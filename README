@@ -1,4 +1,44 @@
-Repository de mes scripts
-=========================
+Repository de mes scripts contenus dans ~/01-scripts.
+=====================================================
+
+Répertoire : Backup
+ -> backup
+ -> backup-ob
+ -> backup-nosauve
+
+Répertoire : Creation-PKG-Tempfs
+ -> mkpkg-tmpfs
+ -> mkpkg-chroot-repo
+
+Répertoire : init-mirrorlist-pacnew
+ -> maj-mirrorlist
+
+Répertoire : iso2usb
+ -> iso2usb
+
+Répertoire : Maj-refind
+ -> maj-refind
+ -> modif-refind-conf
+
+Répertoire : Maj-Repos
+ -> maj-repolocal
+
+Répertoire : Modif-qt-conf
+ -> modif-qt4-conf
+ -> modif-qt5-conf
+
+Répertoire : To-git
+ -> dev2git
+ -> script2git
+
+Répertoire : verif-deps
+ -> verif-deps
 
 
+Racine :
+ -> clean-backups
+ -> dpi.py
+ -> lls
+ -> ompload
+ -> rpmextract.sh
+ -> search.sh

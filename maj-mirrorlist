@@ -1,0 +1,239 @@
+ 
+#!/usr/bin/bash
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013
+# Version : 06
+
+## POUR TEST
+#set -x
+
+# REPERTOIRES
+DIR_PACMAN_D=/etc/pacman.d
+NAME_MIRROR=mirrorlist
+NAME_MIRROR_PACNEW=mirrorlist.pacnew
+
+# COLORS
+# Regular Colors
+Normal='\e[0m'          # Normal
+Black='\e[0;30m'        # Black
+Blue='\e[0;34m'         # Blue
+Cyan='\e[0;36m'         # Cyan
+Green='\e[0;32m'        # Green
+Purple='\e[0;35m'       # Purple
+Red='\e[0;31m'          # Red
+White='\e[0;37m'        # White
+Yellow='\e[0;33m'       # Yellow
+# Bold
+BBlack='\e[1;30m'       # Black
+BBlue='\e[1;34m'        # Blue
+BCyan='\e[1;36m'        # Cyan
+BGreen='\e[1;32m'       # Green
+BPurple='\e[1;35m'      # Purple
+BRed='\e[1;31m'         # Red
+BWhite='\e[1;37m'       # White
+BYellow='\e[1;33m'      # Yellow
+
+#
+# FONCTIONS
+#
+msg() {
+  local mesg=$1; shift
+  printf "${BWhite}:: ${mesg}${Normal}\n" "$@" >&2
+}
+
+msg_titre() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Normal}\n" "$@" >&2
+}
+
+error() {
+  local mesg=$1; shift
+  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Normal}\n" "$@" >&2
+}
+
+cleanup() {
+  cd
+  [[ $1 ]] && exit $1
+}
+
+die() {
+  error "$*"
+  cleanup 1
+}
+
+#
+# FIN FONCTIONS
+#
+
+#
+# DEBUT DU SCRIPT
+#
+
+# => Passe en root
+if [ ! $( id -u ) -eq 0 ]; then
+    echo -e "\n${BYellow}Le script doit être exécuté en << root >>."
+    echo -e "Entrer le mot de passe de << root >>${Normal}"
+    exec su -c "${0} ${1}"
+    exit ${?}
+fi
+
+# Titre
+msg_titre "+-----------------------------------------+"
+msg_titre "|     Création du fichier mirrorlist      |"
+msg_titre "|  à partir du fichier mirrorlist.pacnew  |"
+msg_titre "+-----------------------------------------+"
+
+
+# La date du jour
+LADATE=`date +%Y-%m-%d`;
+
+# Répertoire de travail
+DIR_WORK="${DIR_PACMAN_D}"
+
+cd "${DIR_WORK}"
+
+
+# Suppressions anciens fichiers
+echo ""
+msg "Suppression des anciens fichiers .backup existants."
+rm -v -f ${NAME_MIRROR}.backup.*
+rm -v -f ${NAME_MIRROR_PACNEW}.backup.*
+
+
+# Sauvegarde fichiers
+echo ""
+msg "Sauvegarde des fichiers existants."
+cp -v ${NAME_MIRROR} ${NAME_MIRROR}.backup.${LADATE}
+cp -v ${NAME_MIRROR_PACNEW} ${NAME_MIRROR_PACNEW}.backup.${LADATE}
+
+# Configure le fichier /etc/pacman.d/mirrorlist.
+url="https://www.archlinux.org/mirrorlist/?country=FR&use_mirror_status=on"
+tmpfile=$(mktemp --suffix=-mirrorlist)
+# Get latest mirror list and save to tmpfile
+curl -so ${tmpfile} ${url}
+sed -i "s/^#Server/Server/g" ${tmpfile}
+
+# Visualisation des mirroirs qui seront utilisés.
+echo ""
+msg "Visualisation des mirroirs qui seront utilisés..."
+cat "${tmpfile}"
+
+sed -i "/^## Score/d" ${tmpfile}
+# Backup and replace current mirrorlist file (if new file is non-zero)
+if [[ -s ${tmpfile} ]]; then
+  echo ""
+  msg "Configuration du fichier mirrorlist..."
+  mv -i ${tmpfile} /etc/pacman.d/mirrorlist
+  chmod +r /etc/pacman.d/mirrorlist
+else
+  echo ""
+  msg "Échec de la configuration du fichier mirrorlist..."
+fi
+
+
+# Visualisation du nouveau fichier mirrorlist.
+echo ""
+msg "Pour visualiser le nouveau fichier "${NAME_MIRROR}" avec nano, appuyer sur une touche."
+read
+nano "${NAME_MIRROR}"
+
+
+# Synchronise les nouveaux mirroirs.
+echo ""
+msg "Synchronisation des nouveaux mirroirs..."
+#pacman -Syyu
+pacman -Syy
+
+
+# Supprime le fichier mirrorlist.pacnew
+echo ""
+msg "Suppression du fichier "${NAME_MIRROR_PACNEW}"."
+rm -v -f "${NAME_MIRROR_PACNEW}"
+
+
+## POUR TEST
+#set +x
+
+cd
+exit 0
+
+#==============================================================================
+# ESSAIS
+#==============================================================================
+## V 04
+# # Calcule Numéros des lignes ds mirrorlist.pacnew
+# num_ligne_belgique=$(grep -n "## Belgium" "${NAME_MIRROR_PACNEW}" | cut -f1 -d:)
+# 
+# num_ligne_france=$(grep -n "## France" "${NAME_MIRROR_PACNEW}" | cut -f1 -d:)
+# 
+# num_ligne_germany=$(grep -n "## Germany" "${NAME_MIRROR_PACNEW}" | cut -f1 -d:)
+# 
+# num_ligne_luxembourg=$(grep -n "## Luxembourg" "${NAME_MIRROR_PACNEW}" | cut -f1 -d:)
+# 
+# 
+# # Modifications fichier mirrorlist.pacnew
+# # Belgium
+# numLigneEnCours=0
+# incNumeroLigne=1
+# while true; do
+#   numLigneEnCours=$(( $num_ligne_belgique + $incNumeroLigne ))
+#   nomServer="$(sed -n "${numLigneEnCours}p" "${NAME_MIRROR_PACNEW}" | awk '{print $1}')"
+#   if [[ "${nomServer}" == "#Server" ]]; then
+#       sed -i "${numLigneEnCours}s/^#//" "${NAME_MIRROR_PACNEW}"
+#   else
+#       break
+#   fi
+#   incNumeroLigne=$(( $incNumeroLigne + 1 ))
+# done
+# 
+# # France
+# numLigneEnCours=0
+# incNumeroLigne=1
+# while true; do
+#   numLigneEnCours=$(( $num_ligne_france + $incNumeroLigne ))
+#   nomServer="$(sed -n "${numLigneEnCours}p" "${NAME_MIRROR_PACNEW}" | awk '{print $1}')"
+#   if [[ "${nomServer}" == "#Server" ]]; then
+#       sed -i "${numLigneEnCours}s/^#//" "${NAME_MIRROR_PACNEW}"
+#   else
+#       break
+#   fi
+#   incNumeroLigne=$(( $incNumeroLigne + 1 ))
+# done
+# 
+# # Germany
+# numLigneEnCours=0
+# incNumeroLigne=1
+# while true; do
+#   numLigneEnCours=$(( $num_ligne_germany + $incNumeroLigne ))
+#   nomServer="$(sed -n "${numLigneEnCours}p" "${NAME_MIRROR_PACNEW}" | awk '{print $1}')"
+#   if [[ "${nomServer}" == "#Server" ]]; then
+#       sed -i "${numLigneEnCours}s/^#//" "${NAME_MIRROR_PACNEW}"
+#   else
+#       break
+#   fi
+#   incNumeroLigne=$(( $incNumeroLigne + 1 ))
+# done
+# 
+# # Luxembourg
+# numLigneEnCours=0
+# incNumeroLigne=1
+# while true; do
+#   numLigneEnCours=$(( $num_ligne_luxembourg + $incNumeroLigne ))
+#   nomServer="$(sed -n "${numLigneEnCours}p" "${NAME_MIRROR_PACNEW}" | awk '{print $1}')"
+#   if [[ "${nomServer}" == "#Server" ]]; then
+#       sed -i "${numLigneEnCours}s/^#//" "${NAME_MIRROR_PACNEW}"
+#   else
+#       break
+#   fi
+#   incNumeroLigne=$(( $incNumeroLigne + 1 ))
+# done
+# 
+# 
+# # Filtre les miroirs les plus à jour, les trie par vitesse et configure le fichier /etc/pacman.d/mirrorlist.
+# echo ""
+# msg "Filtrage des miroirs ( durée : 2 à 3 minutes ) et configuration du fichier mirrorlist..."
+# rankmirrors -n 9 "${NAME_MIRROR_PACNEW}" > "${NAME_MIRROR}"
+# sed '/^##/d' -i "${NAME_MIRROR}"
+# sed '/^#Server/d' -i "${NAME_MIRROR}"
+# 
+# 

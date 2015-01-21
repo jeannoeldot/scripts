@@ -1,0 +1,394 @@
+#!/usr/bin/bash
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2014
+
+clear
+cd
+
+# CONSTANTES
+
+# COULEURS GRAS
+ALL_OFF="\e[1;0m"
+BBlack='\e[1;30m'       # Black
+BBlue='\e[1;34m'        # Blue
+BCyan='\e[1;36m'        # Cyan
+BGreen='\e[1;32m'       # Green
+BPurple='\e[1;35m'      # Purple
+BRed='\e[1;31m'         # Red
+BYellow='\e[1;33m'      # Yellow
+BWhite='\e[1;37m'       # White
+
+# LES VARIABLES
+USERNAME="jnd"
+# Sources a sauvegarder
+# mettre ici les repertoires a sauvegarder
+REP_CONKY="00-Conky"
+REP_DEV="01-dev"
+REP_SCRIPTS="01-scripts"
+REP_GIT="02-git"
+REP_BUILDS="05-builds"
+REP_ICOP="05-Icones-Progs"
+REP_IMG="05-Images"
+REP_THEMES="05-Themes"
+REP_DOCSOFFICE="07-Docs-Office"
+REP_DWL="08-Dwl-OK"
+REP_SKAR="08-SuperKaramba-Themes"
+REP_DOCUS="09-Documentation"
+REP_CONF="09-Fichiers-Conf"
+REP_SHARE="90-Partage"
+REP_IMPR="99-A-IMPRIM"
+REP_3D="00-3D"
+REP_PHOTOS="05-Photos"
+REP_MUSE="10-Musiques"
+REP_VIDEO="10-Videos"
+REP_ISOS="99-Isos"
+REP_DOCUMENT="Documents"
+REP_BIN="bin"
+REP_ETC="etc"
+
+# Chemin de DataLinux partitions sdb5
+DATAS="/0-DataLinux"
+
+# Chemin de Save-Confs ( Fichiers cachés )
+SAVE_CONFS="0-Save-Confs"
+
+# Chemin du fichier nosauve
+NOSAUVE="$HOME/bin/backup-nosauve"
+
+# Le media de sauvegarde est passé en paramètres
+SAUVE="$HOME/90-BACKUP"
+
+# Repertoire de sauvegarde
+REP_CIBLE_SAVE="${SAUVE}/sauvegarde"
+REP_BACKUP_ALL="${SAUVE}/backup_all"
+
+# La date du jour
+DATE_JOUR_HEURE=`date +%Y-%m-%d_%H-%M`;
+AUJOURDHUI=`date +%Y-%m-%d`;
+
+# Sources a sauvegarder
+# mettre ici le chemin vers les repertoires a sauvegarder
+SOURCES="
+ /$REP_ETC
+ $DATAS/$REP_3D
+ $DATAS/$REP_PHOTOS
+ $HOME/$REP_THEMES
+ $HOME/$REP_CONKY
+ $HOME/$REP_DEV
+ $HOME/$REP_SCRIPTS
+ $HOME/$REP_GIT
+ $HOME/$REP_BUILDS
+ $HOME/$REP_ICOP
+ $HOME/$REP_IMG
+ $HOME/$REP_DOCSOFFICE
+ $HOME/$REP_DWL
+ $HOME/$REP_DOCUS
+ $HOME/$REP_CONF
+ $HOME/$REP_DOCUMENT
+ $HOME/$REP_BIN
+"
+
+SOURCES_TAR="
+ $REP_ETC
+ $REP_3D
+ $REP_PHOTOS
+ $REP_THEMES
+ $REP_CONKY
+ $REP_DEV
+ $REP_SCRIPTS
+ $REP_GIT
+ $REP_BUILDS
+ $REP_ICOP
+ $REP_IMG
+ $REP_DOCSOFFICE
+ $REP_DWL
+ $REP_DOCUS
+ $REP_CONF
+ $REP_DOCUMENT
+ $REP_BIN
+"
+
+
+# FONCTIONS
+is_package_installed() {
+  #check if a package is already installed
+  for PKG in $1; do
+    pacman -Q $PKG &> /dev/null && return 0;
+  done
+  return 1
+}
+
+attendre_appui_touche() {
+  print_bold_cyan " ==> Et appuyer sur une touche pour continuer"
+  read
+}
+
+print_bold_blanc() {
+  echo -e "${BWhite}$1"
+}
+
+print_bold_vert() {
+  echo -e "${BGreen}$1${BWhite}"
+}
+
+print_bold_jaune() {
+  echo -e "${BYellow}$1${BWhite}"
+}
+
+print_bold_magenta() {
+  echo -e "${BPurple}$1${BWhite}"
+}
+
+print_bold_cyan() {
+  echo -e "${BCyan}$1${BWhite}"
+}
+
+
+
+# DÉBUT DU SCRIPT
+print_bold_blanc "   +----------------------------------+"
+print_bold_blanc "   | Programme de sauvegarde en cours |"
+print_bold_blanc "   +----------------------------------+"
+echo ""
+
+sleep 0.5
+
+print_bold_vert "Les répertoires suivants vont être sauvegardés :"
+print_bold_vert "------------------------------------------------"
+ for REP in ${SOURCES};
+        do
+        echo " ==> "${REP}
+        sleep 0.1
+        done
+#sleep 0.3
+echo ""
+
+print_bold_jaune " INFOS :"
+print_bold_jaune " Pour rajouter des répertoires ouvrir le script"
+print_bold_jaune " et les ajouter dans les ligne SOURCES et SOURCES_TAR"
+echo ""
+sleep 0.5
+
+
+# LES FICHIERS
+print_bold_vert "Effacement des fichiers backup ( ~ )"
+print_bold_vert "------------------------------------"
+#Effacement des fichiers backup ( ~ )
+find -name *~ -exec /usr/bin/rm -vf {} \;
+echo ""
+
+# LES REPERTOIRES build-*-Desktop-Debug et build-*-Desktop-Release de qt5
+print_bold_vert "Vérification existence de répertoires build-* (qt5) dans ${REP_DEV}"
+print_bold_vert "-----------------------------------------------------------------------"
+find ${REP_DEV} -name build-*-Desktop-*
+echo
+print_bold_magenta "!!! ATTENTION !!!"
+print_bold_magenta "-----------------"
+echo -e "Si des répetoires ${BYellow}build-*-Desktop-*${BWhite} existent, supprimer leurs contenus."
+attendre_appui_touche
+echo ""
+
+# LE REPERTOIRE blender
+print_bold_vert "Vérification existence du répertoire blender dans ${REP_BUILDS}"
+print_bold_vert "---------------------------------------------------------------------"
+find ${REP_BUILDS} -name blender
+echo
+print_bold_magenta "!!! ATTENTION !!!"
+print_bold_magenta "-----------------"
+echo -e "Si le répetoire ${BYellow}blender${BWhite} existe, le déplacer dans /0-DataLinux/05-builds-dir-git."
+attendre_appui_touche
+echo ""
+
+# LES REPERTOIRES SRC ET PKG
+print_bold_vert "Vérification existence de répertoires src et pkg dans ${REP_BUILDS}"
+print_bold_vert "---------------------------------------------------------------------"
+find ${REP_BUILDS} -name src
+find ${REP_BUILDS} -name pkg
+echo
+print_bold_magenta "!!! ATTENTION !!!"
+print_bold_magenta "-----------------"
+echo -e "Si des répetoires ${BYellow}src${BWhite} et ${BYellow}pkg${BWhite} existent, les supprimer."
+attendre_appui_touche
+echo ""
+
+# Sauvegarde des sessions Kate
+print_bold_vert "Sauvegarde des sessions Kate"
+print_bold_vert "----------------------------"
+rm -f $HOME/${REP_CONF}/kate-sessions/*.katesession
+cp -v $HOME/.kde4/share/apps/kate/sessions/* $HOME/${REP_CONF}/kate-sessions/
+echo ""
+
+# Sauvegarde des bookmark Firefox
+print_bold_vert "Sauvegarde des bookmark Firefox"
+print_bold_vert "-------------------------------"
+rm -f $HOME/${REP_CONF}/bookmarkbackups/*
+# ANCIENNE INSTALLATION
+#cp -v $HOME/.mozilla/firefox/gsmgqp55.default/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
+#
+if [[ -f "/$HOME/.mozilla/firefox/profiles.ini" ]]; then
+  eval $(grep '^Path=' "/$HOME/.mozilla/firefox/profiles.ini")
+  NAME_DIR_BOOKMARKS="${Path}"
+  cp -v $HOME/.mozilla/firefox/${NAME_DIR_BOOKMARKS}/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
+else
+  cp -v $HOME/.mozilla/firefox/v9kvq5cr.default/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
+fi
+#
+
+NOMBOOKMARKS="bookmarks-${AUJOURDHUI}.html"
+echo ""
+print_bold_magenta "!!! ATTENTION !!!"
+print_bold_magenta "-----------------"
+echo -e "Est-ce que ${BYellow}${NOMBOOKMARKS}${BWhite} est sauvegardé ?"
+echo -e "Si ${BPurple}NON${BWhite} : le faire"
+attendre_appui_touche
+echo ""
+
+# Sauvegarde fichiers confs
+# Efface ancien fichiers
+#rm -f $HOME/${REP_CONF}/${SAVE_CONFS}/*
+#
+print_bold_vert "Sauvegarde Liste des Services et des Units de Systemd"
+print_bold_vert "-----------------------------------------------------"
+echo "« systemd-analyze blame » -> « $HOME/${REP_CONF}/0-Systemd/Liste-Services-Actifs.${AUJOURDHUI}.TXT »"
+systemd-analyze blame > $HOME/${REP_CONF}/0-Systemd/Liste-Services-Actifs.${AUJOURDHUI}.TXT
+echo "« systemctl list-unit-files » -> « $HOME/${REP_CONF}/0-Systemd/Liste-Units.${AUJOURDHUI}.TXT »"
+systemctl list-unit-files > $HOME/${REP_CONF}/0-Systemd/Liste-Units.${AUJOURDHUI}.TXT
+echo ""
+
+if is_package_installed "grub-bios" ; then
+  print_bold_vert "Sauvegarde de /boot/grub/grub.cfg"
+  print_bold_vert "---------------------------------"
+  sudo cp -v /boot/grub/grub.cfg $HOME/${REP_CONF}/${SAVE_CONFS}/boot-grub-grub.cfg.${AUJOURDHUI}
+  sudo chown ${USERNAME}:users $HOME/${REP_CONF}/${SAVE_CONFS}/boot-grub-grub.cfg.${AUJOURDHUI}
+  echo ""
+fi
+
+if is_package_installed "refind-efi" ; then
+  print_bold_vert "Sauvegarde de /boot/efi/EFI/refind/refind.conf"
+  print_bold_vert "----------------------------------------------"
+  sudo cp -v /boot/efi/EFI/refind/refind.conf $HOME/${REP_CONF}/Refind-Fichiers-Conf/boot-efi-EFI-refind-refind.conf.${AUJOURDHUI}
+  sudo chown ${USERNAME}:users $HOME/${REP_CONF}/Refind-Fichiers-Conf/boot-efi-EFI-refind-refind.conf.${AUJOURDHUI}
+  echo ""
+fi
+
+# Sauvegarde Fichiers cachés dans home
+print_bold_vert "Sauvegarde des fichiers .cachés dans $HOME"
+print_bold_vert "----------------------------------------------"
+cp -v $HOME/.bash_profile $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.bash_profile.${AUJOURDHUI}
+cp -v $HOME/.bashrc $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.bashrc.${AUJOURDHUI}
+cp -v $HOME/.gitconfig $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.gitconfig.${AUJOURDHUI}
+cp -v $HOME/.toprc $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.toprc.${AUJOURDHUI}
+cp -v $HOME/.yasp.script $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.yasp.script.${AUJOURDHUI}
+echo ""
+
+# Sauvegarde Fichiers fichiers config de blender
+VERSION_BLENDER=(`blender -v | awk '/Blender/ {print $2}'`)
+
+print_bold_vert "Sauvegarde des fichiers config de blender ${BYellow}${VERSION_BLENDER}"
+print_bold_vert "----------------------------------------------"
+cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/bookmarks.txt $HOME/${REP_CONF}/Blender-config/home-jnd-.config-blender-${VERSION_BLENDER}-config-bookmarks.txt.${AUJOURDHUI}
+cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/recent-files.txt $HOME/${REP_CONF}/Blender-config/home-jnd-.config-blender-${VERSION_BLENDER}-config-recent-files.txt.${AUJOURDHUI}
+echo ""
+
+
+# Sauvegarde incrementale
+#rsync --force --ignore-errors --delete --backup --backup-dir=$REP_BACKUP_ALL/backup/$DATE_JOUR_HEURE  -av ${SOURCES}  $REP_CIBLE_SAVE 
+
+REP=""
+  for REP in ${SOURCES};
+	  do
+	    print_bold_vert "Sauvegarde en cours de : ${REP}"
+	    print_bold_vert "--------------------------------------------------------"
+##        rsync --force --max-size=256M --ignore-errors --delete --backup --exclude-from=nosauve --backup-dir=$REP_BACKUP_ALL/$DATE_JOUR_HEURE  -av ${REP} $REP_CIBLE_SAVE 
+	    rsync --force --max-size=256M --ignore-errors --delete --backup --exclude-from=${NOSAUVE} --backup-dir=${REP_BACKUP_ALL}/${DATE_JOUR_HEURE} -av ${REP} ${REP_CIBLE_SAVE} 
+	    print_bold_cyan " ==> Le répertoire ${REP} est sauvegardé"
+	    echo ""
+	  done
+
+#echo "-----------------------------------------------------------------"
+#echo "Compression du repertoire 90-BACKUP"
+#tar -cpzf BACKUP-${DATE_JOUR_HEURE}.tar.gz --exclude backup_all 90-BACKUP
+#tar --files-from=$HOME/bin/tar-include.txt -cvpzf test-tar-backupname.tar.gz
+
+print_bold_vert "Compression des répertoires de ${REP_CIBLE_SAVE}"
+print_bold_vert "-------------------------------------------------------------"
+cd ${REP_CIBLE_SAVE}
+REP_TAR=""
+  for REP_TAR in ${SOURCES_TAR};
+        do
+        print_bold_cyan " ==> Compression de : ${REP_TAR}"
+	bsdtar -cf - ${REP_TAR} > ${REP_TAR}-${DATE_JOUR_HEURE}.tar
+	xz -z -f ${REP_TAR}-${DATE_JOUR_HEURE}.tar
+        done
+
+cd
+# SUPPRIME LES ANCIENS FICHIERS
+rm -vf ${SAUVE}/*.tar.*
+sync
+echo ""
+#
+mv -v ${REP_CIBLE_SAVE}/*.tar.* ${SAUVE}/
+sync
+print_bold_vert "----------------------------------------------------------"
+echo ""
+echo ""
+
+print_bold_vert "La sauvegarde des données est terminée"
+print_bold_vert "--------------------------------------"
+echo ""
+print_bold_magenta "!!! ATTENTION !!!"
+print_bold_magenta "-----------------"
+print_bold_magenta "Fichiers XXX-${DATE_JOUR_HEURE}.tar.xz dans ${SAUVE}"
+echo ""
+print_bold_cyan " > À sauver sur : https://www.dropbox.com/ dans 00-SAVE_ARCH-KDE"
+print_bold_cyan "   ou"
+print_bold_cyan " > À sauver sur : https://hubic.com/home/browser/ dans 00-SAVE-ARCH64"
+echo ""
+echo ""
+print_bold_cyan " > À sauver sur : /0-DataLinux/00-ARCH64/"
+print_bold_jaune "Commandes :"
+print_bold_jaune "-----------"
+echo "rm -f /0-DataLinux/00-ARCH64/*.tar.*"
+echo "cp -v ${SAUVE}/*.tar.* /0-DataLinux/00-ARCH64/"
+echo "sync"
+echo ""
+echo ""
+print_bold_cyan " > À sauver sur : /MYBOOK/00-ARCH64/"
+print_bold_jaune "Commandes :"
+print_bold_jaune "-----------"
+echo "rm -f /run/media/jnd/MYBOOK/00-ARCH64/*.tar.*"
+echo "mv -v ${SAUVE}/*.tar.* /run/media/jnd/MYBOOK/00-ARCH64/"
+echo "ou"
+echo "cp -v ${SAUVE}/*.tar.* /run/media/jnd/MYBOOK/00-ARCH64/"
+echo "sync"
+echo ""
+
+#ls -l $HOME/99-temp/
+#ls -l /run/media/jnd/MYBOOK/00-ARCH64/
+
+#pour avoir la taille restant sur le disque de backup
+##df
+exit 0 
+
+#=========================================================================
+#ANCIENS
+#########
+
+
+# echo "!!! ATTENTION À LA VERSION DE BLENDER : 2.71 !!!"
+# echo "------------------------------------------------"
+# cp -v $HOME/.config/blender/2.71/config/bookmarks.txt $HOME/$REP_CONF/Blender-config/home-jnd-.config-blender-2.71-config-bookmarks.txt.${AUJOURDHUI}
+# cp -v $HOME/.config/blender/2.71/config/recent-files.txt $HOME/$REP_CONF/Blender-config/home-jnd-.config-blender-2.71-config-recent-files.txt.${AUJOURDHUI}
+
+
+#echo "Sauvegarde du fichier BACKUP-DATE"
+
+#rm -f $HOME/99-temp/BACKUP*
+#mv BACKUP-${DATE_JOUR_HEURE}.tar.gz $HOME/99-temp/
+#rm -f /media/MYBOOK/00-ARCH64/BACKUP*
+#mv BACKUP-${DATE_JOUR_HEURE}.tar.gz /media/MYBOOK/00-ARCH64/
+#echo "Fichiers XXX-${DATE_JOUR_HEURE}.tar.gz dans $SAUVE"
+#echo "copiés dans /0-DataLinux/0-SAVE_ARCH64"
+#echo cp $SAUVE/*.tar.gz /0-DataLinux/0-SAVE_ARCH64/*
+#echo ""
+

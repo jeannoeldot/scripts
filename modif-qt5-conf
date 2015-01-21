@@ -1,0 +1,96 @@
+#!/usr/bin/bash
+
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013 2014
+#
+# Version 05
+#
+
+#
+# FONCTIONS
+read_input_text(){ #{{{
+    read -p "$1 [O/N]: " OPTION
+    echo ""
+    OPTION=`echo "$OPTION" | tr '[:upper:]' '[:lower:]'`
+} #}}}
+#
+
+# => Passe en root
+if [ ! $( id -u ) -eq 0 ]; then
+echo "Entrer mot de passe root: "
+exec su -c "${0} ${CMDLN_ARGS}"
+exit ${?}
+fi
+
+# Titre
+echo "+----------------------------------------------------------+"
+echo "| Modification des options de compilation de Qt5           |"
+echo "| Modification de /usr/lib/qt/mkspecs/common/gcc-base.conf |"
+echo "+----------------------------------------------------------+"
+echo ""
+
+# La date du jour
+#LADATE=`date +%Y-%m-%d_%H-%M`;
+LADATE=`date +%Y-%m-%d`;
+
+# Le répertoire
+cd /usr/lib/qt/mkspecs/common
+
+# QMAKE_CFLAGS_OPTIMIZE      = -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4
+# CXXFLAGS="-march=native -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4"
+# CXXFLAGS="-march=native -O2 -pipe -fdiagnostics-color=always -fstack-protector-strong --param=ssp-buffer-size=4"
+
+# 1) MODIFS SUR FICHIERS TEMPS
+cp gcc-base.conf gcc-base.conf.txt
+if [ -f "/etc/makepkg.conf" ]; then
+  # Get CXXFLAGS from makepkg.conf
+  eval $(grep '^CXXFLAGS=' "/etc/makepkg.conf")
+  if [ -n "${CXXFLAGS}" ]; then
+    # Changes the current line with my CXXFLAGS
+    sed -i "/^QMAKE_CFLAGS_OPTIMIZE /c\QMAKE_CFLAGS_OPTIMIZE      = ${CXXFLAGS}" gcc-base.conf.txt
+  fi
+fi
+echo ":: Ces modifications seront apportées :"
+echo "=> gcc-base.conf :"
+cat gcc-base.conf.txt | grep -E "^QMAKE_CFLAGS_OPTIMIZE "
+echo ""
+
+# 2) FAIT MODIFS SI REPONSE = o ou O
+read_input_text "Confirmer les modifications apportées"
+  case "$OPTION" in
+    "o")
+        echo ":: Suppression des anciens gcc-base.conf.backup-AAAA-MM-JJ"
+        echo ""
+        rm -f gcc-base.conf.backup-*
+
+        echo ":: Sauvegarde de gcc-base.conf original en gcc-base.conf.backup-${LADATE}"
+        echo ""
+        cp gcc-base.conf gcc-base.conf.backup-${LADATE}
+
+        echo ":: Modification de gcc-base.conf"
+        echo ""
+        mv gcc-base.conf.txt gcc-base.conf
+
+        echo ":: Vérification :"
+        echo "=> gcc-base.conf :"
+        cat gcc-base.conf | grep -E "^QMAKE_CFLAGS_OPTIMIZE "
+        echo ""
+
+        cd
+        echo ":: Modifications terminées."
+        echo ""
+        ret=0
+        ;;
+    *)
+        # 3) SUPPRIME FICHIERS TEMPS
+        rm -f gcc-base.conf.txt
+        cd
+        echo ":: Modifications non apportées."
+        echo ""
+        ret=1
+        ;;
+  esac
+  
+
+# ) FIN
+exit $ret

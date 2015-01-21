@@ -1,0 +1,331 @@
+#!/bin/sh
+
+#lls v0.5
+# "lls" is a sript that works as "ls" with additional info on files spiced with some fancy colors.
+# Avalaibale options are: 
+#  -h, --help help this help.
+#  -b, brief list, with file info and sizes omitted.
+#
+#SCRIPT TAGS:
+#DIR open -- means that user can search into this directory.
+#DIR closed -- means that user can't search into this directory.
+#FILE open -- means that this file is writable and readable.
+#FILE closed -- means that this file is not writable and readable.
+#FILE open X -- means that this file is writable, readable and executable.
+#FILE closed X -- means that this file is executable only.
+#FILE seen X -- means that this file is readable and executable, but not writable.
+#FILE edit X -- means that this file is writable and executable, but not readable.
+#FILE edit only -- means that this file is writable only.
+#FILE seen only -- means that this file is readable only.
+#FILE zombie -- means that this file is not writable, readable or executable.
+#
+
+#Black         0;30
+#Dark Gray     1;30
+#Blue          0;34
+#Light Blue    1;34
+#Green         0;32
+#Light Green   1;32
+#Cyan          0;36
+#Light Cyan    1;36
+#Red           0;31
+#Light Red     1;31
+#Purple        0;35
+#Light Purple  1;35
+#Brown         0;33
+#Yellow        1;33
+#Light Gray    0;37
+#White         1;37
+
+colorize()
+{
+	color="$1"
+	str="$2"
+
+	echo -e "\033[${color};148m${str}\033[39m"
+#	tput sgr0
+}
+
+filter_x () {
+#awk '{print $0 length($0)}'
+	if [ $SHOW_X -eq 1 ]; then
+		grep -E 'FILE (closed|seen|edit|open) X'
+	elif [ $NO_X -eq 1 ]; then
+#		awk 'NF && !/FILE (closed|seen|edit|open) X/ {gsub(/./, " & "); print ":"$0":"}'
+		grep -E -v 'FILE (closed|seen|edit|open) X'
+	else
+		cat
+	fi 
+}
+
+######################################################################
+
+add_file_props()
+{
+	if [ $ADD_FILE_PROPS -eq 1 ]; then
+		echo -ne "$1"
+	fi
+	echo ""
+	tput sgr0
+}
+
+######################################################################
+
+file_info ( )
+{
+	file=$1
+
+	# dont bother computing stuff we will not use
+	if [ $ADD_FILE_PROPS -eq 1 ]; then
+		file_prop=$(file -b "$file")
+		file_size=$(du -h "$file" | awk '{print " "$1}')
+	fi
+
+	fname=${file##$PWD/}
+
+	# about directories
+	if [ -d "$file" ]; then
+		if [ -x "$file" ]; then
+			label="DIR open"
+			echo -n `colorize "34;2" "$fname"`
+			echo -n `colorize "34;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}"`"
+		else
+			label="DIR closed"
+			echo -n `colorize "31;2" "$fname"`
+			echo -n `colorize "31;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}"`"
+		fi
+	fi
+
+	# about files
+	if [ -f "$file" ]; then
+
+		if [ -r "$file" -a -w "$file" -a ! -x "$file" ]; then
+			label="FILE open"
+			echo -n "$fname"
+			echo -n `colorize "32;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}$file_size"`"
+	
+		elif [ ! -w "$file" -a ! -r "$file" -a -x "$file" ]; then
+			label="FILE closed X"
+#			echo -ne "\033[31;2;148m${fname}\033[39m \033[31;1;148m> ${label}\033[39m"
+#			add_file_props " \033[30;5;148m{$file_prop}$file_size\033[39m"
+			echo -n `colorize "31;2" "$fname"`
+			echo -n `colorize "31;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}$file_size"`"
+
+		elif [ -w "$file" -a -r "$file" -a -x "$file" ]; then
+			label="FILE open X"
+#			echo -ne "\033[33;2;148m${fname}\033[39m \033[33;1;148m> ${label}\033[39m"
+#			add_file_props " \033[30;5;148m{$file_prop}$file_size\033[39m"
+			echo -n `colorize "33;2" "$fname"`
+			echo -n `colorize "33;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}$file_size"`"
+
+		elif [ ! -w "$file" -a -r "$file" -a -x "$file" ]; then
+			label="FILE seen X"
+#			echo -ne "\033[31;2;148m${fname}\033[39m \033[31;1;148m> ${label}\033[39m"
+#			add_file_props " \033[30;5;148m{$file_prop}$file_size\033[39m"
+			echo -n `colorize "31;2" "$fname"`
+			echo -n `colorize "31;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}$file_size"`"
+
+		elif [ -w "$file" -a ! -r "$file" -a -x "$file" ]; then
+			label="FILE edit X" 
+#			echo -ne "\033[35;2;148m${fname}\033[39m \033[35;1;148m> ${label}\033[39m"
+#			add_file_props " \033[30;5;148m{$file_prop}$file_size\033[39m"
+			echo -n `colorize "35;2" "$fname"`
+			echo -n `colorize "35;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}$file_size"`"
+
+		elif [ -w "$file" -a ! -r "$file" -a ! -x "$file" ]; then
+			label="FILE edit only"
+#			echo -ne "\033[35;2;148m${fname}\033[39m \033[35;1;148m> ${label}\033[39m"
+#			add_file_props " \033[30;5;148m{$file_prop}$file_size\033[39m"
+			echo -n `colorize "35;2" "$fname"`
+			echo -n `colorize "35;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}$file_size"`"
+
+		elif [ ! -w "$file" -a -r "$file" -a ! -x "$file" ]; then
+			label="FILE seen only"
+#			echo -ne "\033[31;2;148m${fname}\033[39m \033[31;1;148m> ${label}\033[39m"
+#			add_file_props " \033[30;5;148m{$fil     m e_prop}$file_size\033[39m"
+			echo -n `colorize "31;2" "$fname"`
+			echo -n `colorize "31;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}$file_size"`"
+
+		elif [ ! -w "$file" -a ! -r "$file" -a ! -x "$file" ]; then
+			label="FILE zombie"
+#			echo -ne "\033[30;2;148m${fname}\033[39m \033[30;1;148m> ${label}\033[39m"
+#			add_file_props " \033[30;5;148m{$file_prop}$file_size\033[39m"
+			echo -n `colorize "30;1" "$fname"`     m 
+			echo -n `colorize "30;1" " > $label"`
+			add_file_props " `colorize "30;2" "{$file_prop}$file_size"`"
+		fi
+	fi
+}
+
+######################################################################
+
+usage() {
+	tput sgr0
+
+	echo -e "
+ Usage: lls [OPTION] PATH
+ \"lls\" is a sript that works as \"ls\" with additional info on files spiced with some fancy colors.
+OPTIONS: 
+   -h, --help, -help shows this help
+   -b, brief list, with file info and sizes omitted
+   -a, list all files and directories
+   -f, list files only
+   -d, list directories only
+   -x, list executable files only
+   -X, list all except executable and hidden files
+   
+ {SCRIPT TAGS:
+  `colorize "34;2" "DIR open"` -- means that user can search into this directory.
+  `colorize "31;2" "DIR closed"` -- means that user can't search into this directory.
+  `colorize "32;2" "FILE open"` -- means that this file is writable and readable.
+  `colorize "33;2" "FILE open X"` -- means that this file is writable, readable and executable.
+  `colorize "31;2" "FILE closed X"` -- means that this file is executable only.
+  `colorize "31;2" "FILE seen X"` -- means that this file is readable and executable, but not writable.
+  `colorize "35;2" "FILE edit X"` -- means that this file is writable and executable, but not readable.
+  `colorize "35;2" "FILE edit only"` -- means that this file is writable only.
+  `colorize "31;2" "FILE seen only"` -- means that this file is readable only.
+  `colorize "30;1" "FILE zombie"` -- means that this file is not writable, readable or executable.}
+"
+	tput sgr0
+}
+
+
+######################################################################
+
+ADD_FILE_PROPS=1
+LIST_ALL=0
+LIST_FILES=0
+LIST_DIRS=0
+SHOW_X=0
+NO_X=0
+
+# TODO: does not work for combined short options: -ab
+while [ $# -ne 0 ]; do
+	case $1 in
+	-a)
+		LIST_ALL=1
+		;;
+	-b) 
+		ADD_FILE_PROPS=0
+		;;
+	-f)
+		LIST_FILES=1
+		;;
+	-d)
+		LIST_DIRS=1
+		;;
+	-x)
+		SHOW_X=1
+		;;
+	-X)
+		NO_X=1
+		;;
+	-h|--help|-help)
+		usage
+		exit 0
+		;;
+	*)
+		break
+		;;
+	esac
+	shift
+done
+
+#while getopts ":a :b" opt; do
+#	case $opt in
+#	a)
+#		LIST_ALL=1
+#		echo $LIST_ALL
+#		shift::
+#		;;
+#	b)
+##		cmd_file_info=file_info2
+#		ADD_FILE_PROPS=0
+#		echo $ADD_FILE_PROPS
+#		shift
+#		;;
+#
+#	\?)
+#		usage
+#		exit 0
+#		;;
+#	esac
+#done
+
+#echo "List all? ${LIST_ALL}"
+#echo "add file propes? ${ADD_FILE_PROPS}"
+#exit 100
+
+curdir=$1
+if [ -z "$curdir" ]; then
+	curdir=$PWD
+elif [ -f "$curdir" ]; then
+	file_info "$curdir"
+	exit 0
+elif [ ! -n "$curdir" ]; then
+	echo "Can't see it here"
+fi
+
+cmd_filt_dirs='find "$curdir" -maxdepth 1 -type d \( ! -iname ".*" \)'
+cmd_filt_files='find "$curdir" -maxdepth 1 -type f \( ! -iname ".*" \)'
+
+cmd_unfilt_dirs='find "$curdir" -maxdepth 1 -type d'
+cmd_unfilt_files='find "$curdir" -maxdepth 1 -type f'
+
+#find "$curdir" -maxdepth 1 \( ! -iname ".*" \) |
+#find "$curdir" -maxdepth 1 " $dot_filter" | 
+
+cmd_list_dirs=$cmd_filt_dirs
+cmd_list_files=$cmd_filt_files
+
+if [ $LIST_ALL -eq 1 ]; then
+	cmd_list_dirs=$cmd_unfilt_dirs
+	cmd_list_files=$cmd_unfilt_files
+
+fi
+
+if [ $LIST_FILES -eq 0 -a $LIST_DIRS -eq 0 ]; then
+break
+elif [ $LIST_FILES -eq 0 ]; then
+	cmd_list_files=""
+elif [ $LIST_DIRS -eq 0 ]; then
+	cmd_list_dirs=""
+fi
+
+#if [ $LIST_ALL -eq 1 -a $LIST_FILES -eq 0 -a $LIST_DIRS -eq 0 ]; then
+#	cmd_list_dirs=$cmd_unfilt_dirs
+#	cmd_list_files=$cmd_unfilt_files
+#elif [ $LIST_ALL -eq 0 -a $LIST_FILES -eq 1 -a $LIST_DIRS -eq 0 ]; then
+#	cmd_list_dirs=""
+#elif [ $LIST_ALL -eq 0 -a $LIST_FILES -eq 0 -a $LIST_DIRS -eq 1 ]; then
+#	cmd_list_files=""
+#elif [ $LIST_ALL -eq 1 -a $LIST_FILES -eq 1 -a $LIST_DIRS -eq 0 ]; then
+#	cmd_list_dirs=""
+#	cmd_list_files=$cmd_unfilt_files
+#elif [ $LIST_ALL -eq 1 -a $LIST_FILES -eq 0 -a $LIST_DIRS -eq 1 ]; then
+#	cmd_list_files=""
+#	cmd_list_dirs=$cmd_unfilt_dirs
+#fi
+
+if [ $SHOW_X -ne 1 -a $NO_X -ne 1 ]; then
+	eval $cmd_list_dirs | 
+	while read files; do
+		file_info "$files" 
+	done
+fi
+
+eval $cmd_list_files |
+while read files; do
+	file_info "$files"
+done | filter_x
+
+

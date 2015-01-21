@@ -1,0 +1,37 @@
+#!/usr/bin/bash
+
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013
+#
+
+clear
+
+echo "-----------------------------------------------"
+echo "            M A J REPO-LOCAL"
+echo "-----------------------------------------------"
+
+#sleep 0.5
+
+cd /home/jnd/00-repolocal/
+
+rm -f repolocal.db.tar.gz
+rm -f repolocal.files.tar.gz
+
+#
+# Si pas de -any.pkg.tar.gz
+#repo-add repolocal.db.tar.gz *-x86_64.pkg.tar.gz
+#
+# Si -any.pkg.tar.gz
+#repo-add repolocal.db.tar.gz *.pkg.tar.gz
+#
+# Si -any.pkg et tar.xz
+repo-add repolocal.db.tar.gz *.pkg.tar.*
+repo-add -f repolocal.files.tar.gz *.pkg.tar.*
+
+##
+# Enlever suite /etc/sudoers : Suppr JND
+#sudo pacman -Sy
+
+cd
+
+exit 0

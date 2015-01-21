@@ -1,0 +1,324 @@
+#!/usr/bin/bash
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014
+#
+# Name : dev2git
+#
+# Version : 0.1.1
+#
+# AVEC 3 paramètres : dev2git quoi destination ["motifs du commit"]
+# Example : $ dev2git jndqcbgrd jndqcbgrd-qt5 "Ajout N° Catégories dans Dialog"
+# ou
+# AVEC 2 paramètres : dev2git quoi destination
+# Example : $ dev2git jndqcbgrd jndqcbgrd-qt5
+# Par défaut : motifs = "Mises à jour"
+#
+
+################################
+## POUR TEST
+#set -x
+################################
+
+# COULEURS
+ALL_OFF="\e[1;0m"
+BOLD="\e[1;1m"
+BLUE="${BOLD}\e[1;34m"
+GREEN="${BOLD}\e[1;32m"
+RED="${BOLD}\e[1;31m"
+YELLOW="${BOLD}\e[1;33m"
+
+# FONCTIONS
+msg_titre() {
+        local mesg=$1; shift
+        printf "${BOLD}${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+msg() {
+        local mesg=$1; shift
+        printf "${BOLD}:: ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+msg_grenn() {
+        local mesg=$1; shift
+        printf "${GREEN}:: ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+error() {
+        local mesg=$1; shift
+        printf "${RED}==> ERREUR:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+cleanup() {
+        [[ $1 ]] && exit $1
+}
+
+die() {
+        error "$*"
+        cleanup 1
+}
+
+usage() {
+        echo 'Arguments :'
+        echo '-h                 Cette aide.'
+        echo '-s <source>        source : Nom du répertoire source. Obligatoire.'
+        echo '-d <destination>   destination : Nom du répertoire destination. Obligatoire.'
+        echo '-m <motif>         motif : Motifs du commit. Facultatif: Par défaut = "Mises à jour"'
+        echo '-t <tag>           tag : Numéro Version. Facultatif.'
+        cleanup 0
+}
+
+
+# Variables globales
+DIR_DEV="/home/jnd/01-dev/00-qtcreator"
+DIR_GIT="/home/jnd/02-git"
+
+MOTIF_PAR_DEFAUT="Mises à jour"
+TAG_PAR_DEFAUT="Nouvelle Version"
+
+PATH_TO_QUOI=""
+PATH_TO_DESTINATION=""
+CONTENU_MOTIF=""
+CONTENU_TAG=""
+
+
+# Variables du script
+# nom_script="$0"
+# nombre_d_argument="$#"
+# nom_quoi="$1"
+# nom_destination="$2"
+# contenu_motif="$3"
+
+
+# Titre
+msg_titre " +-----------------------------------------------------------------------------+"
+msg_titre " |                                                                             |"
+msg_titre " |                                   DEV2GIT                                   |"
+msg_titre " |                                                                             |"
+msg_titre " | Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0] |"
+msg_titre " |                                                                             |"
+msg_titre " | dev2git -h pour lire l'aide                                                 |"
+msg_titre " +-----------------------------------------------------------------------------+"
+echo ""
+
+# Drapeau si tag existe; false = NON , true = OUI
+avec_tag=false
+
+# DÉBUTS DES TESTS DES ARGUMENTS
+# Variables tests arguments
+arg_source=
+arg_destination=
+arg_motif=
+arg_tag=
+
+while getopts 'hs:d:m:t:' arg; do
+        case "$arg" in
+                s) arg_source="$OPTARG" ;;
+                d) arg_destination="$OPTARG" ;;
+                m) arg_motif="$OPTARG" ;;
+                t) arg_tag="$OPTARG" ;;
+                h|*) usage ;;
+        esac
+done
+
+# Test si arg_source = 1 répertoire qui existe
+if [[ "$arg_source" != "" ]]; then
+#     echo "==> Argument -s source = "$arg_source
+    path_to_quoi=$(find ${DIR_DEV} -name "$arg_source")
+    if [[ ! -d "${path_to_quoi}" ]]; then
+        die "Le répertoire « ""$arg_source"" » n'existe pas. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
+    else
+        PATH_TO_QUOI="${path_to_quoi}"
+#         echo "PATH_TO_QUOI = "${PATH_TO_QUOI}
+    fi
+else
+    die "Argument <source> erroné. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
+fi
+
+# Test si $arg_destination = 1 répertoire qui existe
+if [[ "$arg_destination" != "" ]]; then
+#     echo "==> Argument -d destination = "$arg_destination
+    path_to_destination=$(find ${DIR_GIT} -name "$arg_destination")
+    if [[ ! -d "${path_to_destination}" ]]; then
+        die "Le répertoire « ""$arg_destination"" » n'existe pas. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
+    else
+        PATH_TO_DESTINATION="${path_to_destination}"
+#         echo "PATH_TO_DESTINATION = "${PATH_TO_DESTINATION}
+    fi
+else
+    die "Argument <destination> erroné. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
+fi
+
+# Test si arg_motif existe. Par défaut = "Mises à jour"
+if [[ "$arg_motif" != "" ]]; then
+    if [[ "$arg_motif" != "-t" ]]; then
+#         echo "==> Argument -m \"motifs du commit\" = "$arg_motif
+        CONTENU_MOTIF="$arg_motif"
+#         echo "CONTENU_MOTIF = "${CONTENU_MOTIF}
+    else
+        die "Argument <motif> erroné. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
+    fi
+else
+    CONTENU_MOTIF="${MOTIF_PAR_DEFAUT}"
+#     echo "PAR DEFAUT, CONTENU_MOTIF = "${CONTENU_MOTIF}
+fi
+
+# Test si arg_tag existe. Tag par défaut = "Nouvelle Version". NON par défaut
+if [[ "$arg_tag" != "" ]]; then
+#     echo "==> Argument -t tag = "$arg_tag
+    avec_tag=true
+#     echo "avec_tag = "$avec_tag
+    CONTENU_TAG="$arg_tag"
+#     echo "CONTENU_TAG = "${CONTENU_TAG}
+else
+    avec_tag=false
+#     echo "avec_tag = "$avec_tag
+fi
+
+# DÉBUTS MISES À JOUR SUR GIT
+# Effacement des fichiers ~ dans ${PATH_TO_QUOI}
+echo ""
+msg "Effacement des fichiers « *~ » dans « ${PATH_TO_QUOI} »"
+rm -vf ${PATH_TO_QUOI}/*~
+
+# Copie des fichiers de ${PATH_TO_QUOI} vers ${PATH_TO_DESTINATION}
+echo ""
+msg "Copie des fichiers de « ${PATH_TO_QUOI} » vers « ${PATH_TO_DESTINATION} »"
+cp -Rf ${PATH_TO_QUOI}/* ${PATH_TO_DESTINATION}/
+
+# Effacement des fichiers *.user* dans ${PATH_TO_DESTINATION}
+echo ""
+msg "Effacement des fichiers « *.user* » dans « ${PATH_TO_DESTINATION} »"
+find ${PATH_TO_DESTINATION} -name *.user* -exec /usr/bin/rm -vf {} \;
+
+# Commande git add --all
+echo ""
+msg "Commande « git add --all »"
+cd ${PATH_TO_DESTINATION}
+git add --all
+
+# Commande git commit -m "motifs du commit"
+echo ""
+msg "Commande « git commit -m \"${CONTENU_MOTIF}\" »"
+git commit -m "\"${CONTENU_MOTIF}\""
+
+# Commande git push origin master"
+echo ""
+msg "Commande « git push origin master »"
+git push origin master
+
+# TAGS ( FACULTATIF )
+# $ git tag -a v0.1.7 -m "Version 0.1.7" 
+# $ git push origin v0.1.7
+if [ "$avec_tag" = true ]; then
+    echo ""
+    msg "Commande « git tag -a ${CONTENU_TAG} -m \"${TAG_PAR_DEFAUT}\" »"
+    git tag -a ${CONTENU_TAG} -m "${TAG_PAR_DEFAUT}"
+    echo ""
+    msg "Commande « git push origin ${CONTENU_TAG} »"
+    git push origin ${CONTENU_TAG}
+fi
+
+
+cd
+
+################################
+## POUR TEST
+#set +x
+################################
+
+exit 0
+
+=======================================================================================
+## POUR TEST
+
+# # $ find ~/01-dev -name jndqcbgrd
+# # ==> /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# 
+# # $ find ~/02-git -name jndqcbgrd-qt5
+# # ==> /home/jnd/02-git/jndqcbgrd-qt5
+# echo ""
+# echo "TEST"
+# find ${DIR_DEV} -name jndqcbgrd
+# 
+# path_to_quoi=$(find ${DIR_DEV} -name jndqcbgrd)
+# echo ""
+# echo "path_to_quoi = "${path_to_quoi}
+# 
+# 
+# echo ""
+# find ${DIR_GIT} -name jndqcbgrd-qt5
+# 
+# path_to_destination=$(find ${DIR_GIT} -name jndqcbgrd-qt5)
+# echo ""
+# echo "path_to_destination = "${path_to_destination}
+# 
+# echo ""
+# echo "----------------------------------------------------------"
+# echo ""
+# 
+
+# SORTIES KONSOLE
+# $ dev2git jndqcbgrd jndqcbgrd-qt5 "motifs bidons"
+# ==> OK : 3 arguments
+# PATH_TO_QUOI = /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# PATH_TO_DESTINATION = /home/jnd/02-git/jndqcbgrd-qt5
+# CONTENU_MOTIF = motifs bidons
+# 
+# $ dev2git jndqcbgrd jndqcbgrd-qt5
+# ==> OK : 2 arguments
+# PATH_TO_QUOI = /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# PATH_TO_DESTINATION = /home/jnd/02-git/jndqcbgrd-qt5
+# CONTENU_MOTIF = Mises à jour
+# 
+
+
+# cd /home/jnd/01-dev/00-qtcreator/00-progs-qt5-olds/jndqcbgrd-0.1.6/ \
+# && rm -f *~ \
+# && cd
+# 
+# cd /home/jnd/02-git/jndqcbgrd-qt5
+# 
+# cp -Rf /home/jnd/01-dev/00-qtcreator/00-progs-qt5-olds/jndqcbgrd-0.1.6/* .
+# 
+# git add --all
+# 
+# git commit -m "modif.......
+# 
+# git push origin master && cd
+
+# SORTIES KONSOLE
+# $ dev2git jndqcbgrd jndqcbgrd-qt5 "Début Ajout N° Catégories dans Dialog"
+#  +-------------------------------------------------------+
+#  |                                                       |
+#  |                       DEV2GIT                         |
+#  | Usage : dev2git quoi destination ["motifs du commit"] |
+#  |                                                       |
+#  +-------------------------------------------------------+
+# ==> OK : 3 arguments
+# PATH_TO_QUOI = /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# PATH_TO_DESTINATION = /home/jnd/02-git/jndqcbgrd-qt5
+# CONTENU_MOTIF = Début Ajout N° Catégories dans Dialog
+# 
+# :: Effacement des fichiers ~ dans /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# 
+# :: Copie des fichiers de /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd vers /home/jnd/02-git/jndqcbgrd-qt5
+# 
+# :: Commande « git add --all »
+# 
+# :: Commande « git commit -m "Début Ajout N° Catégories dans Dialog" »
+# Sur la branche master
+# Votre branche est en avance sur 'origin/master' de 1 commit.
+#   (utilisez "git push" pour publier vos commits locaux)
+# rien à valider, la copie de travail est propre
+# 
+# :: Commande « git push origin master »
+# Username for 'https://github.com': jeannoeldot
+# Password for 'https://jeannoeldot@github.com': 
+# Décompte des objets: 9, fait.
+# Delta compression using up to 8 threads.
+# Compression des objets: 100% (9/9), fait.
+# Écriture des objets: 100% (9/9), 6.51 KiB | 0 bytes/s, fait.
+# Total 9 (delta 7), reused 0 (delta 0)
+# To https://github.com/jeannoeldot/jndqcbgrd-qt5.git
+#    993dd30..831238d  master -> master
+

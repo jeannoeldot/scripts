@@ -1,0 +1,590 @@
+#!/usr/bin/bash
+
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015
+# 
+
+# VERSION=0.9.5
+VERS="@VERSION@"
+
+################################
+## POUR TEST
+#set -x
+################################
+
+#
+# CONSTANTES
+#
+
+# COULEURS
+ALL_OFF="\e[1;0m"
+BOLD="\e[1;1m"
+BLUE="${BOLD}\e[1;34m"
+GREEN="${BOLD}\e[1;32m"
+RED="${BOLD}\e[1;31m"
+YELLOW="${BOLD}\e[1;33m"
+
+# REPERTOIRES
+#REP_TMPFS="/0-Chroot/00-tmpfs-chroot"
+REP_TMPFS="/home/jnd/05-builds/0-chroot/00-tmpfs-chroot"
+REP_COPIES="/home/jnd/05-builds/0-copie-fichiers-chroot"
+REP_REPO="/tmp/chrootrepo"
+
+#
+# FONCTIONS
+#
+msg_titre() {
+	local mesg=$1; shift
+#	printf "${GREEN}==>${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+	printf "${BOLD}${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+msg() {
+	local mesg=$1; shift
+#	printf "${GREEN}==>${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+#	printf "${GREEN}==> ${mesg}${ALL_OFF}\n" "$@" >&2
+	printf "${GREEN}:: ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+error() {
+	local mesg=$1; shift
+	printf "${RED}==> ERREUR:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+warning() {
+	local mesg=$1; shift
+	printf "      ${YELLOW}!!! => ${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+cleanup() {
+        sudo umount -f "$REP_TMPFS" &>/dev/null
+        rm -rf "$REP_TMPFS" &>/dev/null
+	[[ $1 ]] && exit $1
+}
+
+die() {
+	error "$*"
+# Inutile depuis maj devtools 24.10.2014
+#         clean_own "$rep_paquet" "$uid_nobody" &>/dev/null
+#         clean_own "$rep_paquet" "$uid_root" &>/dev/null
+	cleanup 1
+}
+
+usage() {
+        echo 'Arguments :'
+        echo '-h                Cette aide'
+        echo '-m <march>        march : native ou generic ou blender. Obligatoire'
+        echo '-g <6G|8G>        Taille du chroot en Giga : 6G ou 8G. Facultatif : 6G par défaut'
+        echo '-l <logs>         Conservations des logs. Facultatif : NON conservés par défaut'
+        echo '-q <qt|qt4>       UI Framework : qt(5) ou qt4. Facultatif'
+        echo '-v <git|svn>      Version Control System : git ou svn. Facultatif'
+# Inutile depuis maj devtools 24.10.2014
+#         clean_own "$rep_paquet" "$uid_nobody" &>/dev/null
+#         clean_own "$rep_paquet" "$uid_root" &>/dev/null
+        cleanup 0
+}
+
+setup_dir() {
+	mkdir "$REP_TMPFS" &>/dev/null
+}
+
+#
+# $1 : $arg_size = 6G ou 8G (pour blender)
+setup_mount() {
+#        mount -t tmpfs -o defaults,size=6G none "$REP_TMPFS" &>/dev/null
+#        mount -t tmpfs -o defaults,size=$1 none "$REP_TMPFS" &>/dev/null
+        if [ "$1" == "6G" ]; then
+          sudo mount -t tmpfs -o defaults,size=6G none "$REP_TMPFS" &>/dev/null
+          if [ $? -ne 0 ]; then
+            return 1
+          fi
+        else
+          sudo mount -t tmpfs -o defaults,size=8G none "$REP_TMPFS" &>/dev/null
+          if [ $? -ne 0 ]; then
+            return 1
+          fi
+        fi        
+}
+
+
+#
+# $1 : $arg_qt = "qt"
+# $2 : $arg_qt4 = "qt4"
+# $3 : $arg_git = "git"
+# $4 : $arg_svn = "subversion"
+#
+setup_chroot() {
+#	mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf "$REP_TMPFS"/root base base-devel sudo qt &>/dev/null
+#	mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf "$REP_TMPFS"/root base base-devel sudo qt
+	local arg_chroot=""
+	if [ -n "$1" ]; then
+	  arg_chroot+="$1"
+	fi
+	if [ -n "$2" ]; then
+	  arg_chroot+=" $2"
+	fi
+	if [ -n "$3" ]; then
+	  arg_chroot+=" $3"
+	fi
+        if [ -n "$4" ]; then
+          arg_chroot+=" $4"
+        fi
+#        mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf "$REP_TMPFS"/root base base-devel sudo ${arg_chroot}
+        # Suite maj pacman 4.2
+        mkarchroot "$REP_TMPFS"/root base base-devel sudo ${arg_chroot}
+	ret=$?
+	if [ $ret -ne 0 ]; then
+	  return $ret
+	fi
+}
+
+#
+# $1 : si qt ( $1 = "$avec_qt" =  false ou = true)
+# $2 : si qt4 ( $2 = "$avec_qt4" =  false ou = true)
+# $3 : arg_flags = "generic" ou "native" ou "blender"
+#
+setup_copies() {
+	if [ "$1" = true ]; then
+	  sudo cp -f "$REP_COPIES"/qt-gcc-base.conf "$REP_TMPFS"/root/usr/lib/qt/mkspecs/common/gcc-base.conf
+	  if [ $? -ne 0 ]; then
+	    return 1
+	  fi
+	fi
+        if [ "$2" = true ]; then
+          sudo cp -f "$REP_COPIES"/qt4-g++-base.conf "$REP_TMPFS"/root/usr/share/qt4/mkspecs/common/g++-base.conf
+          if [ $? -ne 0 ]; then
+            return 1
+          fi
+          sudo cp -f "$REP_COPIES"/qt4-gcc-base.conf "$REP_TMPFS"/root/usr/share/qt4/mkspecs/common/gcc-base.conf
+          if [ $? -ne 0 ]; then
+            return 1
+          fi
+        fi
+	sudo cp -f "$REP_COPIES"/mirrorlist "$REP_TMPFS"/root/etc/pacman.d/mirrorlist
+	if [ $? -ne 0 ]; then
+	  return 1
+	fi
+	sudo cp -f "$REP_COPIES"/pacman.conf "$REP_TMPFS"/root/etc/pacman.conf
+	if [ $? -ne 0 ]; then
+	  return 1
+	fi
+        if [ "$3" == "blender" ]; then
+          sudo cp -f "$REP_COPIES"/makepkg.conf.blender "$REP_TMPFS"/root/etc/makepkg.conf
+          if [ $? -ne 0 ]; then
+            return 1
+          fi
+        elif [ "$3" == "native" ]; then
+          sudo cp -f "$REP_COPIES"/makepkg.conf.native "$REP_TMPFS"/root/etc/makepkg.conf
+          if [ $? -ne 0 ]; then
+            return 1
+          fi
+        else
+          sudo cp -f "$REP_COPIES"/makepkg.conf.generic "$REP_TMPFS"/root/etc/makepkg.conf
+          if [ $? -ne 0 ]; then
+            return 1
+          fi
+        fi
+# 	if [ "$3" == "native" ]; then
+#           sudo cp -f "$REP_COPIES"/makepkg.conf.native "$REP_TMPFS"/root/etc/makepkg.conf
+#           if [ $? -ne 0 ]; then
+#             return 1
+#           fi
+#         else
+#           sudo cp -f "$REP_COPIES"/makepkg.conf.generic "$REP_TMPFS"/root/etc/makepkg.conf
+#           if [ $? -ne 0 ]; then
+#             return 1
+#           fi
+#         fi
+}
+
+setup_chroot_repolocal() {
+	sudo mkdir "$REP_TMPFS"/root/chrootrepolocal
+	if [ $? -ne 0 ]; then
+	  return 1
+	fi
+	sudo cp -f "$REP_REPO"/*.pkg.tar.* "$REP_TMPFS"/root/chrootrepolocal/
+	if [ $? -ne 0 ]; then
+	  return 1
+	fi
+        sudo rm -f "$REP_TMPFS"/root/chrootrepolocal/chroot-repolocal.db.tar.gz
+        if [ $? -ne 0 ]; then
+          return 1
+        fi
+#	repo-add chroot-repolocal.db.tar.gz *.pkg.tar.* &>/dev/null
+        sudo repo-add "$REP_TMPFS"/root/chrootrepolocal/chroot-repolocal.db.tar.gz "$REP_TMPFS"/root/chrootrepolocal/*.pkg.tar.*
+	if [ $? -ne 0 ]; then
+	  return 1
+	fi
+}
+
+# Inutile depuis maj devtools 25.05.2013
+# setup_maj_chroot() {
+# #	mkarchroot -u "$REP_TMPFS"/root &>/dev/null
+# 	mkarchroot -u "$REP_TMPFS"/root
+# 	ret=$?
+# 	if [ $ret -ne 0 ]; then
+# 	  return $ret
+# 	fi
+# }
+
+# Fonction fabriquant le paquet
+#
+# $1 : répertoire où est situé le PKGBUILD ( $1 = "$rep_paquet" )
+#
+make_paquet() {
+#	local rep="$1"
+	cd "$1"
+	if [ $? -ne 0 ]; then
+	  return 1
+	fi
+#	makechrootpkg -c -r "$REP_TMPFS" &>/dev/null
+#	makechrootpkg -c -r "$REP_TMPFS"
+        makechrootpkg -u -c -r "$REP_TMPFS"
+ 	ret=$?
+	if [ $ret -ne 0 ]; then
+	  return $ret
+	fi
+}
+
+# Fonction supprime fichier(s) .log
+#
+# $1 : répertoire où est situé le PKGBUILD ( $1 = "$rep_paquet" )
+#
+clean_log() {
+	cd "$1"
+	if [ $? -ne 0 ]; then
+	  return 1
+	fi
+	rm -f *.log
+	if [ $? -ne 0 ]; then
+	  return 1
+	fi
+}
+
+# Inutile depuis maj devtools 24.10.2014
+# # Fonction remet propriétaire:groupe
+# #
+# # $1 : répertoire où est situé le PKGBUILD ( $1 = "$rep_paquet" )
+# # $2 : valeur uid ( $2 = 99 nobody ou 0 root )
+# # $3 : valeur gid ( $3 = 99 nonody ou 0 root )
+# # clean_own "$rep_paquet" "$uid_root" "$gid_root"
+# #
+# clean_own() {
+#     local rep="$1"
+#     local user="$2"
+#     local group="$3"
+#     cd
+#     files=( $(find "$rep" -uid "$user" -print) )
+#     if [[ "${#files[@]}" -ne 0 ]]; then
+#         for filechown in "${files[@]}"; do
+#             chown $USERNAME:users "$filechown"
+#         done
+#     fi
+#     files=( $(find "$rep" -gid "$group" -print) )
+#     if [[ "${#files[@]}" -ne 0 ]]; then
+#         for filechown in "${files[@]}"; do
+#             chown $USERNAME:users "$filechown"
+#         done
+#     fi
+# }
+
+#
+# DEBUT DU SCRIPT
+#
+
+# Inutile depuis maj devtools 24.10.2014
+# nom du script = $0
+# nombre d'argument = $#
+# liste des arguments = $*
+# => Passe en root
+# if [ ! $( id -u ) -eq 0 ]; then
+#     echo -e "\n${YELLOW}Le script "$0" doit être exécuté en << root >>."
+#     echo -e "Entrer le mot de passe de << root >>${ALL_OFF}"
+#     exec su -c "${0} ${*}"
+#     exit ${?}
+# fi
+#
+
+# Titre
+msg_titre "+-----------------------------------------------------------------------------------------------------------+"
+msg_titre "|                                     Création de paquets en RAM                                            |"
+msg_titre "|                                        ( chroot en tmpfs )                                                |"
+msg_titre "|                                          Version = $VERS                                                  |"
+msg_titre "|                                                                                                           |"
+msg_titre "| Usage : mkpkg-tmpfs -m native|generic|blender [-g 6G|8G] [-l logs] [-q qt|qt4] [-v git|svn]               |"
+msg_titre "| ou                                                                                                        |"
+msg_titre "| Usage : /home/jnd/bin/mkpkg-tmpfs -m native|generic|blender [-g 6G|8G] [-l logs] [-q qt|qt4] [-v git|svn] |"
+msg_titre "|                                                                                                           |"
+msg_titre "| mkpkg-tmpfs -h pour lire l'aide                                                                           |"
+msg_titre "+-----------------------------------------------------------------------------------------------------------+"
+echo ""
+
+# VARIABLES DU SCRIPT
+USERNAME="jnd"
+
+# id nobody ==> uid=99(nobody) gid=99(nobody) groupes=99(nobody)
+uid_nobody=$(id -u nobody)
+gid_nobody=$(id -g nobody)
+# id root ==> uid=0(root) gid=0(root) groupes=0(root)
+uid_root=$(id -u root)
+gid_root=$(id -g root)
+
+# Nom du script
+nom_script="$0"
+
+# Drapeau si qt ou qt4 existe; false = NON , true = OUI
+avec_qt4=false
+avec_qt=false
+
+# Drapeau si logs existe; false = NON , true = OUI
+avec_logs=false
+
+# Arguments pour setup_chroot()
+arg_flags=""
+arg_qt4=""
+arg_qt=""
+arg_git=""
+arg_svn=""
+
+# Arguments pour setup_mount()
+arg_size=""
+
+# RÉPERTOIRE DE TRAVAIL
+rep_paquet="$PWD"
+
+# Test si rep_paquet existe et est un répertoire
+if [ ! -d "$rep_paquet" ]; then
+  die "Le répertoire ""$rep_paquet" "n'existe pas"
+fi
+
+
+# DÉBUTS DES TESTS DES ARGUMENTS
+# Variables tests arguments
+arg_march=
+arg_qt_4_5=
+arg_vcs=
+arg_giga=
+arg_logs=
+
+while getopts 'hm:g:l:q:v:' arg; do
+        case "$arg" in
+                h) usage ;;
+                m) arg_march="$OPTARG" ;;
+                g) arg_giga="$OPTARG" ;;
+                l) arg_logs="$OPTARG" ;;
+                q) arg_qt_4_5="$OPTARG" ;;
+                v) arg_vcs="$OPTARG" ;;
+        esac
+done
+
+# Test si arg_march = generic ou native ou blender
+    if [ "$arg_march" == "generic" ]; then
+      arg_flags="generic"
+    elif [ "$arg_march" == "native" ]; then
+      arg_flags="native"
+    elif [ "$arg_march" == "blender" ]; then
+      arg_flags="blender"
+    else
+      die "Argument <march> erroné. Usage : ""$nom_script"" -m native|generic|blender"
+    fi
+
+# Test si arg_giga existe et = 6G ou 8G. 6G par défaut
+if [ "$arg_giga" != "" ]; then
+    if [ "$arg_giga" == "6G" ]; then
+      arg_size="6G"
+    elif [ "$arg_giga" == "8G" ]; then
+      arg_size="8G"
+    else
+      die "Argument <6G|8G> erroné. Usage : ""$nom_script"" -m native|generic|blender -g 6G|8G"
+    fi
+else
+    arg_size="6G"
+fi
+
+# avec_logs=false
+# Test si arg_logs existe et = logs. NON conservés par défaut
+if [ "$arg_logs" != "" ]; then
+    if [ "$arg_logs" == "logs" ]; then
+      avec_logs=true
+    else
+      die "Argument <logs> erroné. Usage : ""$nom_script"" -m native|generic|blender -l logs"
+    fi
+else
+    avec_logs=false
+fi
+
+
+# Test si arg_qt_4_5 existe et = qt ou qt4
+if [ "$arg_qt_4_5" != "" ]; then
+    if [ "$arg_qt_4_5" == "qt" ]; then
+      avec_qt=true
+      arg_qt="qt"
+    elif [ "$arg_qt_4_5" == "qt4" ]; then
+      avec_qt4=true
+      arg_qt4="qt4"
+    else
+      die "Argument <qt|qt4> erroné. Usage : ""$nom_script"" -m native|generic|blender -q qt|qt4"
+    fi
+fi
+
+# Test si arg_vcs existe et = git ou svn
+if [ "$arg_vcs" != "" ]; then
+    if [ "$arg_vcs" == "git" ]; then
+      arg_git="git"
+    elif [ "$arg_vcs" == "svn" ]; then
+        arg_svn="subversion"
+    else
+      die "Argument <git|svn> erroné. Usage : ""$nom_script"" -m native|generic|blender -v git|svn"
+    fi
+fi
+
+
+# Lecture de CARCH="x86_64" ds /etc/makepkg.conf
+eval $(grep 'CARCH=' "/etc/makepkg.conf")
+architecture="${CARCH}"
+# Lecture de PKGEXT ds /etc/makepkg.conf
+eval $(grep 'PKGEXT=' "/etc/makepkg.conf")
+extension_paquet="${PKGEXT}"
+
+
+# Nom Paquet, Version et Release
+nom_paquet=""
+num_version=""
+num_release=""
+cd "$rep_paquet"
+if [ -f "PKGBUILD" ]; then
+  eval $(grep '^pkgname=' "PKGBUILD")
+  if [ -n "${pkgname}" ]; then
+    nom_paquet="${pkgname}"
+  else
+    eval $(grep '^pkgbase=' "PKGBUILD")
+    if [ -n "${pkgbase}" ]; then		# cas paquet linux
+      nom_paquet="${pkgbase}"
+    fi
+  fi
+  eval $(grep '^pkgver=' "PKGBUILD")
+  if [ -n "${pkgver}" ]; then
+    num_version="${pkgver}"
+  fi
+  eval $(grep '^pkgrel=' "PKGBUILD")
+  if [ -n "${pkgrel}" ]; then
+    num_release="${pkgrel}"
+  fi
+else
+  die "Aucun fichier << PKGBUILD >> présent"
+fi
+cd
+
+
+# MISE EN PLACE CHROOT
+#
+msg "Mise en place du chroot en RAM ..."
+# Création du répertoire build
+setup_dir
+if [ $? -ne 0 ]; then
+  die "Impossible de créer le répertoire << ""$REP_TMPFS"" >>"
+fi
+
+setup_mount "$arg_size"
+if [ $? -ne 0 ]; then
+  die "Impossible d'effectuer le montage de << ""$REP_TMPFS"" >>."
+fi
+
+setup_chroot "$arg_qt" "$arg_qt4" "$arg_git" "$arg_svn"
+if [ $? -ne 0 ]; then
+  die "Création chroot impossible."
+fi
+
+setup_copies $avec_qt $avec_qt4 "$arg_flags"
+if [ $? -ne 0 ]; then
+  die "Copie des fichiers impossible."
+fi
+
+setup_chroot_repolocal
+if [ $? -ne 0 ]; then
+  die "Création de << chroot-repolocal >> dans chroot impossible."
+fi
+
+# Inutile depuis maj devtools 25.05.2013
+# setup_maj_chroot
+# if [ $? -ne 0 ]; then
+#   die "M A J chroot impossible."
+# fi
+
+
+# FAIRE LE PAQUET
+#
+echo ""
+if [ -n "$arg_git" ] || [ -n "$arg_svn" ]; then
+  msg "Fabrication du paquet << ""$nom_paquet"" >> ..."
+else
+  msg "Fabrication du paquet << ""$nom_paquet"" ""$num_version"" >> ..."
+fi
+echo ""
+
+make_paquet "$rep_paquet"
+# if [ $? -ne 0 ]; then
+#   error "Fabrication du paquet << ""$nom_paquet"" >> impossible."
+#   warning "Faire : cd "$REP_TMPFS"/copy/build pour inspection."
+#   warning "Quand fini, appuyer sur une touche pour quitter le script."
+#   read -e -sn 1 -p "..."
+#   die "Terminé."
+# fi
+# makechrootpkg NE retourne PLUS de code d'erreur
+if [ ! -f "$rep_paquet/$nom_paquet-$num_version-$num_release-${architecture}${extension_paquet}" ]; then
+  if [ ! -f "$rep_paquet/$nom_paquet-$num_version-$num_release-any${extension_paquet}" ]; then
+    error "Fabrication du paquet << ""$nom_paquet"" >> impossible."
+    warning "Faire : cd "$REP_TMPFS"/jnd/build pour inspection."
+    warning "Quand fini, appuyer sur une touche pour quitter le script."
+    read -e -sn 1 -p "..."
+    die "Terminé."
+  fi
+fi
+
+# NETTOYAGE
+#
+# avec_logs=false
+if [ "$avec_logs" = false ]; then
+  echo ""
+  msg "Suppression des fichiers << .log >> ..."
+
+  clean_log "$rep_paquet"
+  if [ $? -ne 0 ]; then
+    die "Suppression des fichiers << .log >> impossible."
+  fi
+else
+  echo ""
+  msg "Fichiers << .log >> conservés."
+
+fi
+
+# Inutile depuis maj devtools 24.10.2014
+# # CHANGE PERMISSIONS
+# #
+# echo ""
+# msg "Remet propriétaire:groupe à << ""$USERNAME"":users >> ..."
+# 
+# clean_own "$rep_paquet" "$uid_nobody" "$gid_nobody"
+# clean_own "$rep_paquet" "$uid_root" "$gid_root"
+
+
+# FIN COMPILE EN RAM
+#
+echo ""
+if [ -n "$arg_git" ] || [ -n "$arg_svn" ]; then
+  msg "Fabrication du paquet << ""$nom_paquet"" >> terminée."
+else
+  msg "Fabrication du paquet << ""$nom_paquet"" ""$num_version"" >> terminée."
+fi
+echo ""
+
+cd
+cleanup 0
+
+
+################################
+## POUR TEST
+#set +x
+################################
+
+exit 0

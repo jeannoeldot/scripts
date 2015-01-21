@@ -1,0 +1,50 @@
+#!/usr/bin/bash
+
+#
+# mkpkg-chroot-repo
+#
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014
+# 
+
+# VERSION=0.1.1
+
+################################
+## POUR TEST
+#set -x
+################################
+
+#
+# CONSTANTES
+#
+
+# REPERTOIRES
+DIR_REPOLOCAL="/home/jnd/00-repolocal"
+
+REP_TMP_CHROOT_REPO="/tmp/chrootrepo"
+
+
+
+#
+# DEBUT DU SCRIPT
+#
+
+# Efface le répertoire /tmp/chrootrepo si existe déjà
+[[ -d "${REP_TMP_CHROOT_REPO}" ]] && rm -rf "${REP_TMP_CHROOT_REPO}"
+
+# Créée le répertoire /tmp/chrootrepo
+mkdir -p "${REP_TMP_CHROOT_REPO}" &>/dev/null
+
+# Copie 1 pkq ( le + petit ) dans le répertoire /tmp/chrootrepo
+cp -f "${DIR_REPOLOCAL}"/mkpkg-tmpfs-*-any.pkg.tar.* "${REP_TMP_CHROOT_REPO}"/
+
+
+
+
+
+################################
+## POUR TEST
+#set +x
+################################
+
+exit 0
