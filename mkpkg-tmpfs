@@ -4,7 +4,7 @@
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015
 # 
 
-# VERSION=0.9.5
+# VERSION=0.9.6
 VERS="@VERSION@"
 
 ################################
@@ -73,7 +73,7 @@ die() {
 usage() {
         echo 'Arguments :'
         echo '-h                Cette aide'
-        echo '-m <march>        march : native ou generic ou blender. Obligatoire'
+        echo '-m <march>        march : native ou generic ou fast. Obligatoire'
         echo '-g <6G|8G>        Taille du chroot en Giga : 6G ou 8G. Facultatif : 6G par défaut'
         echo '-l <logs>         Conservations des logs. Facultatif : NON conservés par défaut'
         echo '-q <qt|qt4>       UI Framework : qt(5) ou qt4. Facultatif'
@@ -141,7 +141,7 @@ setup_chroot() {
 #
 # $1 : si qt ( $1 = "$avec_qt" =  false ou = true)
 # $2 : si qt4 ( $2 = "$avec_qt4" =  false ou = true)
-# $3 : arg_flags = "generic" ou "native" ou "blender"
+# $3 : arg_flags = "generic" ou "native" ou "fast"
 #
 setup_copies() {
 	if [ "$1" = true ]; then
@@ -168,8 +168,8 @@ setup_copies() {
 	if [ $? -ne 0 ]; then
 	  return 1
 	fi
-        if [ "$3" == "blender" ]; then
-          sudo cp -f "$REP_COPIES"/makepkg.conf.blender "$REP_TMPFS"/root/etc/makepkg.conf
+        if [ "$3" == "fast" ]; then
+          sudo cp -f "$REP_COPIES"/makepkg.conf.fast "$REP_TMPFS"/root/etc/makepkg.conf
           if [ $? -ne 0 ]; then
             return 1
           fi
@@ -311,9 +311,9 @@ msg_titre "|                                     Création de paquets en RAM    
 msg_titre "|                                        ( chroot en tmpfs )                                                |"
 msg_titre "|                                          Version = $VERS                                                  |"
 msg_titre "|                                                                                                           |"
-msg_titre "| Usage : mkpkg-tmpfs -m native|generic|blender [-g 6G|8G] [-l logs] [-q qt|qt4] [-v git|svn]               |"
+msg_titre "| Usage : mkpkg-tmpfs -m native|generic|fast [-g 6G|8G] [-l logs] [-q qt|qt4] [-v git|svn]                  |"
 msg_titre "| ou                                                                                                        |"
-msg_titre "| Usage : /home/jnd/bin/mkpkg-tmpfs -m native|generic|blender [-g 6G|8G] [-l logs] [-q qt|qt4] [-v git|svn] |"
+msg_titre "| Usage : /home/jnd/bin/mkpkg-tmpfs -m native|generic|fast [-g 6G|8G] [-l logs] [-q qt|qt4] [-v git|svn]    |"
 msg_titre "|                                                                                                           |"
 msg_titre "| mkpkg-tmpfs -h pour lire l'aide                                                                           |"
 msg_titre "+-----------------------------------------------------------------------------------------------------------+"
@@ -377,15 +377,15 @@ while getopts 'hm:g:l:q:v:' arg; do
         esac
 done
 
-# Test si arg_march = generic ou native ou blender
+# Test si arg_march = generic ou native ou fast
     if [ "$arg_march" == "generic" ]; then
       arg_flags="generic"
     elif [ "$arg_march" == "native" ]; then
       arg_flags="native"
-    elif [ "$arg_march" == "blender" ]; then
-      arg_flags="blender"
+    elif [ "$arg_march" == "fast" ]; then
+      arg_flags="fast"
     else
-      die "Argument <march> erroné. Usage : ""$nom_script"" -m native|generic|blender"
+      die "Argument <march> erroné. Usage : ""$nom_script"" -m native|generic|fast"
     fi
 
 # Test si arg_giga existe et = 6G ou 8G. 6G par défaut
@@ -395,7 +395,7 @@ if [ "$arg_giga" != "" ]; then
     elif [ "$arg_giga" == "8G" ]; then
       arg_size="8G"
     else
-      die "Argument <6G|8G> erroné. Usage : ""$nom_script"" -m native|generic|blender -g 6G|8G"
+      die "Argument <6G|8G> erroné. Usage : ""$nom_script"" -m native|generic|fast -g 6G|8G"
     fi
 else
     arg_size="6G"
@@ -407,7 +407,7 @@ if [ "$arg_logs" != "" ]; then
     if [ "$arg_logs" == "logs" ]; then
       avec_logs=true
     else
-      die "Argument <logs> erroné. Usage : ""$nom_script"" -m native|generic|blender -l logs"
+      die "Argument <logs> erroné. Usage : ""$nom_script"" -m native|generic|fast -l logs"
     fi
 else
     avec_logs=false
@@ -423,7 +423,7 @@ if [ "$arg_qt_4_5" != "" ]; then
       avec_qt4=true
       arg_qt4="qt4"
     else
-      die "Argument <qt|qt4> erroné. Usage : ""$nom_script"" -m native|generic|blender -q qt|qt4"
+      die "Argument <qt|qt4> erroné. Usage : ""$nom_script"" -m native|generic|fast -q qt|qt4"
     fi
 fi
 
@@ -434,7 +434,7 @@ if [ "$arg_vcs" != "" ]; then
     elif [ "$arg_vcs" == "svn" ]; then
         arg_svn="subversion"
     else
-      die "Argument <git|svn> erroné. Usage : ""$nom_script"" -m native|generic|blender -v git|svn"
+      die "Argument <git|svn> erroné. Usage : ""$nom_script"" -m native|generic|fast -v git|svn"
     fi
 fi
 
