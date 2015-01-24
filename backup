@@ -215,7 +215,7 @@ echo ""
 print_bold_vert "Sauvegarde des sessions Kate"
 print_bold_vert "----------------------------"
 rm -f $HOME/${REP_CONF}/kate-sessions/*.katesession
-cp -v $HOME/.kde4/share/apps/kate/sessions/* $HOME/${REP_CONF}/kate-sessions/
+cp -v $HOME/.local/share/kate/sessions/* $HOME/${REP_CONF}/kate-sessions/
 echo ""
 
 # Sauvegarde des bookmark Firefox
