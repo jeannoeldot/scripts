@@ -218,6 +218,13 @@ rm -f $HOME/${REP_CONF}/kate-sessions/*.katesession
 cp -v $HOME/.local/share/kate/sessions/* $HOME/${REP_CONF}/kate-sessions/
 echo ""
 
+# Sauvegarde config KDE
+print_bold_vert "Sauvegarde des configs de KDE"
+print_bold_vert "-----------------------------"
+rm -f $HOME/${REP_CONF}/KDE-config-rc/*
+cp -v $HOME/.config/*rc $HOME/${REP_CONF}/KDE-config-rc/
+echo ""
+
 # Sauvegarde des bookmark Firefox
 print_bold_vert "Sauvegarde des bookmark Firefox"
 print_bold_vert "-------------------------------"
@@ -242,6 +249,13 @@ echo -e "Est-ce que ${BYellow}${NOMBOOKMARKS}${BWhite} est sauvegardé ?"
 echo -e "Si ${BPurple}NON${BWhite} : le faire"
 attendre_appui_touche
 echo ""
+
+print_bold_magenta "!!! ATTENTION : BOOKMARKS FIREFOX NON SAUVEGARDÉS !!!"
+print_bold_magenta "-----------------------------------------------------"
+print_bold_magenta "==> Copier/Coller bookmarks dans un fichiers TXT manuellement"
+attendre_appui_touche
+echo ""
+
 
 # Sauvegarde fichiers confs
 # Efface ancien fichiers
