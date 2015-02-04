@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
 #
 # Version 0.1
 #
@@ -22,6 +22,7 @@ NAME_INSTALLATION_PKG_REFIND="refind_x64.efi"
 NAME_CONF_INSTALLATION_PKG_REFIND="refind.conf-sample"
 NAME_CONF_DEST_BOOT_MGR="refind.conf"
 NAME_REP_ICONS_PKG_REFIND="icons"
+NAME_REP_DEST_ICONS="icons"
 NAME_REP_MY_ARCH_ICONS="/home/jnd/01-scripts/Maj-refind/icones-arch"
 #
 
@@ -135,6 +136,7 @@ fi
 msg_titre "+----------------------------------------------+"
 msg_titre "|    Suite à la mise à jour de refind-efi      |"
 msg_titre "|    Copie du fichier refind_x64.efi           |"
+msg_titre "|    Copie du Répertoire icons                 |"
 msg_titre "+----------------------------------------------+"
 
 echo -e "\n"
@@ -175,6 +177,22 @@ if [[ MISE_AU_POINT -eq 0 ]]; then
 else
     echo -e "\nMISE AU POINT - La commande suivante sera éxécutée :"
     echo -e "cp -v ${NAME_REP_INSTALLATION_PKG_REFIND}/${NAME_INSTALLATION_PKG_REFIND} ${NAME_REP_DEST_BOOT_MGR}/${NAME_DEST_BOOT_MGR}"
+    echo -e "\n"
+fi
+
+msg "Copie de ${NAME_REP_ICONS_PKG_REFIND} dans ${NAME_REP_DEST_BOOT_MGR}/."
+if [[ MISE_AU_POINT -eq 0 ]]; then
+    cp -R ${NAME_REP_INSTALLATION_PKG_REFIND}/${NAME_REP_ICONS_PKG_REFIND} ${NAME_REP_DEST_BOOT_MGR}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_1.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_1_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_2.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_2_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_3.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_3_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    echo -e "\n"
+else
+    echo -e "\nMISE AU POINT - La commande suivante sera éxécutée :"
+    echo -e "cp -R ${NAME_REP_INSTALLATION_PKG_REFIND}/${NAME_REP_ICONS_PKG_REFIND} ${NAME_REP_DEST_BOOT_MGR}/"
     echo -e "\n"
 fi
 
