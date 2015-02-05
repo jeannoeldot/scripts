@@ -4,7 +4,7 @@
 #
 # Name : script2git
 #
-# Version : 0.1.0
+# Version : 0.1.1
 #
 # AVEC 1 paramètres : script2git "motifs du commit"
 # Example : $ script2git "Ajout N° Catégories dans Dialog"
@@ -124,7 +124,7 @@ find ${DIR_SCRIPTS} -name *~ -exec /usr/bin/rm -vf {} \;
 echo ""
 msg "Copie des scripts de « ${DIR_SCRIPTS} » vers « ${DIR_GIT} »"
 # Effacement de ${DIR_GIT}/README
-rm -rf ${DIR_GIT}/README
+rm -f ${DIR_GIT}/README
 # Copie des scripts
 cp -vf ${DIR_SCRIPTS}/Backup/backup ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Backup/backup-nosauve ${DIR_GIT}/
@@ -135,6 +135,8 @@ cp -vf ${DIR_SCRIPTS}/init-mirrorlist-pacnew/maj-mirrorlist ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/iso2usb/iso2usb ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-refind/maj-refind ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-refind/modif-refind-conf ${DIR_GIT}/
+rm -rf ${DIR_GIT}/icones-arch
+cp -R ${DIR_SCRIPTS}/Maj-refind/icones-arch ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-Repos/maj-repolocal ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Modif-qt-conf/modif-qt4-conf ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Modif-qt-conf/modif-qt5-conf ${DIR_GIT}/
@@ -170,6 +172,7 @@ echo '' >> ${DIR_GIT}/README
 echo 'Répertoire : Maj-refind' >> ${DIR_GIT}/README
 echo ' -> maj-refind' >> ${DIR_GIT}/README
 echo ' -> modif-refind-conf' >> ${DIR_GIT}/README
+echo ' -> icones-arch' >> ${DIR_GIT}/README
 echo '' >> ${DIR_GIT}/README
 echo 'Répertoire : Maj-Repos' >> ${DIR_GIT}/README
 echo ' -> maj-repolocal' >> ${DIR_GIT}/README
