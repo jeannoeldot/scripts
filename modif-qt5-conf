@@ -1,9 +1,9 @@
 #!/usr/bin/bash
 
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013 2014
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013 2014,2015
 #
-# Version 05
+# Version 06
 #
 
 #
@@ -42,6 +42,7 @@ cd /usr/lib/qt/mkspecs/common
 
 # 1) MODIFS SUR FICHIERS TEMPS
 cp gcc-base.conf gcc-base.conf.txt
+# 1-1) Modifs QMAKE_CFLAGS_OPTIMIZE
 if [ -f "/etc/makepkg.conf" ]; then
   # Get CXXFLAGS from makepkg.conf
   eval $(grep '^CXXFLAGS=' "/etc/makepkg.conf")
@@ -50,9 +51,13 @@ if [ -f "/etc/makepkg.conf" ]; then
     sed -i "/^QMAKE_CFLAGS_OPTIMIZE /c\QMAKE_CFLAGS_OPTIMIZE      = ${CXXFLAGS}" gcc-base.conf.txt
   fi
 fi
+# 1-2) Modifs QMAKE_CFLAGS_RELEASE
+sed -i "/^QMAKE_CFLAGS_RELEASE /c\QMAKE_CFLAGS_RELEASE       += \$\$QMAKE_CFLAGS_OPTIMIZE" gcc-base.conf.txt
+
 echo ":: Ces modifications seront apportées :"
 echo "=> gcc-base.conf :"
 cat gcc-base.conf.txt | grep -E "^QMAKE_CFLAGS_OPTIMIZE "
+cat gcc-base.conf.txt | grep -E "^QMAKE_CFLAGS_RELEASE "
 echo ""
 
 # 2) FAIT MODIFS SI REPONSE = o ou O
@@ -74,6 +79,7 @@ read_input_text "Confirmer les modifications apportées"
         echo ":: Vérification :"
         echo "=> gcc-base.conf :"
         cat gcc-base.conf | grep -E "^QMAKE_CFLAGS_OPTIMIZE "
+        cat gcc-base.conf | grep -E "^QMAKE_CFLAGS_RELEASE "
         echo ""
 
         cd
