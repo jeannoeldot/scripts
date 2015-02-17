@@ -219,10 +219,16 @@ cp -v $HOME/.local/share/kate/sessions/* $HOME/${REP_CONF}/kate-sessions/
 echo ""
 
 # Sauvegarde config KDE
-print_bold_vert "Sauvegarde des configs de KDE"
-print_bold_vert "-----------------------------"
-rm -f $HOME/${REP_CONF}/KDE-config-rc/*
-cp -v $HOME/.config/*rc $HOME/${REP_CONF}/KDE-config-rc/
+print_bold_vert "Sauvegarde des configs de KDE5"
+print_bold_vert "------------------------------"
+rm -f $HOME/${REP_CONF}/KDE5-config-rc/*
+cp -v $HOME/.config/*rc $HOME/${REP_CONF}/KDE5-config-rc/
+echo ""
+
+print_bold_vert "Sauvegarde de la configs de DOLPHIN"
+print_bold_vert "-----------------------------------"
+# rm -f $HOME/${REP_CONF}/KDE5-Dolphin/*
+cp -v $HOME/.local/share/user-places.xbel $HOME/${REP_CONF}/KDE5-Dolphin/user-places.xbel.${AUJOURDHUI}
 echo ""
 
 # Sauvegarde des bookmark Firefox
