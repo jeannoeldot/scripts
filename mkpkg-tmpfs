@@ -4,7 +4,7 @@
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015
 # 
 
-# VERSION=0.9.6
+# VERSION=0.9.7
 VERS="@VERSION@"
 
 ################################
@@ -57,6 +57,9 @@ warning() {
 }
 
 cleanup() {
+        if [ -f "/etc/pacman.conf.mkpkg.tmpfs" ]; then
+          sudo mv /etc/pacman.conf.mkpkg.tmpfs /etc/pacman.conf
+        fi
         sudo umount -f "$REP_TMPFS" &>/dev/null
         rm -rf "$REP_TMPFS" &>/dev/null
 	[[ $1 ]] && exit $1
@@ -68,6 +71,15 @@ die() {
 #         clean_own "$rep_paquet" "$uid_nobody" &>/dev/null
 #         clean_own "$rep_paquet" "$uid_root" &>/dev/null
 	cleanup 1
+}
+
+setup_copie_pacman_conf() {
+        sudo mv /etc/pacman.conf /etc/pacman.conf.mkpkg.tmpfs
+	sudo cp -f "$REP_COPIES"/pacman.conf.mkpkg.tmpfs /etc/pacman.conf
+        if [ $? -ne 0 ]; then
+          return 1
+        fi
+
 }
 
 usage() {
@@ -105,7 +117,6 @@ setup_mount() {
           fi
         fi        
 }
-
 
 #
 # $1 : $arg_qt = "qt"
@@ -479,6 +490,13 @@ cd
 # MISE EN PLACE CHROOT
 #
 msg "Mise en place du chroot en RAM ..."
+
+setup_copie_pacman_conf
+if [ $? -ne 0 ]; then
+  die "Copie du fichier « pacman.conf » impossible."
+fi
+
+
 # Création du répertoire build
 setup_dir
 if [ $? -ne 0 ]; then
