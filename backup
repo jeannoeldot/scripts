@@ -229,6 +229,7 @@ print_bold_vert "Sauvegarde de la configs de DOLPHIN"
 print_bold_vert "-----------------------------------"
 # rm -f $HOME/${REP_CONF}/KDE5-Dolphin/*
 cp -v $HOME/.local/share/user-places.xbel $HOME/${REP_CONF}/KDE5-Dolphin/user-places.xbel.${AUJOURDHUI}
+cp -v $HOME/.local/share/user-places.xbel.avec.mes.emplacements $HOME/${REP_CONF}/KDE5-Dolphin/user-places.xbel.avec.mes.emplacements.${AUJOURDHUI}
 echo ""
 
 # Sauvegarde des bookmark Firefox
