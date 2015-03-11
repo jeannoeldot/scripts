@@ -55,6 +55,9 @@ msg_titre() {
 # DEBUT DU SCRIPT
 #
 
+# Version de rEFInd
+VERSION_REFIND_EFI=$(pacman -Qi "refind-efi" 2>/dev/null | awk '/Version/ {print $3}' | sed -e "s/-[0-9]$//")
+
 cd
 msg "Ouverture du fichier /usr/share/refind/refind.conf-sample avec kwrite"
 msg "Pour comparaison avec refind.conf modifié."
@@ -71,7 +74,8 @@ fi
 # Titre
 msg_titre "+----------------------------------------------------+"
 msg_titre "| Modification du fichier de configuration de rEFInd |"
-msg_titre "| Version de rEFInd = 0.8.5                          |"
+# msg_titre "| Version de rEFInd = 0.8.5                          |"
+msg_titre "| Version de rEFInd = ${VERSION_REFIND_EFI}                          |"
 msg_titre "| Modification de /boot/efi/EFI/refind/refind.conf   |"
 msg_titre "+----------------------------------------------------+"
 
