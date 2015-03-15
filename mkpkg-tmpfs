@@ -4,7 +4,7 @@
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015
 # 
 
-# VERSION=0.9.7
+# VERSION=0.9.8
 VERS="@VERSION@"
 
 ################################
@@ -175,7 +175,7 @@ setup_copies() {
 	if [ $? -ne 0 ]; then
 	  return 1
 	fi
-	sudo cp -f "$REP_COPIES"/pacman.conf "$REP_TMPFS"/root/etc/pacman.conf
+	sudo cp -f "$REP_COPIES"/pacman.conf.chroot "$REP_TMPFS"/root/etc/pacman.conf
 	if [ $? -ne 0 ]; then
 	  return 1
 	fi
@@ -553,7 +553,9 @@ if [ ! -f "$rep_paquet/$nom_paquet-$num_version-$num_release-${architecture}${ex
   if [ ! -f "$rep_paquet/$nom_paquet-$num_version-$num_release-any${extension_paquet}" ]; then
     error "Fabrication du paquet << ""$nom_paquet"" >> impossible."
     warning "Faire : cd "$REP_TMPFS"/jnd/build pour inspection."
-    warning "Quand fini, appuyer sur une touche pour quitter le script."
+    warning "Quand fini :"
+    warning "==> fermer tous les fichiers ouverts."
+    warning "==> appuyer sur une touche pour quitter le script."
     read -e -sn 1 -p "..."
     die "Terminé."
   fi
