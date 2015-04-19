@@ -32,8 +32,6 @@
 - *.*~
 - *~
 - *.old
-- cuda_*.run
-- cuda-*.pkg.tar.xz
 - namcap.log
 - linux-3.*.tar.xz
 - patch-*.gz
@@ -43,11 +41,14 @@
 - amaya-fullsrc-*
 - blender-svn-*
 - blender-git-*
-- cudaminer-git-*
 - blender-addons-yafaray-git-*
 - openimageio-git-*.tar.gz
 - openshadinglanguage-git-*.tar.gz
 - opencollada-git-*.tar.gz
+- cudaminer-git-*
+- cuda_*.run
+- cuda-*.pkg.tar.xz
+- cuda-z-*.zip
 - boost_1_*
 - bluegriffon-svn-*
 - bluegriffon-*.Ubuntu*
