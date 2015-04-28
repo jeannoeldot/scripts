@@ -2,7 +2,7 @@
 #!/usr/bin/bash
 #
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013
-# Version : 06
+# Version : 07
 
 ## POUR TEST
 #set -x
@@ -61,6 +61,11 @@ die() {
   cleanup 1
 }
 
+read_input_text(){
+    read -p "$1 [O/N]: " OPTION
+    echo ""
+    OPTION=`echo "$OPTION" | tr '[:upper:]' '[:lower:]'`
+}
 #
 # FIN FONCTIONS
 #
@@ -78,14 +83,18 @@ if [ ! $( id -u ) -eq 0 ]; then
 fi
 
 # Titre
-msg_titre "+-----------------------------------------+"
-msg_titre "|     Création du fichier mirrorlist      |"
-msg_titre "|  à partir du fichier mirrorlist.pacnew  |"
-msg_titre "+-----------------------------------------+"
+msg_titre "+--------------------------------------------------+"
+msg_titre "|          Création du fichier mirrorlist          |"
+msg_titre "|                 à partir de l'url                |"
+msg_titre "| https://www.archlinux.org/mirrorlist/?country=FR |"
+msg_titre "+--------------------------------------------------+"
 
+
+# Variable de retour : init à 9
+retour=9
 
 # La date du jour
-LADATE=`date +%Y-%m-%d`;
+LADATE=$(date +%Y-%m-%d)
 
 # Répertoire de travail
 DIR_WORK="${DIR_PACMAN_D}"
@@ -111,44 +120,69 @@ url="https://www.archlinux.org/mirrorlist/?country=FR&use_mirror_status=on"
 tmpfile=$(mktemp --suffix=-mirrorlist)
 # Get latest mirror list and save to tmpfile
 curl -so ${tmpfile} ${url}
-sed -i "s/^#Server/Server/g" ${tmpfile}
 
-# Visualisation des mirroirs qui seront utilisés.
-echo ""
-msg "Visualisation des mirroirs qui seront utilisés..."
-cat "${tmpfile}"
-
-sed -i "/^## Score/d" ${tmpfile}
 # Backup and replace current mirrorlist file (if new file is non-zero)
 if [[ -s ${tmpfile} ]]; then
-  echo ""
-  msg "Configuration du fichier mirrorlist..."
-  mv -i ${tmpfile} /etc/pacman.d/mirrorlist
-  chmod +r /etc/pacman.d/mirrorlist
+  date_Generated=$(cat "${tmpfile}" | awk '/Generated/ {print $4}')
+  if [[ ${date_Generated} == ${LADATE} ]]; then
+    sed -i "s/^#Server/Server/g" ${tmpfile}
+
+    # Visualisation des mirroirs qui seront utilisés.
+    echo ""
+    msg "Visualisation des mirroirs qui seront utilisés..."
+    cat "${tmpfile}"
+
+    # ICI : confirmer si mirroirs OK
+    read_input_text "Confirmer la sélection des mirroirs"
+    case "$OPTION" in
+      "o")
+          sed -i "/^## Score/d" ${tmpfile}
+    
+          echo ""
+          msg "Configuration du fichier mirrorlist..."
+          mv -i ${tmpfile} ${NAME_MIRROR}
+          chmod +r ${NAME_MIRROR}
+    
+          # Visualisation du nouveau fichier mirrorlist.
+          echo ""
+          msg "Pour visualiser le nouveau fichier "${NAME_MIRROR}" avec nano, appuyer sur une touche."
+          read
+          nano "${NAME_MIRROR}"
+    
+          # OK
+          retour=0
+          ;;
+      *)
+          # Réponse = N/n
+          retour=1
+          ;;
+    esac
+  else
+    # PAS OK : date_Generated != LADATE du jour
+    retour=1
+  fi
 else
-  echo ""
-  msg "Échec de la configuration du fichier mirrorlist..."
+  # PAS OK : new file is zero
+  retour=1
 fi
 
+# Fin ou Erreur
+if [[ $retour -eq 0 ]]; then
+  # Synchronise les nouveaux mirroirs.
+  echo ""
+  msg "Synchronisation des nouveaux mirroirs..."
+  pacman -Syy
 
-# Visualisation du nouveau fichier mirrorlist.
-echo ""
-msg "Pour visualiser le nouveau fichier "${NAME_MIRROR}" avec nano, appuyer sur une touche."
-read
-nano "${NAME_MIRROR}"
-
-
-# Synchronise les nouveaux mirroirs.
-echo ""
-msg "Synchronisation des nouveaux mirroirs..."
-#pacman -Syyu
-pacman -Syy
-
-
-# Supprime le fichier mirrorlist.pacnew
-echo ""
-msg "Suppression du fichier "${NAME_MIRROR_PACNEW}"."
-rm -v -f "${NAME_MIRROR_PACNEW}"
+  # Supprime le fichier mirrorlist.pacnew
+  echo ""
+  msg "Suppression du fichier "${NAME_MIRROR_PACNEW}"."
+  rm -v -f "${NAME_MIRROR_PACNEW}"
+  echo ""
+  msg "Fin de la configuration du fichier mirrorlist."
+else
+  echo ""
+  msg "Échec de la configuration du fichier mirrorlist... Éditer manuellement le fichier « /etc/pacman.d/mirrorlist »."
+fi
 
 
 ## POUR TEST
@@ -157,83 +191,3 @@ rm -v -f "${NAME_MIRROR_PACNEW}"
 cd
 exit 0
 
-#==============================================================================
-# ESSAIS
-#==============================================================================
-## V 04
-# # Calcule Numéros des lignes ds mirrorlist.pacnew
-# num_ligne_belgique=$(grep -n "## Belgium" "${NAME_MIRROR_PACNEW}" | cut -f1 -d:)
-# 
-# num_ligne_france=$(grep -n "## France" "${NAME_MIRROR_PACNEW}" | cut -f1 -d:)
-# 
-# num_ligne_germany=$(grep -n "## Germany" "${NAME_MIRROR_PACNEW}" | cut -f1 -d:)
-# 
-# num_ligne_luxembourg=$(grep -n "## Luxembourg" "${NAME_MIRROR_PACNEW}" | cut -f1 -d:)
-# 
-# 
-# # Modifications fichier mirrorlist.pacnew
-# # Belgium
-# numLigneEnCours=0
-# incNumeroLigne=1
-# while true; do
-#   numLigneEnCours=$(( $num_ligne_belgique + $incNumeroLigne ))
-#   nomServer="$(sed -n "${numLigneEnCours}p" "${NAME_MIRROR_PACNEW}" | awk '{print $1}')"
-#   if [[ "${nomServer}" == "#Server" ]]; then
-#       sed -i "${numLigneEnCours}s/^#//" "${NAME_MIRROR_PACNEW}"
-#   else
-#       break
-#   fi
-#   incNumeroLigne=$(( $incNumeroLigne + 1 ))
-# done
-# 
-# # France
-# numLigneEnCours=0
-# incNumeroLigne=1
-# while true; do
-#   numLigneEnCours=$(( $num_ligne_france + $incNumeroLigne ))
-#   nomServer="$(sed -n "${numLigneEnCours}p" "${NAME_MIRROR_PACNEW}" | awk '{print $1}')"
-#   if [[ "${nomServer}" == "#Server" ]]; then
-#       sed -i "${numLigneEnCours}s/^#//" "${NAME_MIRROR_PACNEW}"
-#   else
-#       break
-#   fi
-#   incNumeroLigne=$(( $incNumeroLigne + 1 ))
-# done
-# 
-# # Germany
-# numLigneEnCours=0
-# incNumeroLigne=1
-# while true; do
-#   numLigneEnCours=$(( $num_ligne_germany + $incNumeroLigne ))
-#   nomServer="$(sed -n "${numLigneEnCours}p" "${NAME_MIRROR_PACNEW}" | awk '{print $1}')"
-#   if [[ "${nomServer}" == "#Server" ]]; then
-#       sed -i "${numLigneEnCours}s/^#//" "${NAME_MIRROR_PACNEW}"
-#   else
-#       break
-#   fi
-#   incNumeroLigne=$(( $incNumeroLigne + 1 ))
-# done
-# 
-# # Luxembourg
-# numLigneEnCours=0
-# incNumeroLigne=1
-# while true; do
-#   numLigneEnCours=$(( $num_ligne_luxembourg + $incNumeroLigne ))
-#   nomServer="$(sed -n "${numLigneEnCours}p" "${NAME_MIRROR_PACNEW}" | awk '{print $1}')"
-#   if [[ "${nomServer}" == "#Server" ]]; then
-#       sed -i "${numLigneEnCours}s/^#//" "${NAME_MIRROR_PACNEW}"
-#   else
-#       break
-#   fi
-#   incNumeroLigne=$(( $incNumeroLigne + 1 ))
-# done
-# 
-# 
-# # Filtre les miroirs les plus à jour, les trie par vitesse et configure le fichier /etc/pacman.d/mirrorlist.
-# echo ""
-# msg "Filtrage des miroirs ( durée : 2 à 3 minutes ) et configuration du fichier mirrorlist..."
-# rankmirrors -n 9 "${NAME_MIRROR_PACNEW}" > "${NAME_MIRROR}"
-# sed '/^##/d' -i "${NAME_MIRROR}"
-# sed '/^#Server/d' -i "${NAME_MIRROR}"
-# 
-# 
