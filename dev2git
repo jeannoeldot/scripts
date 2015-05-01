@@ -1,10 +1,10 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
 #
 # Name : dev2git
 #
-# Version : 0.1.1
+# Version : 0.1.2
 #
 # AVEC 3 paramètres : dev2git quoi destination ["motifs du commit"]
 # Example : $ dev2git jndqcbgrd jndqcbgrd-qt5 "Ajout N° Catégories dans Dialog"

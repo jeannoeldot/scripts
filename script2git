@@ -1,10 +1,10 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 #
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
 #
 # Name : script2git
 #
-# Version : 0.1.1
+# Version : 0.1.2
 #
 # AVEC 1 paramètres : script2git "motifs du commit"
 # Example : $ script2git "Ajout N° Catégories dans Dialog"

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 #for file in `find ./ -name "*~"`;do /bin/rm ${file};done
 find -name *~ -exec /usr/bin/rm {} \;

@@ -1,12 +1,12 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2012-2014
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2012-2015
 # 
 # Purpose: Vérifie les dépendances de mes paquets
 # situés dans ~/00-repolocal
 #
 #
-# Version : 0.8.1
+# Version : 0.8.2
 #
 
 # REPERTOIRES

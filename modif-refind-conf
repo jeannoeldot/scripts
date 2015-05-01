@@ -1,7 +1,7 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 #
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
-# Version : 01
+# Version : 02
 
 ## POUR TEST
 #set -x

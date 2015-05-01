@@ -1,6 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 #
-# VERSION 4
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2015
+#
+# VERSION 5
 #
 # AVEC 1 paramètre : /path/to/archlinux.iso
 # Example : $ iso2usb ~/99-Isos/archlinux-2012.12.01-dual.iso

@@ -1,13 +1,13 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 #
 # mkpkg-chroot-repo
 #
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
 # 
 
-# VERSION=0.1.1
+# VERSION=0.1.2
 
 ################################
 ## POUR TEST

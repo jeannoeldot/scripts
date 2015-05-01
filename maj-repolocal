@@ -1,7 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013, 2015
+#
+# Version : 02
 #
 
 clear
