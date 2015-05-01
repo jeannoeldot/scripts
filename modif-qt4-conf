@@ -1,11 +1,19 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013 2014
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013, 2014, 2015
 #
-# Version 05
+# Version 06
 #
 
+#
+# COULEURS
+ALL_OFF="\e[1;0m"
+BOLD="\e[1;1m"
+BLUE="${BOLD}\e[1;34m"
+GREEN="${BOLD}\e[1;32m"
+RED="${BOLD}\e[1;31m"
+YELLOW="${BOLD}\e[1;33m"
 
 #
 # FONCTIONS
@@ -18,9 +26,10 @@ read_input_text(){ #{{{
 
 # => Passe en root
 if [ ! $( id -u ) -eq 0 ]; then
-echo "Entrer mot de passe root: "
-exec su -c "${0} ${CMDLN_ARGS}"
-exit ${?}
+    echo -e "\n${YELLOW}Le script "$0" doit être exécuté en << root >>."
+    echo -e "Entrer le mot de passe de << root >>${ALL_OFF}"
+    exec su -c "${0} ${CMDLN_ARGS}"
+    exit ${?}
 fi
 
 # Titre
