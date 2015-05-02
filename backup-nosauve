@@ -96,3 +96,5 @@
 - i7z-git-*.tar.gz
 - lm_sensors-svn-*.tar.gz
 - libicns-*.tar.gz
+- v0.*.tar.gz
+- google-chrome-stable-*.x86_64.rpm
