@@ -217,23 +217,25 @@ rm -f $HOME/${REP_CONF}/bookmarkbackups/*
 # ANCIENNE INSTALLATION
 #cp -v $HOME/.mozilla/firefox/gsmgqp55.default/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
 #
-if [[ -f "/$HOME/.mozilla/firefox/profiles.ini" ]]; then
+if [[ ! -f "/$HOME/.mozilla/firefox/profiles.ini" ]]; then
   eval $(grep '^Path=' "/$HOME/.mozilla/firefox/profiles.ini")
   NAME_DIR_BOOKMARKS="${Path}"
   cp -v $HOME/.mozilla/firefox/${NAME_DIR_BOOKMARKS}/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
 else
   cp -v $HOME/.mozilla/firefox/v9kvq5cr.default/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
 fi
+echo ""
 #
 
-NOMBOOKMARKS="bookmarks-${AUJOURDHUI}.html"
-echo ""
-print_bold_magenta "!!! ATTENTION !!!"
-print_bold_magenta "-----------------"
-echo -e "Est-ce que ${BYellow}${NOMBOOKMARKS}${BWhite} est sauvegardé ?"
-echo -e "Si ${BPurple}NON${BWhite} : le faire"
-attendre_appui_touche
-echo ""
+if [[ ! -f "$HOME/${REP_CONF}/${NOMBOOKMARKS}" ]]; then
+  echo ""
+  print_bold_magenta "!!! ATTENTION !!!"
+  print_bold_magenta "-----------------"
+  echo -e "Est-ce que ${BYellow}${NOMBOOKMARKS}${BWhite} est sauvegardé ?"
+  echo -e "Si ${BPurple}NON${BWhite} : le faire"
+  attendre_appui_touche
+  echo ""
+fi
 
 # Sauvegarde fichiers confs
 # Efface ancien fichiers
@@ -286,24 +288,16 @@ cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/recent-files.txt $HOME/${R
 echo ""
 
 
-# Sauvegarde incrementale
-#rsync --force --ignore-errors --delete --backup --backup-dir=$REP_BACKUP_ALL/backup/$DATE_JOUR_HEURE  -av ${SOURCES}  $REP_CIBLE_SAVE 
-
 REP=""
   for REP in ${SOURCES};
 	  do
 	    print_bold_vert "Sauvegarde en cours de : ${REP}"
 	    print_bold_vert "--------------------------------------------------------"
-##        rsync --force --max-size=256M --ignore-errors --delete --backup --exclude-from=nosauve --backup-dir=$REP_BACKUP_ALL/$DATE_JOUR_HEURE  -av ${REP} $REP_CIBLE_SAVE 
 	    rsync --force --max-size=256M --ignore-errors --delete --backup --exclude-from=${NOSAUVE} --backup-dir=${REP_BACKUP_ALL}/${DATE_JOUR_HEURE} -av ${REP} ${REP_CIBLE_SAVE} 
 	    print_bold_cyan " ==> Le répertoire ${REP} est sauvegardé"
 	    echo ""
 	  done
 
-#echo "-----------------------------------------------------------------"
-#echo "Compression du repertoire 90-BACKUP"
-#tar -cpzf BACKUP-${DATE_JOUR_HEURE}.tar.gz --exclude backup_all 90-BACKUP
-#tar --files-from=$HOME/bin/tar-include.txt -cvpzf test-tar-backupname.tar.gz
 
 print_bold_vert "Compression des répertoires de ${REP_CIBLE_SAVE}"
 print_bold_vert "-------------------------------------------------------------"
@@ -369,6 +363,15 @@ exit 0
 #ANCIENS
 #########
 
+# Sauvegarde incrementale
+#rsync --force --ignore-errors --delete --backup --backup-dir=$REP_BACKUP_ALL/backup/$DATE_JOUR_HEURE  -av ${SOURCES}  $REP_CIBLE_SAVE 
+
+##        rsync --force --max-size=256M --ignore-errors --delete --backup --exclude-from=nosauve --backup-dir=$REP_BACKUP_ALL/$DATE_JOUR_HEURE  -av ${REP} $REP_CIBLE_SAVE 
+
+#echo "-----------------------------------------------------------------"
+#echo "Compression du repertoire 90-BACKUP"
+#tar -cpzf BACKUP-${DATE_JOUR_HEURE}.tar.gz --exclude backup_all 90-BACKUP
+#tar --files-from=$HOME/bin/tar-include.txt -cvpzf test-tar-backupname.tar.gz
 
 # echo "!!! ATTENTION À LA VERSION DE BLENDER : 2.71 !!!"
 # echo "------------------------------------------------"
