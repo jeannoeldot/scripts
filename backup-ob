@@ -217,16 +217,17 @@ rm -f $HOME/${REP_CONF}/bookmarkbackups/*
 # ANCIENNE INSTALLATION
 #cp -v $HOME/.mozilla/firefox/gsmgqp55.default/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
 #
-if [[ ! -f "/$HOME/.mozilla/firefox/profiles.ini" ]]; then
+if [[ -f "/$HOME/.mozilla/firefox/profiles.ini" ]]; then
   eval $(grep '^Path=' "/$HOME/.mozilla/firefox/profiles.ini")
   NAME_DIR_BOOKMARKS="${Path}"
   cp -v $HOME/.mozilla/firefox/${NAME_DIR_BOOKMARKS}/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
 else
-  cp -v $HOME/.mozilla/firefox/v9kvq5cr.default/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
+  cp -v $HOME/.mozilla/firefox/ljs58rbs.default/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
 fi
 echo ""
 #
 
+NOMBOOKMARKS="bookmarks-${AUJOURDHUI}.html"
 if [[ ! -f "$HOME/${REP_CONF}/${NOMBOOKMARKS}" ]]; then
   echo ""
   print_bold_magenta "!!! ATTENTION !!!"
