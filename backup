@@ -244,7 +244,7 @@ if [[ -f "/$HOME/.mozilla/firefox/profiles.ini" ]]; then
   NAME_DIR_BOOKMARKS="${Path}"
   cp -v $HOME/.mozilla/firefox/${NAME_DIR_BOOKMARKS}/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
 else
-  cp -v $HOME/.mozilla/firefox/dedgiakq.default/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
+  cp -v $HOME/.mozilla/firefox/xc7a0q3k.default/bookmarkbackups/* $HOME/${REP_CONF}/bookmarkbackups/
 fi
 echo ""
 #
