@@ -138,6 +138,7 @@ cp -vf ${DIR_SCRIPTS}/Maj-refind/modif-refind-conf ${DIR_GIT}/
 rm -rf ${DIR_GIT}/icones-arch
 cp -R ${DIR_SCRIPTS}/Maj-refind/icones-arch ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-Repos/maj-repolocal ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-sudoers/maj-sudoers ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Modif-qt-conf/modif-qt4-conf ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Modif-qt-conf/modif-qt5-conf ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/To-git/dev2git ${DIR_GIT}/
