@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
-# Version : 02
+# Version : 03
 
 ## POUR TEST
 #set -x
@@ -119,6 +119,7 @@ sed -i "/^#showtools/c\showtools shell,about,shutdown,reboot,firmware" ${NAME_DI
 #
 sed -i "/^#dont_scan_files/c\dont_scan_files BOOTX64.EFI,fallback.efi,shim.efi,shim-fedora.efi,gcdx64.efi,MokManager.efi" ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
 sed -i "/^#scan_all_linux_kernels/c\scan_all_linux_kernels false" ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
+sed -i "/^#fold_linux_kernels/c\fold_linux_kernels false" ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
 
 # A REVOIR
 # Visualisation du nouveau fichier
