@@ -24,6 +24,9 @@ Répertoire : Maj-refind
 Répertoire : Maj-Repos
  -> maj-repolocal
 
+Répertoire : Maj-sudoers
+ -> maj-sudoers
+
 Répertoire : Modif-qt-conf
  -> modif-qt4-conf
  -> modif-qt5-conf

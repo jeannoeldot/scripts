@@ -178,6 +178,9 @@ echo '' >> ${DIR_GIT}/README
 echo 'Répertoire : Maj-Repos' >> ${DIR_GIT}/README
 echo ' -> maj-repolocal' >> ${DIR_GIT}/README
 echo '' >> ${DIR_GIT}/README
+echo 'Répertoire : Maj-sudoers' >> ${DIR_GIT}/README
+echo ' -> maj-sudoers' >> ${DIR_GIT}/README
+echo '' >> ${DIR_GIT}/README
 echo 'Répertoire : Modif-qt-conf' >> ${DIR_GIT}/README
 echo ' -> modif-qt4-conf' >> ${DIR_GIT}/README
 echo ' -> modif-qt5-conf' >> ${DIR_GIT}/README
