@@ -177,6 +177,17 @@ print_bold_vert "------------------------------------"
 find -name *~ -exec /usr/bin/rm -vf {} \;
 echo ""
 
+# LES FICHIERS blend1,2,3, DANS /0-DataLinux/00-3D
+print_bold_vert "Vérification existence de fichiers blend1,2,3,... dans $DATAS/$REP_3D"
+print_bold_vert "-------------------------------------------------------------------------"
+find $DATAS/$REP_3D -name *.blend[1-9]
+echo
+print_bold_magenta "!!! ATTENTION !!!"
+print_bold_magenta "-----------------"
+echo -e "Si des fichiers ${BYellow}blend1,2,3,...${BWhite} existent, les supprimer."
+attendre_appui_touche
+echo ""
+
 # LES REPERTOIRES build-*-Desktop-Debug et build-*-Desktop-Release de qt5
 print_bold_vert "Vérification existence de répertoires build-* (qt5) dans ${REP_DEV}"
 print_bold_vert "-----------------------------------------------------------------------"
