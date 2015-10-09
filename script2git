@@ -133,6 +133,7 @@ cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-tmpfs ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-chroot-repo ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/init-mirrorlist-pacnew/maj-mirrorlist ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/iso2usb/iso2usb ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-pacman/maj-pacman ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-refind/maj-refind ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-refind/modif-refind-conf ${DIR_GIT}/
 rm -rf ${DIR_GIT}/icones-arch
@@ -169,6 +170,9 @@ echo ' -> maj-mirrorlist' >> ${DIR_GIT}/README
 echo '' >> ${DIR_GIT}/README
 echo 'Répertoire : iso2usb' >> ${DIR_GIT}/README
 echo ' -> iso2usb' >> ${DIR_GIT}/README
+echo '' >> ${DIR_GIT}/README
+echo 'Répertoire : Maj-pacman' >> ${DIR_GIT}/README
+echo ' -> maj-pacman' >> ${DIR_GIT}/README
 echo '' >> ${DIR_GIT}/README
 echo 'Répertoire : Maj-refind' >> ${DIR_GIT}/README
 echo ' -> maj-refind' >> ${DIR_GIT}/README

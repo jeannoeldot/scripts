@@ -16,6 +16,9 @@ Répertoire : init-mirrorlist-pacnew
 Répertoire : iso2usb
  -> iso2usb
 
+Répertoire : Maj-pacman
+ -> maj-pacman
+
 Répertoire : Maj-refind
  -> maj-refind
  -> modif-refind-conf
