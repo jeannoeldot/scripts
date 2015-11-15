@@ -4,7 +4,7 @@
 #
 # Name : script2git
 #
-# Version : 0.1.2
+# Version : 0.1.3
 #
 # AVEC 1 paramètres : script2git "motifs du commit"
 # Example : $ script2git "Ajout N° Catégories dans Dialog"
@@ -20,32 +20,51 @@
 ################################
 
 # COULEURS
-ALL_OFF="\e[1;0m"
-BOLD="\e[1;1m"
-BLUE="${BOLD}\e[1;34m"
-GREEN="${BOLD}\e[1;32m"
-RED="${BOLD}\e[1;31m"
-YELLOW="${BOLD}\e[1;33m"
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
 
 # FONCTIONS
 msg_titre() {
         local mesg=$1; shift
-        printf "${BOLD}${mesg}${ALL_OFF}\n" "$@" >&2
+        printf "${Bold}${mesg}${Reset}\n" "$@" >&2
 }
 
 msg() {
         local mesg=$1; shift
-        printf "${BOLD}:: ${mesg}${ALL_OFF}\n" "$@" >&2
+        printf "${Bold}:: ${mesg}${Reset}\n" "$@" >&2
 }
 
-msg_grenn() {
+msg_green() {
         local mesg=$1; shift
-        printf "${GREEN}:: ${mesg}${ALL_OFF}\n" "$@" >&2
+        printf "${BGreen}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+        local mesg=$1; shift
+        printf "\n" "$@" >&2
 }
 
 error() {
         local mesg=$1; shift
-        printf "${RED}==> ERREUR:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+        printf "${BRed}==> ERREUR:${Reset}${Bold} ${mesg}${Reset}\n" "$@" >&2
 }
 
 cleanup() {
@@ -58,9 +77,9 @@ die() {
 }
 
 usage() {
-        echo 'Arguments :'
-        echo '-h                 Cette aide.'
-        echo '-m <motif>         motif : Motifs du commit. Facultatif: Par défaut = "Mises à jour"'
+        printf '%s\n' "Arguments :"
+        printf '%s\n' "-h                 Cette aide."
+        printf '%s\n' "-m <motif>         motif : Motifs du commit. Facultatif: Par défaut = \"Mises à jour\""
         cleanup 0
 }
 
@@ -89,7 +108,7 @@ msg_titre " | Usage : script2git [-m \"motifs du commit\"] |"
 msg_titre " |                                            |"
 msg_titre " | script2git -h pour lire l'aide             |"
 msg_titre " +--------------------------------------------+"
-echo ""
+msg_newline
 
 
 # DÉBUTS DES TESTS DES ARGUMENTS
@@ -115,13 +134,13 @@ fi
 
 # DÉBUTS MISES À JOUR SUR GIT
 # Effacement des fichiers ~ dans ${DIR_SCRIPTS}
-echo ""
+msg_newline
 msg "Effacement des fichiers « *~ » dans « ${DIR_SCRIPTS} »"
 find ${DIR_SCRIPTS} -name *~ -exec /usr/bin/rm -vf {} \;
 
 
 # Copie des scripts de ${DIR_SCRIPTS} vers ${DIR_GIT}
-echo ""
+msg_newline
 msg "Copie des scripts de « ${DIR_SCRIPTS} » vers « ${DIR_GIT} »"
 # Effacement de ${DIR_GIT}/README
 rm -f ${DIR_GIT}/README
@@ -207,18 +226,18 @@ echo ' -> search.sh' >> ${DIR_GIT}/README
 
 
 # Commande git add --all
-echo ""
+msg_newline
 msg "Commande « git add --all »"
 cd ${DIR_GIT}
 git add --all
 
 # Commande git commit -m "motifs du commit"
-echo ""
+msg_newline
 msg "Commande « git commit -m \"${CONTENU_MOTIF}\" »"
 git commit -m "\"${CONTENU_MOTIF}\""
 
 # Commande git push origin master"
-echo ""
+msg_newline
 msg "Commande « git push origin master »"
 git push origin master
 
