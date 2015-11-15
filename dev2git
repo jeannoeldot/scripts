@@ -4,7 +4,7 @@
 #
 # Name : dev2git
 #
-# Version : 0.1.2
+# Version : 0.1.3
 #
 # AVEC 3 paramètres : dev2git quoi destination ["motifs du commit"]
 # Example : $ dev2git jndqcbgrd jndqcbgrd-qt5 "Ajout N° Catégories dans Dialog"
@@ -20,32 +20,50 @@
 ################################
 
 # COULEURS
-ALL_OFF="\e[1;0m"
-BOLD="\e[1;1m"
-BLUE="${BOLD}\e[1;34m"
-GREEN="${BOLD}\e[1;32m"
-RED="${BOLD}\e[1;31m"
-YELLOW="${BOLD}\e[1;33m"
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
 
 # FONCTIONS
 msg_titre() {
         local mesg=$1; shift
-        printf "${BOLD}${mesg}${ALL_OFF}\n" "$@" >&2
+        printf "${Bold}${mesg}${Reset}\n" "$@" >&2
 }
 
 msg() {
         local mesg=$1; shift
-        printf "${BOLD}:: ${mesg}${ALL_OFF}\n" "$@" >&2
+        printf "${Bold}:: ${mesg}${Reset}\n" "$@" >&2
 }
 
-msg_grenn() {
+msg_green() {
         local mesg=$1; shift
-        printf "${GREEN}:: ${mesg}${ALL_OFF}\n" "$@" >&2
+        printf "${BGreen}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+        local mesg=$1; shift
+        printf "\n" "$@" >&2
 }
 
 error() {
         local mesg=$1; shift
-        printf "${RED}==> ERREUR:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+        printf "${BRed}==> ERREUR:${Reset}${Bold} ${mesg}${Reset}\n" "$@" >&2
 }
 
 cleanup() {
@@ -58,12 +76,12 @@ die() {
 }
 
 usage() {
-        echo 'Arguments :'
-        echo '-h                 Cette aide.'
-        echo '-s <source>        source : Nom du répertoire source. Obligatoire.'
-        echo '-d <destination>   destination : Nom du répertoire destination. Obligatoire.'
-        echo '-m <motif>         motif : Motifs du commit. Facultatif: Par défaut = "Mises à jour"'
-        echo '-t <tag>           tag : Numéro Version. Facultatif.'
+        printf '%s\n' "Arguments :"
+        printf '%s\n' "-h                 Cette aide."
+        printf '%s\n' "-s <source>        source : Nom du répertoire source. Obligatoire."
+        printf '%s\n' "-d <destination>   destination : Nom du répertoire destination. Obligatoire."
+        printf '%s\n' "-m <motif>         motif : Motifs du commit. Facultatif: Par défaut = \"Mises à jour\""
+        printf '%s\n' "-t <tag>           tag : Numéro Version. Facultatif."
         cleanup 0
 }
 
@@ -98,7 +116,7 @@ msg_titre " | Usage : dev2git -s source -d destination  [-m \"motifs du commit\"
 msg_titre " |                                                                             |"
 msg_titre " | dev2git -h pour lire l'aide                                                 |"
 msg_titre " +-----------------------------------------------------------------------------+"
-echo ""
+msg_newline
 
 # Drapeau si tag existe; false = NON , true = OUI
 avec_tag=false
@@ -131,7 +149,7 @@ if [[ "$arg_source" != "" ]]; then
 #         echo "PATH_TO_QUOI = "${PATH_TO_QUOI}
     fi
 else
-    die "Argument <source> erroné. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
+    die "Argument «source» erroné. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
 fi
 
 # Test si $arg_destination = 1 répertoire qui existe
@@ -145,7 +163,7 @@ if [[ "$arg_destination" != "" ]]; then
 #         echo "PATH_TO_DESTINATION = "${PATH_TO_DESTINATION}
     fi
 else
-    die "Argument <destination> erroné. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
+    die "Argument «destination» erroné. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
 fi
 
 # Test si arg_motif existe. Par défaut = "Mises à jour"
@@ -155,7 +173,7 @@ if [[ "$arg_motif" != "" ]]; then
         CONTENU_MOTIF="$arg_motif"
 #         echo "CONTENU_MOTIF = "${CONTENU_MOTIF}
     else
-        die "Argument <motif> erroné. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
+        die "Argument «motif» erroné. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
     fi
 else
     CONTENU_MOTIF="${MOTIF_PAR_DEFAUT}"
@@ -176,44 +194,44 @@ fi
 
 # DÉBUTS MISES À JOUR SUR GIT
 # Effacement des fichiers ~ dans ${PATH_TO_QUOI}
-echo ""
+msg_newline
 msg "Effacement des fichiers « *~ » dans « ${PATH_TO_QUOI} »"
 rm -vf ${PATH_TO_QUOI}/*~
 
 # Copie des fichiers de ${PATH_TO_QUOI} vers ${PATH_TO_DESTINATION}
-echo ""
+msg_newline
 msg "Copie des fichiers de « ${PATH_TO_QUOI} » vers « ${PATH_TO_DESTINATION} »"
 cp -Rf ${PATH_TO_QUOI}/* ${PATH_TO_DESTINATION}/
 
 # Effacement des fichiers *.user* dans ${PATH_TO_DESTINATION}
-echo ""
+msg_newline
 msg "Effacement des fichiers « *.user* » dans « ${PATH_TO_DESTINATION} »"
 find ${PATH_TO_DESTINATION} -name *.user* -exec /usr/bin/rm -vf {} \;
 
 # Commande git add --all
-echo ""
+msg_newline
 msg "Commande « git add --all »"
 cd ${PATH_TO_DESTINATION}
 git add --all
 
 # Commande git commit -m "motifs du commit"
-echo ""
+msg_newline
 msg "Commande « git commit -m \"${CONTENU_MOTIF}\" »"
 git commit -m "\"${CONTENU_MOTIF}\""
 
 # Commande git push origin master"
-echo ""
+msg_newline
 msg "Commande « git push origin master »"
 git push origin master
 
 # TAGS ( FACULTATIF )
 # $ git tag -a v0.1.7 -m "Version 0.1.7" 
 # $ git push origin v0.1.7
-if [ "$avec_tag" = true ]; then
-    echo ""
+if [[ "$avec_tag" = true ]]; then
+    msg_newline
     msg "Commande « git tag -a ${CONTENU_TAG} -m \"${TAG_PAR_DEFAUT}\" »"
     git tag -a ${CONTENU_TAG} -m "${TAG_PAR_DEFAUT}"
-    echo ""
+    msg_newline
     msg "Commande « git push origin ${CONTENU_TAG} »"
     git push origin ${CONTENU_TAG}
 fi
@@ -236,25 +254,25 @@ exit 0
 # 
 # # $ find ~/02-git -name jndqcbgrd-qt5
 # # ==> /home/jnd/02-git/jndqcbgrd-qt5
-# echo ""
+# msg_newline
 # echo "TEST"
 # find ${DIR_DEV} -name jndqcbgrd
 # 
 # path_to_quoi=$(find ${DIR_DEV} -name jndqcbgrd)
-# echo ""
+# msg_newline
 # echo "path_to_quoi = "${path_to_quoi}
 # 
 # 
-# echo ""
+# msg_newline
 # find ${DIR_GIT} -name jndqcbgrd-qt5
 # 
 # path_to_destination=$(find ${DIR_GIT} -name jndqcbgrd-qt5)
-# echo ""
+# msg_newline
 # echo "path_to_destination = "${path_to_destination}
 # 
-# echo ""
+# msg_newline
 # echo "----------------------------------------------------------"
-# echo ""
+# msg_newline
 # 
 
 # SORTIES KONSOLE
