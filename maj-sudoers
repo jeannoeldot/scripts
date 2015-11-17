@@ -129,6 +129,7 @@ if [[ -s ${NAME_SUDOERS_PACNEW} ]]; then
     ## Same thing without a password (not secure)
     #sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/s/^# //' ${NAME_SUDOERS}.txt
 
+    # LE 17/11/2015 : SED Commentés car inutiles
     # Version OpenBox : init à ""
     version_ob=""
     version_ob=$(openbox --version 2> /dev/null | awk '/Openbox/ {print $2}')
@@ -137,13 +138,13 @@ if [[ -s ${NAME_SUDOERS_PACNEW} ]]; then
         sed -i "/^## User alias specification/iUser_Alias ADMINS = ${USER}\n##" ${NAME_SUDOERS}.txt
     
         sed -i "/^## Cmnd alias specification/i## My Cmnd alias" ${NAME_SUDOERS}.txt
-        sed -i "/^## Cmnd alias specification/iCmnd_Alias SHUTDOWN_CMDS = /sbin/shutdown, /sbin/halt, /sbin/reboot, /sbin/poweroff" ${NAME_SUDOERS}.txt
-        sed -i "/^## Cmnd alias specification/iCmnd_Alias PACMAN_CMDS = /usr/bin/pacman" ${NAME_SUDOERS}.txt
+#         sed -i "/^## Cmnd alias specification/iCmnd_Alias SHUTDOWN_CMDS = /sbin/shutdown, /sbin/halt, /sbin/reboot, /sbin/poweroff" ${NAME_SUDOERS}.txt
+#         sed -i "/^## Cmnd alias specification/iCmnd_Alias PACMAN_CMDS = /usr/bin/pacman" ${NAME_SUDOERS}.txt
         sed -i "/^## Cmnd alias specification/iCmnd_Alias HDDTEMP_CMDS = /usr/bin/hddtemp\n##" ${NAME_SUDOERS}.txt
     
         sed -i "/^## Defaults specification/i## My User specification" ${NAME_SUDOERS}.txt
-        sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: SHUTDOWN_CMDS" ${NAME_SUDOERS}.txt
-        sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: PACMAN_CMDS" ${NAME_SUDOERS}.txt
+#         sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: SHUTDOWN_CMDS" ${NAME_SUDOERS}.txt
+#         sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: PACMAN_CMDS" ${NAME_SUDOERS}.txt
         sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: HDDTEMP_CMDS\n##" ${NAME_SUDOERS}.txt
     fi
 
