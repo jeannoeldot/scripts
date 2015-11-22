@@ -81,9 +81,9 @@ read_input_text(){
 #
 
 # => Passe en root
-if [ ! $( id -u ) -eq 0 ]; then
-    echo -e "\n${BYellow}Le script doit être exécuté en «root»."
-    echo -e "Entrer le mot de passe de «root»${Reset}"
+if (( EUID != 0 )); then
+    printf '\n%s\n' "${BYellow}Le script doit être exécuté en «root»."
+    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
     exec su -c "${0} ${1}"
     exit ${?}
 fi
@@ -129,7 +129,7 @@ curl -so ${tmpfile} ${url}
 
 # Backup and replace current mirrorlist file (if new file is non-zero)
 if [[ -s ${tmpfile} ]]; then
-  date_Generated=$(cat "${tmpfile}" | awk '/Generated/ {print $4}')
+  date_Generated=$(awk '/Generated/ {print $4}' "${tmpfile}")
   if [[ ${date_Generated} == ${LADATE} ]]; then
     sed -i "s/^#Server/Server/g" ${tmpfile}
 
@@ -173,7 +173,7 @@ else
 fi
 
 # Fin ou Erreur
-if [[ $retour -eq 0 ]]; then
+if (( retour == 0 )); then
   # Synchronise les nouveaux mirroirs.
   msg_newline
   msg "Synchronisation des nouveaux mirroirs..."

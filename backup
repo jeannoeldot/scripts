@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2015
+# Version : 02 DU 20/11/2015
+#
 
 clear
 cd
@@ -35,6 +37,7 @@ REP_DWL="08-Dwl-OK"
 REP_SKAR="08-SuperKaramba-Themes"
 REP_DOCUS="09-Documentation"
 REP_CONF="09-Fichiers-Conf"
+REP_CONFIGS="09-Configurations"
 REP_SHARE="90-Partage"
 REP_IMPR="99-A-IMPRIM"
 REP_3D="00-3D"
@@ -63,8 +66,8 @@ REP_CIBLE_SAVE="${SAUVE}/sauvegarde"
 REP_BACKUP_ALL="${SAUVE}/backup_all"
 
 # La date du jour
-DATE_JOUR_HEURE=`date +%Y-%m-%d_%H-%M`;
-AUJOURDHUI=`date +%Y-%m-%d`;
+DATE_JOUR_HEURE=$(date +%Y-%m-%d_%H-%M)
+AUJOURDHUI=$(date +%Y-%m-%d)
 
 # Sources a sauvegarder
 # mettre ici le chemin vers les repertoires a sauvegarder
@@ -84,6 +87,7 @@ SOURCES="
  $HOME/$REP_DWL
  $HOME/$REP_DOCUS
  $HOME/$REP_CONF
+ $HOME/$REP_CONFIGS
  $HOME/$REP_DOCUMENT
  $HOME/$REP_BIN
 "
@@ -104,6 +108,7 @@ SOURCES_TAR="
  $REP_DWL
  $REP_DOCUS
  $REP_CONF
+ $REP_CONFIGS
  $REP_DOCUMENT
  $REP_BIN
 "
@@ -319,7 +324,7 @@ cp -v $HOME/.yasp.script $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.yasp.script.$
 echo ""
 
 # Sauvegarde Fichiers fichiers config de blender
-VERSION_BLENDER=(`blender -v | awk '/Blender/ {print $2}'`)
+VERSION_BLENDER=$(blender -v 2> /dev/null | awk '/Blender/ {print $2}')
 
 print_bold_vert "Sauvegarde des fichiers config de blender ${BYellow}${VERSION_BLENDER}"
 print_bold_vert "----------------------------------------------"
