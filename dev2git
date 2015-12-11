@@ -6,11 +6,13 @@
 #
 # Version : 0.1.3
 #
-# AVEC 3 paramètres : dev2git quoi destination ["motifs du commit"]
-# Example : $ dev2git jndqcbgrd jndqcbgrd-qt5 "Ajout N° Catégories dans Dialog"
-# ou
-# AVEC 2 paramètres : dev2git quoi destination
-# Example : $ dev2git jndqcbgrd jndqcbgrd-qt5
+# Examples :
+# dev2git -s jndqcbgrd -d jndqcbgrd-qt5 -m "Revu alignement titre ds modification nom catégories" -t v0.1.8
+#
+# dev2git -s jndqcbgrd -d jndqcbgrd-qt5 -m "Modif n° version ds Readme"
+#
+# dev2git -s jndqcbgrd -d jndqcbgrd-qt5
+#
 # Par défaut : motifs = "Mises à jour"
 #
 

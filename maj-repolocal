@@ -3,18 +3,32 @@
 #
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013, 2015
 #
-# Version : 02
+# Version : 03
 #
+
+# COULEURS
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+
+# FONCTIONS
+msg_titre() {
+        local mesg=$1; shift
+        printf "${Bold}${mesg}${Reset}\n" "$@" >&2
+}
+
 
 clear
 
-echo "-----------------------------------------------"
-echo "            M A J REPO-LOCAL"
-echo "-----------------------------------------------"
+msg_titre " +----------------------------------------+"
+msg_titre " |                                        |"
+msg_titre " |            M A J REPO-LOCAL            |"
+msg_titre " |                                        |"
+msg_titre " +----------------------------------------+"
 
 #sleep 0.5
 
-cd /home/jnd/00-repolocal/
+cd $HOME/00-repolocal/
 
 rm -f repolocal.db.tar.gz
 rm -f repolocal.files.tar.gz
@@ -29,10 +43,6 @@ rm -f repolocal.files.tar.gz
 # Si -any.pkg et tar.xz
 repo-add repolocal.db.tar.gz *.pkg.tar.*
 repo-add -f repolocal.files.tar.gz *.pkg.tar.*
-
-##
-# Enlever suite /etc/sudoers : Suppr JND
-#sudo pacman -Sy
 
 cd
 
