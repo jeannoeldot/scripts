@@ -7,7 +7,7 @@
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
 # 
 
-# VERSION=0.1.2
+# VERSION=0.1.3
 
 ################################
 ## POUR TEST
@@ -17,26 +17,76 @@
 #
 # CONSTANTES
 #
+# COULEURS
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
 
 # REPERTOIRES
-DIR_REPOLOCAL="/home/jnd/00-repolocal"
+DIR_REPOLOCAL="$HOME/00-repolocal"
+## POUR TEST
+#DIR_REPOLOCAL="$HOME/blabla/00-repolocal"
+## POUR TEST
 
 REP_TMP_CHROOT_REPO="/tmp/chrootrepo"
+## POUR TEST
+#REP_TMP_CHROOT_REPO="/usr/chrootrepo"
+## POUR TEST
 
 
+#
+# FONCTIONS
+#
+error() {
+    local mesg=$1; shift
+    printf "${BRed}==> ERREUR:${Reset}${Bold} ${mesg}${Reset}\n" "$@" >&2
+}
+
+die() {
+    error "$*"
+    delete_rep_tmp_chroot_repo
+    exit 1
+}
+
+delete_rep_tmp_chroot_repo() {
+    [[ -d "${REP_TMP_CHROOT_REPO}" ]] && rm -rf "${REP_TMP_CHROOT_REPO}" &>/dev/null
+}
 
 #
 # DEBUT DU SCRIPT
 #
 
 # Efface le répertoire /tmp/chrootrepo si existe déjà
-[[ -d "${REP_TMP_CHROOT_REPO}" ]] && rm -rf "${REP_TMP_CHROOT_REPO}"
+delete_rep_tmp_chroot_repo
 
 # Créée le répertoire /tmp/chrootrepo
 mkdir -p "${REP_TMP_CHROOT_REPO}" &>/dev/null
+if (( $? != 0 )); then
+    die "Création du répertoire «${REP_TMP_CHROOT_REPO}» impossible."
+fi
 
 # Copie 1 pkq ( le + petit ) dans le répertoire /tmp/chrootrepo
-cp -f "${DIR_REPOLOCAL}"/mkpkg-tmpfs-*-any.pkg.tar.* "${REP_TMP_CHROOT_REPO}"/
+cp -f "${DIR_REPOLOCAL}"/mkpkg-tmpfs-*-any.pkg.tar.* "${REP_TMP_CHROOT_REPO}"/ &>/dev/null
+if (( $? != 0 )); then
+    die "Copie d'un paquet dans «${REP_TMP_CHROOT_REPO}» impossible."
+fi
 
 
 

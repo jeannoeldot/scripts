@@ -86,7 +86,7 @@ usage() {
         echo 'Arguments :'
         echo '-h                Cette aide'
         echo '-m <march>        march : generic ou native ou fast. Obligatoire'
-        echo '-g <6G|8G>        Taille du chroot en Giga : 6G ou 8G. Facultatif : 6G par défaut'
+        echo '-g <8G|16G>        Taille du chroot en Giga : 8G ou 16G. Facultatif : 8G par défaut'
         echo '-l <logs>         Conservations des logs. Facultatif : NON conservés par défaut'
         echo '-q <qt|qt4>       UI Framework : qt(5) ou qt4. Facultatif'
         echo '-v <git|svn>      Version Control System : git ou svn. Facultatif'
@@ -101,17 +101,17 @@ setup_dir() {
 }
 
 #
-# $1 : $arg_size = 6G ou 8G (pour blender)
+# $1 : $arg_size = 8G ou 16G (pour blender)
 setup_mount() {
-#        mount -t tmpfs -o defaults,size=6G none "$REP_TMPFS" &>/dev/null
+#        mount -t tmpfs -o defaults,size=8G none "$REP_TMPFS" &>/dev/null
 #        mount -t tmpfs -o defaults,size=$1 none "$REP_TMPFS" &>/dev/null
-        if [ "$1" == "6G" ]; then
-          sudo mount -t tmpfs -o defaults,size=6G none "$REP_TMPFS" &>/dev/null
+        if [ "$1" == "8G" ]; then
+          sudo mount -t tmpfs -o defaults,size=8G none "$REP_TMPFS" &>/dev/null
           if [ $? -ne 0 ]; then
             return 1
           fi
         else
-          sudo mount -t tmpfs -o defaults,size=8G none "$REP_TMPFS" &>/dev/null
+          sudo mount -t tmpfs -o defaults,size=16G none "$REP_TMPFS" &>/dev/null
           if [ $? -ne 0 ]; then
             return 1
           fi
@@ -322,9 +322,9 @@ msg_titre "|                                     Création de paquets en RAM    
 msg_titre "|                                        ( chroot en tmpfs )                                                 |"
 msg_titre "|                                          Version = $VERS                                                  |"
 msg_titre "|                                                                                                            |"
-msg_titre "| Usage : mkpkg-tmpfs -m generic|native|fast [-g 6G|8G] [-l logs] [-q qt|qt4] [-v git|svn]                   |"
+msg_titre "| Usage : mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt|qt4] [-v git|svn]                  |"
 msg_titre "| ou                                                                                                         |"
-msg_titre "| Usage : /home/jnd/bin/mkpkg-tmpfs -m generic|native|fast [-g 6G|8G] [-l logs] [-q qt|qt4] [-v git|svn]     |"
+msg_titre "| Usage : /home/jnd/bin/mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt|qt4] [-v git|svn]    |"
 msg_titre "|                                                                                                            |"
 msg_titre "| mkpkg-tmpfs -h pour lire l'aide                                                                            |"
 msg_titre "+------------------------------------------------------------------------------------------------------------+"
@@ -399,17 +399,17 @@ done
       die "Argument <march> erroné. Usage : ""$nom_script"" -m generic|native|fast"
     fi
 
-# Test si arg_giga existe et = 6G ou 8G. 6G par défaut
+# Test si arg_giga existe et = 8G ou 16G. 8G par défaut
 if [ "$arg_giga" != "" ]; then
-    if [ "$arg_giga" == "6G" ]; then
-      arg_size="6G"
-    elif [ "$arg_giga" == "8G" ]; then
+    if [ "$arg_giga" == "8G" ]; then
       arg_size="8G"
+    elif [ "$arg_giga" == "16G" ]; then
+      arg_size="16G"
     else
-      die "Argument <6G|8G> erroné. Usage : ""$nom_script"" -m generic|native|fast -g 6G|8G"
+      die "Argument <8G|16G> erroné. Usage : ""$nom_script"" -m generic|native|fast -g 8G|16G"
     fi
 else
-    arg_size="6G"
+    arg_size="8G"
 fi
 
 # avec_logs=false
