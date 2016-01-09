@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015,2016
 #
 # Name : script2git
 #
@@ -158,6 +158,7 @@ cp -vf ${DIR_SCRIPTS}/Maj-refind/modif-refind-conf ${DIR_GIT}/
 rm -rf ${DIR_GIT}/icones-arch
 cp -R ${DIR_SCRIPTS}/Maj-refind/icones-arch ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-Repos/maj-repolocal ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-startkde/maj-startkde ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-sudoers/maj-sudoers ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Modif-qt-conf/modif-qt4-conf ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Modif-qt-conf/modif-qt5-conf ${DIR_GIT}/
@@ -200,6 +201,9 @@ echo ' -> icones-arch' >> ${DIR_GIT}/README
 echo '' >> ${DIR_GIT}/README
 echo 'Répertoire : Maj-Repos' >> ${DIR_GIT}/README
 echo ' -> maj-repolocal' >> ${DIR_GIT}/README
+echo '' >> ${DIR_GIT}/README
+echo 'Répertoire : Maj-startkde' >> ${DIR_GIT}/README
+echo ' -> maj-startkde' >> ${DIR_GIT}/README
 echo '' >> ${DIR_GIT}/README
 echo 'Répertoire : Maj-sudoers' >> ${DIR_GIT}/README
 echo ' -> maj-sudoers' >> ${DIR_GIT}/README

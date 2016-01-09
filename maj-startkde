@@ -1,0 +1,196 @@
+ 
+#!/usr/bin/env bash
+#
+# Nom : maj-startkde
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2016
+# Version : 01
+# Modification fichier script /usr/bin/startkde
+#
+# Voir ARCH-KDE-DEBUG-DANS-JOURNAL.TXT
+# Trop d'informations de débuggage par défaut dans le journal
+# https://bbs.archlinux.org/viewtopic.php?id=193123
+# https://git.reviewboard.kde.org/r/121903/diff/1/?file=338977#file338977line12
+#
+
+## POUR TEST
+#set -x
+
+
+## POUR TEST
+# cp -p -vf $HOME/01-scripts/Maj-startkde/startkde.original.test $HOME/01-scripts/Maj-startkde/usr-bin-startkde
+# # REPERTOIRES
+# DIR_SCRIPT=/home/jnd/01-scripts/Maj-startkde
+# NAME_SCRIPT=usr-bin-startkde
+## POUR TEST
+
+## POUR TEST
+# REPERTOIRES
+DIR_SCRIPT=/usr/bin
+NAME_SCRIPT=startkde
+## POUR TEST
+
+# COLORS
+# Regular Colors
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
+#
+# FONCTIONS
+#
+msg() {
+  local mesg=$1; shift
+  printf "${BWhite}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_titre() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+        local mesg=$1; shift
+        printf "\n" "$@" >&2
+}
+
+error() {
+  local mesg=$1; shift
+  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Reset}\n" "$@" >&2
+}
+
+cleanup() {
+  cd
+  [[ $1 ]] && exit $1
+}
+
+die() {
+  error "$*"
+  cleanup 1
+}
+
+read_input_text(){
+    printf '%s' "${BGreen}"
+    read -p "$1 [O/N]: " OPTION
+    msg_newline
+    OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
+    printf '%s\n' "${Reset}"
+}
+#
+# FIN FONCTIONS
+#
+
+#
+# DEBUT DU SCRIPT
+#
+
+# => Passe en root
+if (( EUID != 0 )); then
+    printf '\n%s\n' "${BYellow}Le script doit être exécuté en «root»."
+    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
+    exec su -c "${0} ${1}"
+    exit ${?}
+fi
+
+# Titre
+msg_titre "+-------------------------------------------------+"
+msg_titre "|   Modification du fichier /usr/bin/startkde     |"
+msg_titre "|   Ajout de : QT_LOGGING_RULES=\"*.debug=false\"   |"
+msg_titre "|   Ajout de : export QT_LOGGING_RULES            |"
+msg_titre "+-------------------------------------------------+"
+
+
+# Variable de retour : init à 9
+retour=9
+
+# La date du jour
+LADATE=$(date +%Y-%m-%d)
+
+# Répertoire de travail
+DIR_WORK="${DIR_SCRIPT}"
+
+cd "${DIR_WORK}"
+
+ma_var=""
+ma_var=$(grep '^QT_LOGGING_RULES=' "${NAME_SCRIPT}")
+if [[ -z "${ma_var}" ]]; then
+    # Le script ne contient pas QT_LOGGING_RULES="*.debug=false"
+    # 1) MODIFS SUR FICHIER TEMP
+    tmpfile=$(mktemp --suffix=-startkde)
+    cp -p ${NAME_SCRIPT} ${tmpfile}
+# Trop d'informations de débuggage par défaut dans le journal
+    sed -i "/^# When the X server dies/i# Limite le nombre des informations de débuggage par défaut dans le journal" ${tmpfile}
+    sed -i "/^# When the X server dies/iQT_LOGGING_RULES=\"*.debug=false\"" ${tmpfile}
+    sed -i "/^# When the X server dies/iexport QT_LOGGING_RULES\n" ${tmpfile}
+
+    msg_newline
+    msg "Modifications apportées sur fichier temporaire :"
+    head -n 18 ${tmpfile}
+    msg_newline
+    
+    read_input_text "Accepter les modifications apportées"
+
+    # 2) FAIT MODIFS SI REPONSE = o ou O
+    case "$OPTION" in
+        "o")
+            # Suppressions anciens fichiers backup
+            msg "Suppression de l'ancien fichier .backup existant."
+            rm -v -f ${NAME_SCRIPT}.backup.*
+            # Sauvegarde fichiers
+            msg_newline
+            msg "Sauvegarde du fichier existant."
+            cp -p -v ${NAME_SCRIPT} ${NAME_SCRIPT}.backup.${LADATE}
+            # Modification fichier sudoers
+            msg_newline
+            msg "Modification de «${NAME_SCRIPT}»."
+            mv -v ${tmpfile} ${NAME_SCRIPT}
+            # Vérifications
+            msg_newline
+            msg "Vérification de «${NAME_SCRIPT}» :"
+            head -n 18 ${NAME_SCRIPT}
+            # FIN OK
+            cd
+            msg_newline
+            msg "Modifications terminées."
+            retour=0
+            ;;
+        *)
+            # Réponse = N/n
+            # 3) SUPPRIME FICHIER TEMP
+            rm -f ${tmpfile}
+            cd
+            msg_newline
+            msg "Modifications non apportées."
+            retour=1
+            ;;
+    esac
+else
+    # Le script contient déjà QT_LOGGING_RULES="*.debug=false" : RIEN À FAIRE
+    msg_newline
+    msg "Le script contient déjà QT_LOGGING_RULES=\"*.debug=false\". "
+    msg "Rien à faire."
+    retour=2
+fi
+
+## POUR TEST
+#set +x
+
+cd
+# ) FIN
+exit $retour
+
