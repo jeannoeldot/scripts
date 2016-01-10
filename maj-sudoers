@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015
-# Version : 02
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2016
+# Version : 03
 
 ## POUR TEST
 #set -x
@@ -32,7 +32,7 @@ BWhite=${Bold}$(tput setaf 7)
 DIR_SUDOERS=/etc
 ## POUR TEST
 # DIR_SUDOERS=/home/jnd/01-scripts/Maj-sudoers
-# cp -v /home/jnd/01-scripts/Maj-sudoers/sudoers.pacnew.original /home/jnd/01-scripts/Maj-sudoers/sudoers.pacnew
+# cp -p -v /home/jnd/01-scripts/Maj-sudoers/sudoers.pacnew.original /home/jnd/01-scripts/Maj-sudoers/sudoers.pacnew
 ## POUR TEST
 
 # NOMS FICHIERS
@@ -122,39 +122,40 @@ cd "${DIR_WORK}"
 if [[ -s ${NAME_SUDOERS_PACNEW} ]]; then
 
     # 1) MODIFS SUR FICHIERS TEMPS
-    cp ${NAME_SUDOERS_PACNEW} ${NAME_SUDOERS}.txt
+    tmpfile=$(mktemp --suffix=-sudoers)
+    cp -p ${NAME_SUDOERS_PACNEW} ${tmpfile}
 
     # Uncomment to allow members of group wheel to execute any command
-    sed -i '/%wheel ALL=(ALL) ALL/s/^# //' ${NAME_SUDOERS}.txt
+    sed -i '/%wheel ALL=(ALL) ALL/s/^# //' ${tmpfile}
     ## Same thing without a password (not secure)
-    #sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/s/^# //' ${NAME_SUDOERS}.txt
+    #sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/s/^# //' ${tmpfile}
 
     # LE 17/11/2015 : SED Commentés car inutiles
     # Version OpenBox : init à ""
     version_ob=""
     version_ob=$(openbox --version 2> /dev/null | awk '/Openbox/ {print $2}')
     if [[ ${version_ob} != "" ]]; then
-        sed -i "/^## User alias specification/i## My User alias" ${NAME_SUDOERS}.txt
-        sed -i "/^## User alias specification/iUser_Alias ADMINS = ${USER}\n##" ${NAME_SUDOERS}.txt
+        sed -i "/^## User alias specification/i## My User alias" ${tmpfile}
+        sed -i "/^## User alias specification/iUser_Alias ADMINS = ${USER}\n##" ${tmpfile}
     
-        sed -i "/^## Cmnd alias specification/i## My Cmnd alias" ${NAME_SUDOERS}.txt
-#         sed -i "/^## Cmnd alias specification/iCmnd_Alias SHUTDOWN_CMDS = /sbin/shutdown, /sbin/halt, /sbin/reboot, /sbin/poweroff" ${NAME_SUDOERS}.txt
-#         sed -i "/^## Cmnd alias specification/iCmnd_Alias PACMAN_CMDS = /usr/bin/pacman" ${NAME_SUDOERS}.txt
-        sed -i "/^## Cmnd alias specification/iCmnd_Alias HDDTEMP_CMDS = /usr/bin/hddtemp\n##" ${NAME_SUDOERS}.txt
+        sed -i "/^## Cmnd alias specification/i## My Cmnd alias" ${tmpfile}
+#         sed -i "/^## Cmnd alias specification/iCmnd_Alias SHUTDOWN_CMDS = /sbin/shutdown, /sbin/halt, /sbin/reboot, /sbin/poweroff" ${tmpfile}
+#         sed -i "/^## Cmnd alias specification/iCmnd_Alias PACMAN_CMDS = /usr/bin/pacman" ${tmpfile}
+        sed -i "/^## Cmnd alias specification/iCmnd_Alias HDDTEMP_CMDS = /usr/bin/hddtemp\n##" ${tmpfile}
     
-        sed -i "/^## Defaults specification/i## My User specification" ${NAME_SUDOERS}.txt
-#         sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: SHUTDOWN_CMDS" ${NAME_SUDOERS}.txt
-#         sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: PACMAN_CMDS" ${NAME_SUDOERS}.txt
-        sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: HDDTEMP_CMDS\n##" ${NAME_SUDOERS}.txt
+        sed -i "/^## Defaults specification/i## My User specification" ${tmpfile}
+#         sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: SHUTDOWN_CMDS" ${tmpfile}
+#         sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: PACMAN_CMDS" ${tmpfile}
+        sed -i "/^## Defaults specification/iADMINS ALL=(ALL) NOPASSWD: HDDTEMP_CMDS\n##" ${tmpfile}
     fi
 
     # Modification de timestamp_timeout = 20 minutes
-    echo -e '\n## My Defaults timestamp_timeout = '${TIMESTAMP_TIMEOUT}' minutes' >> ${NAME_SUDOERS}.txt
-    echo -e 'Defaults:'"${USER}"' timestamp_timeout='${TIMESTAMP_TIMEOUT}'' >> ${NAME_SUDOERS}.txt
+    echo -e '\n## My Defaults timestamp_timeout = '${TIMESTAMP_TIMEOUT}' minutes' >> ${tmpfile}
+    echo -e 'Defaults:'"${USER}"' timestamp_timeout='${TIMESTAMP_TIMEOUT}'' >> ${tmpfile}
 
     msg_newline
     msg "Ces modifications seront apportées :"
-    sed '/#/d;/^$/d' ${NAME_SUDOERS}.txt
+    sed '/#/d;/^$/d' ${tmpfile}
 
     msg_newline
 
@@ -166,16 +167,16 @@ if [[ -s ${NAME_SUDOERS_PACNEW} ]]; then
             msg_newline
             msg "Suppression des anciens fichiers «.backup» existants."
             rm -v -f ${NAME_SUDOERS}.backup.*
-            rm -v -f ${NAME_SUDOERS_PACNEW}.backup.*
+#             rm -v -f ${NAME_SUDOERS_PACNEW}.backup.*
             # Sauvegarde fichiers
             msg_newline
             msg "Sauvegarde des fichiers existants."
-            cp -v ${NAME_SUDOERS} ${NAME_SUDOERS}.backup.${LADATE}
-            cp -v ${NAME_SUDOERS_PACNEW} ${NAME_SUDOERS_PACNEW}.backup.${LADATE}
+            cp -p -v ${NAME_SUDOERS} ${NAME_SUDOERS}.backup.${LADATE}
+#             cp -v ${NAME_SUDOERS_PACNEW} ${NAME_SUDOERS_PACNEW}.backup.${LADATE}
             # Modification fichier sudoers
             msg_newline
             msg "Modification de «sudoers»."
-            mv -v ${NAME_SUDOERS}.txt ${NAME_SUDOERS}
+            mv -v ${tmpfile} ${NAME_SUDOERS}
             # Vérifications
             msg_newline
             msg "Vérification de «sudoers» :"
@@ -193,7 +194,7 @@ if [[ -s ${NAME_SUDOERS_PACNEW} ]]; then
         *)
             # Réponse = N/n
             # 3) SUPPRIME FICHIERS TEMPS
-            rm -f ${NAME_SUDOERS}.txt
+            rm -f ${tmpfile}
             cd
             msg_newline
             msg "Modifications non apportées."
