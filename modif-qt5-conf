@@ -1,108 +1,161 @@
 #!/usr/bin/env bash
 
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013, 2014, 2015
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013, 2014, 2015, 2016
 #
-# Version 07
+# Version 08
 #
 
 #
-# COULEURS
-ALL_OFF="\e[1;0m"
-BOLD="\e[1;1m"
-BLUE="${BOLD}\e[1;34m"
-GREEN="${BOLD}\e[1;32m"
-RED="${BOLD}\e[1;31m"
-YELLOW="${BOLD}\e[1;33m"
+# COLORS
+# Regular Colors
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
+#
+# REPERTOIRE
+DIR_COMMON=/usr/lib/qt/mkspecs/common
+## POUR TEST
+# DIR_COMMON=/home/jnd/01-scripts/Modif-qt-conf/0-Tests/qt5/
+# cp -p -v /home/jnd/01-scripts/Modif-qt-conf/0-Tests/qt5/gcc-base.conf.original /home/jnd/01-scripts/Modif-qt-conf/0-Tests/qt5/gcc-base.conf
+## POUR TEST
+
+#
+# NOM FICHIER
+NAME_GCC_BASE=gcc-base.conf
 
 #
 # FONCTIONS
+msg_1() {
+  local mesg=$1; shift
+  printf "${BWhite}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_2() {
+  local mesg=$1; shift
+  printf "${BWhite}=> ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_titre() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+        local mesg=$1; shift
+        printf "\n" "$@" >&2
+}
+
 read_input_text(){ #{{{
     read -p "$1 [O/N]: " OPTION
-    echo ""
-    OPTION=`echo "$OPTION" | tr '[:upper:]' '[:lower:]'`
+    msg_newline
+    OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
 } #}}}
 #
 
 # => Passe en root
-if [ ! $( id -u ) -eq 0 ]; then
-    echo -e "\n${YELLOW}Le script "$0" doit être exécuté en « root »."
-    echo -e "Entrer le mot de passe de « root »${ALL_OFF}"
-    exec su -c "${0} ${CMDLN_ARGS}"
+if (( EUID != 0 )); then
+    printf '\n%s\n' "${BYellow}Le script doit être exécuté en «root»."
+    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
+    exec su -c "${0} ${1}"
     exit ${?}
 fi
 
 # Titre
-echo "+----------------------------------------------------------+"
-echo "| Modification des options de compilation de Qt5           |"
-echo "| Modification de /usr/lib/qt/mkspecs/common/gcc-base.conf |"
-echo "+----------------------------------------------------------+"
-echo ""
+msg_titre "+----------------------------------------------------------+"
+msg_titre "| Modification des options de compilation de Qt5           |"
+msg_titre "| Modification de /usr/lib/qt/mkspecs/common/gcc-base.conf |"
+msg_titre "+----------------------------------------------------------+"
+msg_newline
 
 # La date du jour
-#LADATE=`date +%Y-%m-%d_%H-%M`;
-LADATE=`date +%Y-%m-%d`;
+LADATE=$(date +%Y-%m-%d)
+
+# Répertoire de travail
+DIR_WORK="${DIR_COMMON}"
 
 # Le répertoire
-cd /usr/lib/qt/mkspecs/common
+cd "${DIR_WORK}"
 
 # QMAKE_CFLAGS_OPTIMIZE      = -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4
 # CXXFLAGS="-march=native -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4"
 # CXXFLAGS="-march=native -O2 -pipe -fdiagnostics-color=always -fstack-protector-strong --param=ssp-buffer-size=4"
 
-# 1) MODIFS SUR FICHIERS TEMPS
-cp gcc-base.conf gcc-base.conf.txt
+# 1) MODIFS SUR FICHIER TEMP
+tmpfile=$(mktemp --suffix=-gcc-base)
+cp -p ${NAME_GCC_BASE} ${tmpfile}
 # 1-1) Modifs QMAKE_CFLAGS_OPTIMIZE
-if [ -f "/etc/makepkg.conf" ]; then
+if [[ -f "/etc/makepkg.conf" ]]; then
   # Get CXXFLAGS from makepkg.conf
   eval $(grep '^CXXFLAGS=' "/etc/makepkg.conf")
-  if [ -n "${CXXFLAGS}" ]; then
+  if [[ -n "${CXXFLAGS}" ]]; then
     # Changes the current line with my CXXFLAGS
-    sed -i "/^QMAKE_CFLAGS_OPTIMIZE /c\QMAKE_CFLAGS_OPTIMIZE      = ${CXXFLAGS}" gcc-base.conf.txt
+    sed -i "/^QMAKE_CFLAGS_OPTIMIZE /c\QMAKE_CFLAGS_OPTIMIZE      = ${CXXFLAGS}" ${tmpfile}
   fi
 fi
 # 1-2) Modifs QMAKE_CFLAGS_RELEASE
-sed -i "/^QMAKE_CFLAGS_RELEASE /c\QMAKE_CFLAGS_RELEASE       += \$\$QMAKE_CFLAGS_OPTIMIZE" gcc-base.conf.txt
+sed -i "/^QMAKE_CFLAGS_RELEASE /c\QMAKE_CFLAGS_RELEASE       += \$\$QMAKE_CFLAGS_OPTIMIZE" ${tmpfile}
+# 1-3) Modifs QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO
+sed -i "/^QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO /c\QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO += \$\$QMAKE_CFLAGS_OPTIMIZE -g" ${tmpfile}
 
-echo ":: Ces modifications seront apportées :"
-echo "=> gcc-base.conf :"
-cat gcc-base.conf.txt | grep -E "^QMAKE_CFLAGS_OPTIMIZE "
-cat gcc-base.conf.txt | grep -E "^QMAKE_CFLAGS_RELEASE "
-echo ""
+msg_1 "Ces modifications seront apportées :"
+msg_2 "${NAME_GCC_BASE} :"
+cat ${tmpfile} | grep -E "^QMAKE_CFLAGS_OPTIMIZE "
+cat ${tmpfile} | grep -E "^QMAKE_CFLAGS_RELEASE "
+cat ${tmpfile} | grep -E "^QMAKE_CFLAGS_RELEASE_WITH"
+msg_newline
 
 # 2) FAIT MODIFS SI REPONSE = o ou O
 read_input_text "Confirmer les modifications apportées"
   case "$OPTION" in
     "o")
-        echo ":: Suppression des anciens gcc-base.conf.backup-AAAA-MM-JJ"
-        echo ""
-        rm -f gcc-base.conf.backup-*
+        msg_1 "Suppression des anciens ${NAME_GCC_BASE}.backup-AAAA-MM-JJ"
+        msg_newline
+        rm -f ${NAME_GCC_BASE}.backup-*
 
-        echo ":: Sauvegarde de gcc-base.conf original en gcc-base.conf.backup-${LADATE}"
-        echo ""
-        cp gcc-base.conf gcc-base.conf.backup-${LADATE}
+        msg_1 "Sauvegarde de ${NAME_GCC_BASE} original en ${NAME_GCC_BASE}.backup-${LADATE}"
+        msg_newline
+        cp -p ${NAME_GCC_BASE} ${NAME_GCC_BASE}.backup-${LADATE}
 
-        echo ":: Modification de gcc-base.conf"
-        echo ""
-        mv gcc-base.conf.txt gcc-base.conf
+        msg_1 "Modification de ${NAME_GCC_BASE}"
+        msg_newline
+        mv ${tmpfile} ${NAME_GCC_BASE}
 
-        echo ":: Vérification :"
-        echo "=> gcc-base.conf :"
-        cat gcc-base.conf | grep -E "^QMAKE_CFLAGS_OPTIMIZE "
-        cat gcc-base.conf | grep -E "^QMAKE_CFLAGS_RELEASE "
-        echo ""
+        msg_1 "Vérification :"
+        msg_2 "${NAME_GCC_BASE} :"
+        cat ${NAME_GCC_BASE} | grep -E "^QMAKE_CFLAGS_OPTIMIZE "
+        cat ${NAME_GCC_BASE} | grep -E "^QMAKE_CFLAGS_RELEASE "
+        cat ${NAME_GCC_BASE} | grep -E "^QMAKE_CFLAGS_RELEASE_WITH"
+        msg_newline
 
         cd
-        echo ":: Modifications terminées."
-        echo ""
+        msg_1 "Modifications terminées."
+        msg_newline
         ret=0
         ;;
     *)
         # 3) SUPPRIME FICHIERS TEMPS
-        rm -f gcc-base.conf.txt
+        rm -f ${tmpfile}
         cd
-        echo ":: Modifications non apportées."
-        echo ""
+        msg_1 "Modifications non apportées."
+        msg_newline
         ret=1
         ;;
   esac
