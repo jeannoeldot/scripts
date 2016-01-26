@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015
-# Version : 01
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2016
+# Version : 02
 
 ## POUR TEST
 #set -x
@@ -13,49 +13,63 @@ DIR_CONF=/etc
 # DIR_CONF="/home/jnd/01-scripts/Maj-pacman/0-Tests/"
 ## POUR TEST
 ##
+
+# NOMS FICHIERS
 NAME_MAKEPKG=makepkg.conf
 NAME_MAKEPKG_PACNEW=makepkg.conf.pacnew
 NAME_PACMAN=pacman.conf
 NAME_PACMAN_PACNEW=pacman.conf.pacnew
 
+NAME_DIR_REPOLOCAL=00-repolocal
+
 
 # COLORS
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
 # Regular Colors
-Normal='\e[0m'          # Normal
-Black='\e[0;30m'        # Black
-Blue='\e[0;34m'         # Blue
-Cyan='\e[0;36m'         # Cyan
-Green='\e[0;32m'        # Green
-Purple='\e[0;35m'       # Purple
-Red='\e[0;31m'          # Red
-White='\e[0;37m'        # White
-Yellow='\e[0;33m'       # Yellow
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
 # Bold
-BBlack='\e[1;30m'       # Black
-BBlue='\e[1;34m'        # Blue
-BCyan='\e[1;36m'        # Cyan
-BGreen='\e[1;32m'       # Green
-BPurple='\e[1;35m'      # Purple
-BRed='\e[1;31m'         # Red
-BWhite='\e[1;37m'       # White
-BYellow='\e[1;33m'      # Yellow
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
 
 #
 # FONCTIONS
 #
 msg() {
   local mesg=$1; shift
-  printf "${BWhite}:: ${mesg}${Normal}\n" "$@" >&2
+  printf "${BWhite}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_2() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
 }
 
 msg_titre() {
   local mesg=$1; shift
-  printf "${BWhite}${mesg}${Normal}\n" "$@" >&2
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+  local mesg=$1; shift
+  printf "\n" "$@" >&2
 }
 
 error() {
   local mesg=$1; shift
-  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Normal}\n" "$@" >&2
+  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Reset}\n" "$@" >&2
 }
 
 cleanup() {
@@ -69,9 +83,11 @@ die() {
 }
 
 read_input_text(){
+    printf '%s' "${BGreen}"
     read -p "$1 [O/N]: " OPTION
-    echo ""
-    OPTION=`echo "$OPTION" | tr '[:upper:]' '[:lower:]'`
+    msg_newline
+    OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
+    printf '%s\n' "${Reset}"
 }
 #
 # FIN FONCTIONS
@@ -82,9 +98,9 @@ read_input_text(){
 #
 
 # => Passe en root
-if [ ! $( id -u ) -eq 0 ]; then
-    echo -e "\n${BYellow}Le script doit être exécuté en << root >>."
-    echo -e "Entrer le mot de passe de << root >>${Normal}"
+if (( EUID != 0 )); then
+    printf '\n%s\n' "${BYellow}Le script doit être exécuté en «root»."
+    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
     exec su -c "${0} ${1}"
     exit ${?}
 fi
@@ -109,7 +125,7 @@ LADATE=$(date +%Y-%m-%d)
 DIR_WORK="${DIR_CONF}"
 
 ## POUR TEST
-# echo ""
+# msg_newline
 # echo "POUR TEST : DIR_WORK = "${DIR_WORK}
 ##
 
@@ -133,43 +149,45 @@ if [[ -f "${NAME_MAKEPKG_PACNEW}" ]]; then
     sed -i "s/-march=x86-64 -mtune=generic/-march=native/g" /tmp/${NAME_MAKEPKG}
     # Ajout de  -fdiagnostics-color=always
     sed -i "s/-march=native -O2 -pipe/-march=native -O2 -pipe -fdiagnostics-color=always/g" /tmp/${NAME_MAKEPKG}
-    # lscpu  ==> nbre de processeurs : 5 = Nb Processeurs + 1
-    sed -i "/^#MAKEFLAGS/c\MAKEFLAGS=\"-j5\"" /tmp/${NAME_MAKEPKG}
+    # lscpu  ==> nbre de processeurs : 5 = Nb Core + 1
+    nb_core=$(LC_ALL=C lscpu | grep "^Core" | awk '{print $4}')
+    nb_core_mf=$(( $nb_core + 1 ))
+    sed -i "/^#MAKEFLAGS/c\MAKEFLAGS=\"-j$nb_core_mf\"" /tmp/${NAME_MAKEPKG}
     # PACKAGER
     sed -i "/^#PACKAGER/c\PACKAGER=\"Jean-Noel Dot <jean.noel.dot@sfr.fr>\"" /tmp/${NAME_MAKEPKG}
 
-    echo ""
+    msg_newline
     msg "Ces modifications seront apportées à «${NAME_MAKEPKG}» :"
     sed '/#/d;/^$/d' /tmp/${NAME_MAKEPKG}
 
-    echo ""
+    msg_newline
 
     # 2) FAIT MODIFS SI REPONSE = o ou O
     read_input_text "Confirmer les modifications apportées à «${NAME_MAKEPKG}»"
         case "$OPTION" in
           "o")
             # Suppressions anciens fichiers backup
-            echo ""
+            msg_newline
             msg "Suppression des anciens fichiers .backup existants."
             rm -v -f ${NAME_MAKEPKG}.backup.*
             # Sauvegarde fichiers
-            echo ""
+            msg_newline
             msg "Sauvegarde des fichiers existants."
             cp -v ${NAME_MAKEPKG} ${NAME_MAKEPKG}.backup.${LADATE}
             # Modification fichier
-            echo ""
+            msg_newline
             msg "Modification de «${NAME_MAKEPKG}»."
             mv -v /tmp/${NAME_MAKEPKG} ${NAME_MAKEPKG}
             # Vérifications
-            echo ""
+            msg_newline
             msg "Vérification de «${NAME_MAKEPKG}» :"
             sed '/#/d;/^$/d' ${NAME_MAKEPKG}
             # Supprime le fichier .pacnew
-            echo ""
+            msg_newline
             msg "Suppression du fichier «${NAME_MAKEPKG_PACNEW}»."
             rm -v -f "${NAME_MAKEPKG_PACNEW}"
             # FIN OK
-            echo ""
+            msg_newline
             msg "Modifications de «${NAME_MAKEPKG}» terminées."
             retour=0
             ;;
@@ -177,20 +195,20 @@ if [[ -f "${NAME_MAKEPKG_PACNEW}" ]]; then
             # Réponse = N/n
             # 3) SUPPRIME FICHIERS TEMPS
             rm -f /tmp/${NAME_MAKEPKG}
-            echo ""
+            msg_newline
             msg "Modifications non apportées à «${NAME_MAKEPKG}»."
             retour=1
             ;;
       esac
 else
-      echo ""
+      msg_newline
       msg "Aucun fichier «${NAME_MAKEPKG_PACNEW}». Aucune modification à apporter."
       retour=11
 fi
 
-echo ""
-echo "--------------------------------------------------------------"
-echo ""
+msg_newline
+msg_2 "--------------------------------------------------------------"
+msg_newline
 
 # MODIFS DE PACMAN.CONF
 # =====================
@@ -209,50 +227,53 @@ if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
     ligne_multilib=$(( $ligne_multilib + 1 ))
     sed -i "${ligne_multilib}s/^#//" /tmp/${NAME_PACMAN}
     # ENABLE REPOLOCAL REPOSITORY
-    echo -e '\n[repolocal]' >> /tmp/${NAME_PACMAN}
-    echo -e 'SigLevel = Optional TrustAll' >> /tmp/${NAME_PACMAN}
-    echo -e 'Server = file:///home/jnd/00-repolocal' >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "[repolocal]" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "SigLevel = Optional TrustAll" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "Server = file:///home/${USER}/${NAME_DIR_REPOLOCAL}" >> /tmp/${NAME_PACMAN}
     # ENABLE archlinuxf REPOSITORY
-    echo -e '\n[archlinuxfr]' >> /tmp/${NAME_PACMAN}
-    echo -e 'SigLevel = Never' >> /tmp/${NAME_PACMAN}
-    echo -e 'Server = http://repo.archlinux.fr/$arch' >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "[archlinuxfr]" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "SigLevel = Never" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "Server = http://repo.archlinux.fr/$arch" >> /tmp/${NAME_PACMAN}
     # ENABLE Xyne REPOSITORY : http://xyne.archlinux.ca/projects/
-    echo -e '\n[xyne-x86_64]' >> /tmp/${NAME_PACMAN}
-    echo -e 'SigLevel = Required' >> /tmp/${NAME_PACMAN}
-    echo -e 'Server = http://xyne.archlinux.ca/repos/xyne' >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "[xyne-x86_64]" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "SigLevel = Required" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "Server = http://xyne.archlinux.ca/repos/xyne" >> /tmp/${NAME_PACMAN}
 
-    echo ""
+    msg_newline
     msg "Ces modifications seront apportées à «${NAME_PACMAN}» :"
     sed '/#/d;/^$/d' /tmp/${NAME_PACMAN}
 
-    echo ""
+    msg_newline
 
     # 2) FAIT MODIFS SI REPONSE = o ou O
     read_input_text "Confirmer les modifications apportées à «${NAME_PACMAN}»"
         case "$OPTION" in
           "o")
             # Suppressions anciens fichiers backup
-            echo ""
+            msg_newline
             msg "Suppression des anciens fichiers .backup existants."
             rm -v -f ${NAME_PACMAN}.backup.*
             # Sauvegarde fichiers
-            echo ""
+            msg_newline
             msg "Sauvegarde des fichiers existants."
             cp -v ${NAME_PACMAN} ${NAME_PACMAN}.backup.${LADATE}
             # Modification fichier
-            echo ""
+            msg_newline
             msg "Modification de «${NAME_PACMAN}»."
             mv -v /tmp/${NAME_PACMAN} ${NAME_PACMAN}
             # Vérifications
-            echo ""
+            msg_newline
             msg "Vérification de «${NAME_PACMAN}» :"
             sed '/#/d;/^$/d' ${NAME_PACMAN}
             # Supprime le fichier .pacnew
-            echo ""
+            msg_newline
             msg "Suppression du fichier «${NAME_PACMAN_PACNEW}»."
             rm -v -f "${NAME_PACMAN_PACNEW}"
             # FIN OK
-            echo ""
+            msg_newline
             msg "Modifications de «${NAME_PACMAN}» terminées."
             retour=0
             ;;
@@ -260,13 +281,13 @@ if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
             # Réponse = N/n
             # 3) SUPPRIME FICHIERS TEMPS
             rm -f /tmp/${NAME_PACMAN}
-            echo ""
+            msg_newline
             msg "Modifications non apportées à «${NAME_PACMAN}»."
             retour=2
             ;;
       esac
 else
-      echo ""
+      msg_newline
       msg "Aucun fichier «${NAME_PACMAN_PACNEW}». Aucune modification à apporter."
       retour=22
 fi
