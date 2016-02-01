@@ -235,7 +235,7 @@ if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
     printf '%s\n' "" >> /tmp/${NAME_PACMAN}
     printf '%s\n' "[archlinuxfr]" >> /tmp/${NAME_PACMAN}
     printf '%s\n' "SigLevel = Never" >> /tmp/${NAME_PACMAN}
-    printf '%s\n' "Server = http://repo.archlinux.fr/$arch" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "Server = http://repo.archlinux.fr/\$arch" >> /tmp/${NAME_PACMAN}
     # ENABLE Xyne REPOSITORY : http://xyne.archlinux.ca/projects/
     printf '%s\n' "" >> /tmp/${NAME_PACMAN}
     printf '%s\n' "[xyne-x86_64]" >> /tmp/${NAME_PACMAN}
