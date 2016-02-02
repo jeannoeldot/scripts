@@ -36,9 +36,7 @@ msg_titre " +----------------------------------------+"
 cd $HOME/${NAME_DIR_REPOLOCAL}/
 
 rm -f ${NAME_REPOLOCAL}.db.tar.gz
-
-# Supprimé suite maj pacman 5.0.0
-# rm -f ${NAME_REPOLOCAL}.files.tar.gz
+rm -f ${NAME_REPOLOCAL}.files.tar.gz
 
 #
 # Si pas de -any.pkg.tar.gz
