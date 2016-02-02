@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013, 2015
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013, 2015, 2016
 #
-# Version : 03
+# Version : 04
 #
 
 # COULEURS
 Bold=$(tput bold)
 Underline=$(tput sgr 0 1)
 Reset=$(tput sgr0)
+
+# NOMS FICHIERS
+NAME_DIR_REPOLOCAL=00-repolocal
+NAME_REPOLOCAL=repolocal
+
 
 # FONCTIONS
 msg_titre() {
@@ -28,21 +33,25 @@ msg_titre " +----------------------------------------+"
 
 #sleep 0.5
 
-cd $HOME/00-repolocal/
+cd $HOME/${NAME_DIR_REPOLOCAL}/
 
-rm -f repolocal.db.tar.gz
-rm -f repolocal.files.tar.gz
+rm -f ${NAME_REPOLOCAL}.db.tar.gz
+
+# Supprimé suite maj pacman 5.0.0
+# rm -f ${NAME_REPOLOCAL}.files.tar.gz
 
 #
 # Si pas de -any.pkg.tar.gz
-#repo-add repolocal.db.tar.gz *-x86_64.pkg.tar.gz
+#repo-add ${NAME_REPOLOCAL}.db.tar.gz *-x86_64.pkg.tar.gz
 #
 # Si -any.pkg.tar.gz
-#repo-add repolocal.db.tar.gz *.pkg.tar.gz
+#repo-add ${NAME_REPOLOCAL}.db.tar.gz *.pkg.tar.gz
 #
 # Si -any.pkg et tar.xz
-repo-add repolocal.db.tar.gz *.pkg.tar.*
-repo-add -f repolocal.files.tar.gz *.pkg.tar.*
+repo-add ${NAME_REPOLOCAL}.db.tar.gz *.pkg.tar.*
+
+# Supprimé suite maj pacman 5.0.0
+# repo-add -f ${NAME_REPOLOCAL}.files.tar.gz *.pkg.tar.*
 
 cd
 
