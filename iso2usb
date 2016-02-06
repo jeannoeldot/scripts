@@ -111,7 +111,7 @@ msg_titre "|                                                |"
 msg_titre "+------------------------------------------------+"
 
 # Test si 1 argument
-if [[ $# -eq 1 ]]; then
+if (( $# == 1 )); then
     # Test si $1 = archlinux.iso existe et est un fichier
     if [[ ! -f "$1" ]]; then
         die "Le ficher ""$1" "n'existe pas. Usage : iso2usb /chemin/vers/archlinux.iso""\n"
@@ -153,10 +153,10 @@ else
 fi
 
 # 2) Test si la clé USB est toujours branchée
-if [[ $IS_USB_KEY -eq 1 ]]; then
+if (( $IS_USB_KEY == 1 )); then
     is_usb_key_disconnect=$(journalctl --since="${DATEDUJOUR}" | grep -E "USB disconnect, device number")
     echo ${is_usb_key_disconnect} | tr "[:upper:]" "[:lower:]" | grep -q disconnect
-    if [[ $? -eq 0 ]]; then
+    if ( $? == 0 )); then
         die "La clé USB a été débranchée."
         IS_USB_KEY=0
     else
@@ -165,10 +165,10 @@ if [[ $IS_USB_KEY -eq 1 ]]; then
 fi
 
 # 3) Test si la clé USB n'est pas montée
-if [[ $IS_USB_KEY -eq 2 ]]; then
+if (( $IS_USB_KEY == 2 )); then
     is_usb_key_mounted=$(lsblk | grep -E "$DEVICE_USB_KEY""[1-9]" | awk '{print $7}')
     echo ${is_usb_key_mounted} | tr "[:upper:]" "[:lower:]" | grep -q media
-    if [[ $? -eq 0 ]]; then
+    if ( $? == 0 )); then
         die "La clé USB est montée."
         IS_USB_KEY=0
     else
@@ -177,40 +177,40 @@ if [[ $IS_USB_KEY -eq 2 ]]; then
 fi
 
 # 4) Test si taille clé USB > taille iso
-if [[ $IS_USB_KEY -eq 3 ]]; then
+if (( $IS_USB_KEY == 3 )); then
 #    size_usb_key=$(fdisk -l /dev/$DEVICE_USB_KEY 2> /dev/null | awk '{print $4}' | grep -E "octets" | sed -e "s/.octets,//")
     size_usb_key=$(fdisk -l /dev/$DEVICE_USB_KEY 2> /dev/null | awk '/octets,/ {print $5}' | sed -e "s/.octets,//")
     size_iso=$(ls -la $PATH_TO_ISO | awk '{print $5}')
     if [[ $size_iso -ge $size_usb_key ]] ; then
-        die "Taille du fichier ISO >= Taille de la clé USB << ""$DEVICE_USB_KEY"" >> ."
+        die "Taille du fichier ISO >= Taille de la clé USB «$DEVICE_USB_KEY» ."
     else
         IS_USB_KEY=4
     fi
 fi
 
 # 5) Commande dd bs=4M if=/path/to/archlinux.iso of=/dev/sdx
-if [[ $IS_USB_KEY -eq 4 ]]; then
+if (( $IS_USB_KEY == 4 )); then
     # Calcul du sha1sum de ISO
     msg "Calcul du sha1sum de l'ISO ..."
     sha1sum_iso=$(sha1sum $PATH_TO_ISO | cut -d " " -f 1)
     # Écriture de l'ISO sur la clé USB
-    msg "Écriture de l'ISO sur la clé USB << ""$DEVICE_USB_KEY"" >> ..."
+    msg "Écriture de l'ISO sur la clé USB «$DEVICE_USB_KEY» ..."
     dd bs=4M if=$PATH_TO_ISO of=/dev/$DEVICE_USB_KEY 2>/dev/null
-    if [[ $? -ne 0 ]]; then
-        die "Écriture de l'ISO sur la clé USB << ""$DEVICE_USB_KEY"" >> impossible."
+    if (( $? != 0 )); then
+        die "L'écriture de l'ISO sur la clé USB «$DEVICE_USB_KEY» a échoué."
     fi
     sync
     # Calcul du sha1sum de la clé USB
-    msg "Calcul du sha1sum de la clé USB << ""$DEVICE_USB_KEY"" >> ..."
+    msg "Calcul du sha1sum de la clé USB «$DEVICE_USB_KEY» ..."
     sha1sum_usb=$(dd if=/dev/$DEVICE_USB_KEY count=$(( $(stat -c %s $PATH_TO_ISO) / 512 )) 2>/dev/null | sha1sum | cut -d " " -f 1)
     # Test si sha1sum ok
     if [[ $sha1sum_usb != $sha1sum_iso ]] ;then
-        die "Données sur la clé USB << ""$DEVICE_USB_KEY"" >> erronées."
+        die "Données sur la clé USB «$DEVICE_USB_KEY» erronées."
     fi
 fi
 
 # FIN
-msg "Écriture de l'ISO sur la clé USB << ""$DEVICE_USB_KEY"" >> réalisée avec succès."
+msg "Écriture de l'ISO sur la clé USB «$DEVICE_USB_KEY» réalisée avec succès."
 
 read_key "Retirer la clé USB"
 

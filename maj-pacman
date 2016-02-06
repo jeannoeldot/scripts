@@ -20,6 +20,7 @@ NAME_MAKEPKG_PACNEW=makepkg.conf.pacnew
 NAME_PACMAN=pacman.conf
 NAME_PACMAN_PACNEW=pacman.conf.pacnew
 
+# NOMS RÉPERTOIRES
 NAME_DIR_REPOLOCAL=00-repolocal
 
 

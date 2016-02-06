@@ -7,7 +7,7 @@
 # Version : 0.1.3
 #
 # AVEC 1 paramètres : script2git -m "motifs du commit"
-# Example : $ script2git -m "Modifs COULEURS. echo ==> printf"
+# Example : $ script2git -m "Modifs COULEURS. echo ==> printf. Revu test if"
 # ou
 # SANS paramètre : script2git
 # Example : $ script2git
