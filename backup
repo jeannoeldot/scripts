@@ -197,6 +197,7 @@ print_bold_vert "Effacement des fichiers backup ( ~ )"
 print_bold_vert "------------------------------------"
 #Effacement des fichiers backup ( ~ )
 find -name *~ -exec /usr/bin/rm -vf {} \;
+find -name *~ -exec /usr/bin/rm -vf {} \;
 msg_newline
 
 # LES FICHIERS blend1,2,3, DANS /0-DataLinux/00-3D

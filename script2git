@@ -136,6 +136,7 @@ fi
 # Effacement des fichiers ~ dans ${DIR_SCRIPTS}
 msg_newline
 msg "Effacement des fichiers « *~ » dans « ${DIR_SCRIPTS} »"
+find -name *~ -exec /usr/bin/rm -vf {} \;
 find ${DIR_SCRIPTS} -name *~ -exec /usr/bin/rm -vf {} \;
 
 
