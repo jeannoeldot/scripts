@@ -1,6 +1,65 @@
 #!/usr/bin/env bash
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2016
+# Version : 01 DU 13/02/2016
+#
 
+cd
+
+# CONSTANTES
+# COULEURS
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
+DIR_3D="/0-DataLinux/00-3D"
+
+# FONCTIONS
+print_bold_vert() {
+  local mesg=$1; shift
+  printf "${BGreen}${mesg}${BWhite}\n" "$@" >&2
+}
+msg_newline() {
+  local mesg=$1; shift
+  printf "\n" "$@" >&2
+}
+
+
+# 1) LES FICHIERS BACKUP
+print_bold_vert "Effacement des fichiers backup ( ~ )"
+print_bold_vert "------------------------------------"
 #for file in `find ./ -name "*~"`;do /bin/rm ${file};done
+## POUR TEST
+# find -name *~
+##
 find -name *~ -exec /usr/bin/rm -vf {} \;
 find -name *~ -exec /usr/bin/rm -vf {} \;
-exit
+msg_newline
+
+# 2) LES FICHIERS blend1,2,3, DANS /0-DataLinux/00-3D
+print_bold_vert "Effacement des fichiers blend1,2,3,... dans $DIR_3D"
+print_bold_vert "--------------------------------------------------------------"
+## POUR TEST
+# find $DIR_3D -name *.blend[1-9]
+##
+find $DIR_3D -name *.blend[1-9] -exec /usr/bin/rm -vf {} \;
+msg_newline
+
+
+exit 0
