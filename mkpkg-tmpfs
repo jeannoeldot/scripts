@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015,2016
 # 
 
-# VERSION=1.1.0
+# VERSION=1.1.1
 VERS="@VERSION@"
 
 ################################
@@ -38,8 +38,8 @@ BWhite=${Bold}$(tput setaf 7)
 
 # REPERTOIRES
 #REP_TMPFS="/0-Chroot/00-tmpfs-chroot"
-REP_TMPFS="/home/jnd/05-builds/0-chroot/00-tmpfs-chroot"
-REP_COPIES="/home/jnd/05-builds/0-copie-fichiers-chroot"
+REP_TMPFS="$HOME/05-builds/0-chroot/00-tmpfs-chroot"
+REP_COPIES="$HOME/05-builds/0-copie-fichiers-chroot"
 REP_REPO="/tmp/chrootrepo"
 
 #
@@ -318,13 +318,13 @@ clean_log() {
 #     files=( $(find "$rep" -uid "$user" -print) )
 #     if [[ "${#files[@]}" -ne 0 ]]]; then
 #         for filechown in "${files[@]}"; do
-#             chown $USERNAME:users "$filechown"
+#             chown ${USER}:users "$filechown"
 #         done
 #     fi
 #     files=( $(find "$rep" -gid "$group" -print) )
 #     if [[ "${#files[@]}" -ne 0 ]]]; then
 #         for filechown in "${files[@]}"; do
-#             chown $USERNAME:users "$filechown"
+#             chown ${USER}:users "$filechown"
 #         done
 #     fi
 # }
@@ -354,15 +354,13 @@ msg_titre "|                                          Version = $VERS           
 msg_titre "|                                                                                                            |"
 msg_titre "| Usage : mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt|qt4] [-v git|svn]                  |"
 msg_titre "| ou                                                                                                         |"
-msg_titre "| Usage : /home/jnd/bin/mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt|qt4] [-v git|svn]    |"
+msg_titre "| Usage : $HOME/bin/mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt|qt4] [-v git|svn]    |"
 msg_titre "|                                                                                                            |"
 msg_titre "| mkpkg-tmpfs -h pour lire l'aide                                                                            |"
 msg_titre "+------------------------------------------------------------------------------------------------------------+"
 msg_newline
 
 # VARIABLES DU SCRIPT
-USERNAME="jnd"
-
 # id nobody ==> uid=99(nobody) gid=99(nobody) groupes=99(nobody)
 uid_nobody=$(id -u nobody)
 gid_nobody=$(id -g nobody)
@@ -582,7 +580,7 @@ make_paquet "${rep_paquet}"
 if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}${extension_paquet}" ]]; then
   if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any${extension_paquet}" ]]; then
     error "Fabrication du paquet « $nom_paquet » impossible."
-    warning "Faire : cd ${REP_TMPFS}/jnd/build pour inspection."
+    warning "Faire : cd ${REP_TMPFS}/${USER}/build pour inspection."
     warning "Quand fini :"
     warning "==> fermer tous les fichiers ouverts."
     warning "==> appuyer sur une touche pour quitter le script."
@@ -612,7 +610,7 @@ fi
 # # CHANGE PERMISSIONS
 # #
 # msg_newline
-# msg "Remet propriétaire:groupe à « ""$USERNAME"":users » ..."
+# msg "Remet propriétaire:groupe à « ""${USER}"":users » ..."
 # 
 # clean_own "${rep_paquet}" "$uid_nobody" "$gid_nobody"
 # clean_own "${rep_paquet}" "$uid_root" "$gid_root"

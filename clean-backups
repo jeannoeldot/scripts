@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
 #for file in `find ./ -name "*~"`;do /bin/rm ${file};done
-find -name *~ -exec /usr/bin/rm {} \;
-find -name *~ -exec /usr/bin/rm {} \;
+find -name *~ -exec /usr/bin/rm -vf {} \;
+find -name *~ -exec /usr/bin/rm -vf {} \;
 exit

@@ -33,7 +33,6 @@ BCyan=${Bold}$(tput setaf 6)
 BWhite=${Bold}$(tput setaf 7)
 
 # LES VARIABLES
-USERNAME="jnd"
 # Sources a sauvegarder
 # mettre ici les repertoires a sauvegarder
 REP_CONKY="00-Conky"
@@ -277,7 +276,7 @@ if is_package_installed "grub-bios" ; then
   print_bold_vert "Sauvegarde de /boot/grub/grub.cfg"
   print_bold_vert "---------------------------------"
   sudo cp -v /boot/grub/grub.cfg $HOME/${REP_CONF}/${SAVE_CONFS}/boot-grub-grub.cfg.${AUJOURDHUI}
-  sudo chown ${USERNAME}:users $HOME/${REP_CONF}/${SAVE_CONFS}/boot-grub-grub.cfg.${AUJOURDHUI}
+  sudo chown ${USER}:users $HOME/${REP_CONF}/${SAVE_CONFS}/boot-grub-grub.cfg.${AUJOURDHUI}
   msg_newline
 fi
 
@@ -285,21 +284,21 @@ if is_package_installed "refind-efi" ; then
   print_bold_vert "Sauvegarde de /boot/efi/EFI/refind/refind.conf"
   print_bold_vert "----------------------------------------------"
   sudo cp -v /boot/efi/EFI/refind/refind.conf $HOME/${REP_CONF}/Refind-Fichiers-Conf/boot-efi-EFI-refind-refind.conf.${AUJOURDHUI}
-  sudo chown ${USERNAME}:users $HOME/${REP_CONF}/Refind-Fichiers-Conf/boot-efi-EFI-refind-refind.conf.${AUJOURDHUI}
+  sudo chown ${USER}:users $HOME/${REP_CONF}/Refind-Fichiers-Conf/boot-efi-EFI-refind-refind.conf.${AUJOURDHUI}
   msg_newline
 fi
 
 # Sauvegarde Fichiers cachés dans home
 print_bold_vert "Sauvegarde des fichiers .cachés dans $HOME"
 print_bold_vert "----------------------------------------------"
-cp -v $HOME/.bash_profile $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.bash_profile.${AUJOURDHUI}
-cp -v $HOME/.bashrc $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.bashrc.${AUJOURDHUI}
-cp -v $HOME/.toprc $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.toprc.${AUJOURDHUI}
-cp -v $HOME/.fehbg $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.fehbg.${AUJOURDHUI}
-cp -v $HOME/.gtkrc-2.0 $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.gtkrc-2.0.${AUJOURDHUI}
-cp -v $HOME/.xinitrc $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.xinitrc.${AUJOURDHUI}
+cp -v $HOME/.bash_profile $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.bash_profile.${AUJOURDHUI}
+cp -v $HOME/.bashrc $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.bashrc.${AUJOURDHUI}
+cp -v $HOME/.toprc $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.toprc.${AUJOURDHUI}
+cp -v $HOME/.fehbg $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.fehbg.${AUJOURDHUI}
+cp -v $HOME/.gtkrc-2.0 $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.gtkrc-2.0.${AUJOURDHUI}
+cp -v $HOME/.xinitrc $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.xinitrc.${AUJOURDHUI}
 
-cp -v $HOME/.gitconfig $HOME/${REP_CONF}/${SAVE_CONFS}/home-jnd-.gitconfig.${AUJOURDHUI}
+cp -v $HOME/.gitconfig $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.gitconfig.${AUJOURDHUI}
 msg_newline
 
 # Sauvegarde Fichiers fichiers config de blender
@@ -307,8 +306,8 @@ VERSION_BLENDER=$(blender -v 2> /dev/null | awk '/Blender/ {print $2}')
 
 print_bold_vert "Sauvegarde des fichiers config de blender ${BYellow}${VERSION_BLENDER}"
 print_bold_vert "----------------------------------------------"
-cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/bookmarks.txt $HOME/${REP_CONF}/Blender-config/home-jnd-.config-blender-${VERSION_BLENDER}-config-bookmarks.txt.${AUJOURDHUI}
-cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/recent-files.txt $HOME/${REP_CONF}/Blender-config/home-jnd-.config-blender-${VERSION_BLENDER}-config-recent-files.txt.${AUJOURDHUI}
+cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/bookmarks.txt $HOME/${REP_CONF}/Blender-config/home-${USER}-.config-blender-${VERSION_BLENDER}-config-bookmarks.txt.${AUJOURDHUI}
+cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/recent-files.txt $HOME/${REP_CONF}/Blender-config/home-${USER}-.config-blender-${VERSION_BLENDER}-config-recent-files.txt.${AUJOURDHUI}
 msg_newline
 
 
@@ -377,7 +376,7 @@ printf '%s\n' "sync"
 msg_newline
 
 #ls -l $HOME/99-temp/
-#ls -l /run/media/jnd/MYBOOK/00-ARCH64/
+#ls -l /run/media/${USER}/MYBOOK/00-ARCH64/
 
 #pour avoir la taille restant sur le disque de backup
 ##df
