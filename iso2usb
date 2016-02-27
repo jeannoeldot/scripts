@@ -8,7 +8,7 @@
 # AVEC 1 paramètre : /path/to/archlinux.iso
 # Example : $ iso2usb ~/99-Isos/archlinux-2012.12.01-dual.iso
 # ou
-# SANS PARAMETRE : par défaut dans /home/jnd/99-Isos
+# SANS PARAMETRE : par défaut dans $HOME/99-Isos
 # Example : $ iso2usb
 #
 
@@ -88,7 +88,7 @@ invalid_option() {
 IS_USB_KEY=0
 DEVICE_USB_KEY=""
 PATH_TO_ISO=""
-DIR_ISOS="/home/jnd/99-Isos"
+DIR_ISOS="$HOME/99-Isos"
 
 # Variables du script
 nom_script="$0"
@@ -120,7 +120,7 @@ if (( $# == 1 )); then
     fi
 else
     # Pas d'argument. Fabrique une liste des isos
-    liste_isos=($(LC_ALL=C ls "${DIR_ISOS}" | grep -E ".iso$"))
+    liste_isos=($(LC_ALL=C find -L "${DIR_ISOS}" -iname *.iso -printf "%P\n" | sort))
     PS3="Entrer le n° de l'option choisie: "
     printf '\n%s\n' "${BWhite}Sélectionner le fichier iso à graver sur USB :${Reset}"
     select CHOIX_ISO in "${liste_isos[@]}"; do

@@ -61,5 +61,6 @@ print_bold_vert "--------------------------------------------------------------"
 find $DIR_3D -name *.blend[1-9] -exec /usr/bin/rm -vf {} \;
 msg_newline
 
+sync
 
 exit 0

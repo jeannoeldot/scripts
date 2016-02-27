@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015,2016
 #
 # Name : dev2git
 #
-# Version : 0.1.3
+# Version : 0.1.4
 #
 # Examples :
 # dev2git -s jndqcbgrd -d jndqcbgrd-qt5 -m "Revu alignement titre ds modification nom catégories" -t v0.1.8
@@ -89,8 +89,8 @@ usage() {
 
 
 # Variables globales
-DIR_DEV="/home/jnd/01-dev/00-qtcreator"
-DIR_GIT="/home/jnd/02-git"
+DIR_DEV="$HOME/01-dev/00-qtcreator"
+DIR_GIT="$HOME/02-git"
 
 MOTIF_PAR_DEFAUT="Mises à jour"
 TAG_PAR_DEFAUT="Nouvelle Version"
@@ -252,10 +252,10 @@ exit 0
 ## POUR TEST
 
 # # $ find ~/01-dev -name jndqcbgrd
-# # ==> /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# # ==> $HOME/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
 # 
 # # $ find ~/02-git -name jndqcbgrd-qt5
-# # ==> /home/jnd/02-git/jndqcbgrd-qt5
+# # ==> $HOME/02-git/jndqcbgrd-qt5
 # msg_newline
 # echo "TEST"
 # find ${DIR_DEV} -name jndqcbgrd
@@ -280,25 +280,25 @@ exit 0
 # SORTIES KONSOLE
 # $ dev2git jndqcbgrd jndqcbgrd-qt5 "motifs bidons"
 # ==> OK : 3 arguments
-# PATH_TO_QUOI = /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
-# PATH_TO_DESTINATION = /home/jnd/02-git/jndqcbgrd-qt5
+# PATH_TO_QUOI = $HOME/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# PATH_TO_DESTINATION = $HOME/02-git/jndqcbgrd-qt5
 # CONTENU_MOTIF = motifs bidons
 # 
 # $ dev2git jndqcbgrd jndqcbgrd-qt5
 # ==> OK : 2 arguments
-# PATH_TO_QUOI = /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
-# PATH_TO_DESTINATION = /home/jnd/02-git/jndqcbgrd-qt5
+# PATH_TO_QUOI = $HOME/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# PATH_TO_DESTINATION = $HOME/02-git/jndqcbgrd-qt5
 # CONTENU_MOTIF = Mises à jour
 # 
 
 
-# cd /home/jnd/01-dev/00-qtcreator/00-progs-qt5-olds/jndqcbgrd-0.1.6/ \
+# cd $HOME/01-dev/00-qtcreator/00-progs-qt5-olds/jndqcbgrd-0.1.6/ \
 # && rm -f *~ \
 # && cd
 # 
-# cd /home/jnd/02-git/jndqcbgrd-qt5
+# cd $HOME/02-git/jndqcbgrd-qt5
 # 
-# cp -Rf /home/jnd/01-dev/00-qtcreator/00-progs-qt5-olds/jndqcbgrd-0.1.6/* .
+# cp -Rf $HOME/01-dev/00-qtcreator/00-progs-qt5-olds/jndqcbgrd-0.1.6/* .
 # 
 # git add --all
 # 
@@ -315,13 +315,13 @@ exit 0
 #  |                                                       |
 #  +-------------------------------------------------------+
 # ==> OK : 3 arguments
-# PATH_TO_QUOI = /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
-# PATH_TO_DESTINATION = /home/jnd/02-git/jndqcbgrd-qt5
+# PATH_TO_QUOI = $HOME/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# PATH_TO_DESTINATION = $HOME/02-git/jndqcbgrd-qt5
 # CONTENU_MOTIF = Début Ajout N° Catégories dans Dialog
 # 
-# :: Effacement des fichiers ~ dans /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
+# :: Effacement des fichiers ~ dans $HOME/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd
 # 
-# :: Copie des fichiers de /home/jnd/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd vers /home/jnd/02-git/jndqcbgrd-qt5
+# :: Copie des fichiers de $HOME/01-dev/00-qtcreator/00-progs-qt5/jndqcbgrd vers $HOME/02-git/jndqcbgrd-qt5
 # 
 # :: Commande « git add --all »
 # 

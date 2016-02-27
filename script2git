@@ -4,10 +4,11 @@
 #
 # Name : script2git
 #
-# Version : 0.1.3
+# Version : 0.1.4
 #
 # AVEC 1 paramètres : script2git -m "motifs du commit"
 # Example : $ script2git -m "Modifs COULEURS. echo ==> printf. Revu test if"
+# Example : $ script2git -m "Modifs COULEURS. echo ==> printf. Revu if, PATH, ls et find"
 # ou
 # SANS paramètre : script2git
 # Example : $ script2git
@@ -85,8 +86,8 @@ usage() {
 
 
 # Variables globales
-DIR_SCRIPTS="/home/jnd/01-scripts"
-DIR_GIT="/home/jnd/02-git/scripts"
+DIR_SCRIPTS="$HOME/01-scripts"
+DIR_GIT="$HOME/02-git/scripts"
 
 MOTIF_PAR_DEFAUT="Mises à jour"
 
@@ -174,60 +175,60 @@ cp -vf ${DIR_SCRIPTS}/rpmextract.sh ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/search.sh ${DIR_GIT}/
 
 # Création nouveau ${DIR_GIT}/README
-echo 'Repository de mes scripts contenus dans ~/01-scripts.' > ${DIR_GIT}/README
-echo '=====================================================' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : Backup' >> ${DIR_GIT}/README
-echo ' -> backup' >> ${DIR_GIT}/README
-echo ' -> backup-ob' >> ${DIR_GIT}/README
-echo ' -> backup-nosauve' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : Creation-PKG-Tempfs' >> ${DIR_GIT}/README
-echo ' -> mkpkg-tmpfs' >> ${DIR_GIT}/README
-echo ' -> mkpkg-chroot-repo' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : init-mirrorlist-pacnew' >> ${DIR_GIT}/README
-echo ' -> maj-mirrorlist' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : iso2usb' >> ${DIR_GIT}/README
-echo ' -> iso2usb' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : Maj-pacman' >> ${DIR_GIT}/README
-echo ' -> maj-pacman' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : Maj-refind' >> ${DIR_GIT}/README
-echo ' -> maj-refind' >> ${DIR_GIT}/README
-echo ' -> modif-refind-conf' >> ${DIR_GIT}/README
-echo ' -> icones-arch' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : Maj-Repos' >> ${DIR_GIT}/README
-echo ' -> maj-repolocal' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : Maj-startkde' >> ${DIR_GIT}/README
-echo ' -> maj-startkde' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : Maj-sudoers' >> ${DIR_GIT}/README
-echo ' -> maj-sudoers' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : Modif-qt-conf' >> ${DIR_GIT}/README
-echo ' -> modif-qt4-conf' >> ${DIR_GIT}/README
-echo ' -> modif-qt5-conf' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : To-git' >> ${DIR_GIT}/README
-echo ' -> dev2git' >> ${DIR_GIT}/README
-echo ' -> script2git' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Répertoire : verif-deps' >> ${DIR_GIT}/README
-echo ' -> verif-deps' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo '' >> ${DIR_GIT}/README
-echo 'Racine :' >> ${DIR_GIT}/README
-echo ' -> clean-backups' >> ${DIR_GIT}/README
-echo ' -> dpi.py' >> ${DIR_GIT}/README
-echo ' -> lls' >> ${DIR_GIT}/README
-echo ' -> ompload' >> ${DIR_GIT}/README
-echo ' -> rpmextract.sh' >> ${DIR_GIT}/README
-echo ' -> search.sh' >> ${DIR_GIT}/README
+printf '%s\n' "Repository de mes scripts contenus dans ~/01-scripts." > ${DIR_GIT}/README
+printf '%s\n' "=====================================================" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Backup" >> ${DIR_GIT}/README
+printf '%s\n' " -> backup" >> ${DIR_GIT}/README
+printf '%s\n' " -> backup-ob" >> ${DIR_GIT}/README
+printf '%s\n' " -> backup-nosauve" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Creation-PKG-Tempfs" >> ${DIR_GIT}/README
+printf '%s\n' " -> mkpkg-tmpfs" >> ${DIR_GIT}/README
+printf '%s\n' " -> mkpkg-chroot-repo" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : init-mirrorlist-pacnew" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-mirrorlist" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : iso2usb" >> ${DIR_GIT}/README
+printf '%s\n' " -> iso2usb" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Maj-pacman" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-pacman" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Maj-refind" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-refind" >> ${DIR_GIT}/README
+printf '%s\n' " -> modif-refind-conf" >> ${DIR_GIT}/README
+printf '%s\n' " -> icones-arch" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Maj-Repos" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-repolocal" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Maj-startkde" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-startkde" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Maj-sudoers" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-sudoers" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Modif-qt-conf" >> ${DIR_GIT}/README
+printf '%s\n' " -> modif-qt4-conf" >> ${DIR_GIT}/README
+printf '%s\n' " -> modif-qt5-conf" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : To-git" >> ${DIR_GIT}/README
+printf '%s\n' " -> dev2git" >> ${DIR_GIT}/README
+printf '%s\n' " -> script2git" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : verif-deps" >> ${DIR_GIT}/README
+printf '%s\n' " -> verif-deps" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Racine :" >> ${DIR_GIT}/README
+printf '%s\n' " -> clean-backups" >> ${DIR_GIT}/README
+printf '%s\n' " -> dpi.py" >> ${DIR_GIT}/README
+printf '%s\n' " -> lls" >> ${DIR_GIT}/README
+printf '%s\n' " -> ompload" >> ${DIR_GIT}/README
+printf '%s\n' " -> rpmextract.sh" >> ${DIR_GIT}/README
+printf '%s\n' " -> search.sh" >> ${DIR_GIT}/README
 
 
 # Commande git add --all
