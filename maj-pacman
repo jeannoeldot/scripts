@@ -129,10 +129,6 @@ msg_titre "+------------------------------------------------------------+"
 
 # DANS VIRTUALBOX OU NON
 check_is_in_virtualbox
-# POUR TEST
-msg_newline
-echo "POUR TEST : IN_VIRTUAL_BOX = "${IN_VIRTUAL_BOX}
-#
 
 # Variable de retour : init à 9
 retour=9
@@ -157,11 +153,14 @@ cd "${DIR_WORK}"
 # cp -v ${NAME_PACMAN_PACNEW}.original ${NAME_PACMAN_PACNEW}
 # read_input_text "Appuyer sur une touche pour continuer"
 ## POUR TEST
-# POUR TEST
-msg_newline
-echo "POUR TEST : NAME_USER = "${NAME_USER}
-#
-
+# # POUR TEST
+# msg_newline
+# echo "POUR TEST : IN_VIRTUAL_BOX = "${IN_VIRTUAL_BOX}
+# #
+# # POUR TEST
+# msg_newline
+# echo "POUR TEST : NAME_USER = "${NAME_USER}
+# #
 
 
 # MODIFS DE MAKEPKG.CONF
