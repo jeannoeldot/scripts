@@ -6,14 +6,6 @@
 ## POUR TEST
 #set -x
 
-# REPERTOIRES
-DIR_CONF=/etc
-
-## POUR TEST
-# DIR_CONF="/home/jnd/01-scripts/Maj-pacman/0-Tests/"
-## POUR TEST
-##
-
 # NOMS FICHIERS
 NAME_MAKEPKG=makepkg.conf
 NAME_MAKEPKG_PACNEW=makepkg.conf.pacnew
@@ -22,7 +14,15 @@ NAME_PACMAN_PACNEW=pacman.conf.pacnew
 
 # NOMS RÉPERTOIRES
 NAME_DIR_REPOLOCAL=00-repolocal
+# REPERTOIRES
+DIR_CONF=/etc
+## POUR TEST
+# DIR_CONF="$HOME/01-scripts/Maj-pacman/0-Tests/"
+## POUR TEST
+##
 
+# NOM UTILSATEUR
+NAME_USER=${USER}
 
 # COLORS
 Bold=$(tput bold)
@@ -83,12 +83,23 @@ die() {
   cleanup 1
 }
 
-read_input_text(){
+read_input_text() {
     printf '%s' "${BGreen}"
     read -p "$1 [O/N]: " OPTION
     msg_newline
     OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
     printf '%s\n' "${Reset}"
+}
+
+# DANS VIRTUALBOX OU NON
+check_is_in_virtualbox() {
+    local vbox=$(journalctl -b | grep -E "DMI:")
+    echo ${vbox} | tr "[:upper:]" "[:lower:]" | grep -q virtualbox
+    if (( $? == 0 )); then
+        IN_VIRTUAL_BOX=1
+    else
+        IN_VIRTUAL_BOX=0
+    fi
 }
 #
 # FIN FONCTIONS
@@ -116,6 +127,13 @@ msg_titre "|                                                            |"
 msg_titre "+------------------------------------------------------------+"
 
 
+# DANS VIRTUALBOX OU NON
+check_is_in_virtualbox
+# POUR TEST
+msg_newline
+echo "POUR TEST : IN_VIRTUAL_BOX = "${IN_VIRTUAL_BOX}
+#
+
 # Variable de retour : init à 9
 retour=9
 
@@ -139,6 +157,11 @@ cd "${DIR_WORK}"
 # cp -v ${NAME_PACMAN_PACNEW}.original ${NAME_PACMAN_PACNEW}
 # read_input_text "Appuyer sur une touche pour continuer"
 ## POUR TEST
+# POUR TEST
+msg_newline
+echo "POUR TEST : NAME_USER = "${NAME_USER}
+#
+
 
 
 # MODIFS DE MAKEPKG.CONF
@@ -147,9 +170,11 @@ if [[ -f "${NAME_MAKEPKG_PACNEW}" ]]; then
     # 1) MODIFS SUR FICHIERS TEMPS
     cp ${NAME_MAKEPKG_PACNEW} /tmp/${NAME_MAKEPKG}
     # Modifs -march
-    sed -i "s/-march=x86-64 -mtune=generic/-march=native/g" /tmp/${NAME_MAKEPKG}
+    if (( $IN_VIRTUAL_BOX == 0 )); then
+        sed -i "s/-march=x86-64 -mtune=generic/-march=native/g" /tmp/${NAME_MAKEPKG}
+    fi
     # Ajout de  -fdiagnostics-color=always
-    sed -i "s/-march=native -O2 -pipe/-march=native -O2 -pipe -fdiagnostics-color=always/g" /tmp/${NAME_MAKEPKG}
+    sed -i "s/-O2 -pipe/-O2 -pipe -fdiagnostics-color=always/g" /tmp/${NAME_MAKEPKG}
     # lscpu  ==> nbre de processeurs : 5 = Nb Core + 1
     nb_core=$(LC_ALL=C lscpu | grep "^Core" | awk '{print $4}')
     nb_core_mf=$(( $nb_core + 1 ))
@@ -220,18 +245,22 @@ if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
     sed -i "/^#Color/c\Color" /tmp/${NAME_PACMAN}
     #ADD VerbosePkgLists TO PACMAN.CONF
     sed -i "/^#VerbosePkgLists/c\VerbosePkgLists" /tmp/${NAME_PACMAN}
-    # ENABLE REPO-CK REPOSITORY
-    sed -i "/^\[core\]/i\[repo-ck]\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\n" /tmp/${NAME_PACMAN}
+    if (( $IN_VIRTUAL_BOX == 0 )); then
+        # ENABLE REPO-CK REPOSITORY
+        sed -i "/^\[core\]/i\[repo-ck]\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\n" /tmp/${NAME_PACMAN}
+    fi
     # ENABLE MULTILIB REPOSITORY
     ligne_multilib=$(grep -n "\[multilib\]" /tmp/${NAME_PACMAN} | cut -f1 -d:)
     sed -i "${ligne_multilib}s/^#//" /tmp/${NAME_PACMAN}
     ligne_multilib=$(( $ligne_multilib + 1 ))
     sed -i "${ligne_multilib}s/^#//" /tmp/${NAME_PACMAN}
-    # ENABLE REPOLOCAL REPOSITORY
-    printf '%s\n' "" >> /tmp/${NAME_PACMAN}
-    printf '%s\n' "[repolocal]" >> /tmp/${NAME_PACMAN}
-    printf '%s\n' "SigLevel = Optional TrustAll" >> /tmp/${NAME_PACMAN}
-    printf '%s\n' "Server = file:///home/${USER}/${NAME_DIR_REPOLOCAL}" >> /tmp/${NAME_PACMAN}
+    if (( $IN_VIRTUAL_BOX == 0 )); then
+        # ENABLE REPOLOCAL REPOSITORY
+        printf '%s\n' "" >> /tmp/${NAME_PACMAN}
+        printf '%s\n' "[repolocal]" >> /tmp/${NAME_PACMAN}
+        printf '%s\n' "SigLevel = Optional TrustAll" >> /tmp/${NAME_PACMAN}
+        printf '%s\n' "Server = file:///home/${NAME_USER}/${NAME_DIR_REPOLOCAL}" >> /tmp/${NAME_PACMAN}
+    fi
     # ENABLE archlinuxf REPOSITORY
     printf '%s\n' "" >> /tmp/${NAME_PACMAN}
     printf '%s\n' "[archlinuxfr]" >> /tmp/${NAME_PACMAN}
