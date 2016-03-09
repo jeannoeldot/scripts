@@ -92,6 +92,8 @@ read_input_text() {
 }
 
 # DANS VIRTUALBOX OU NON
+# OUI ==> IN_VIRTUAL_BOX=1
+# NON ==> IN_VIRTUAL_BOX=0
 check_is_in_virtualbox() {
     local vbox=$(journalctl -b | grep -E "DMI:")
     echo ${vbox} | tr "[:upper:]" "[:lower:]" | grep -q virtualbox
