@@ -84,24 +84,24 @@ die() {
 }
 
 read_input_text() {
-    printf '%s' "${BGreen}"
-    read -p "$1 [O/N]: " OPTION
-    msg_newline
-    OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
-    printf '%s\n' "${Reset}"
+  printf '%s' "${BGreen}"
+  read -p "$1 [O/N]: " OPTION
+  msg_newline
+  OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
+  printf '%s\n' "${Reset}"
 }
 
 # DANS VIRTUALBOX OU NON
 # OUI ==> IN_VIRTUAL_BOX=1
 # NON ==> IN_VIRTUAL_BOX=0
 check_is_in_virtualbox() {
-    local vbox=$(journalctl -b | grep -E "DMI:")
-    echo ${vbox} | tr "[:upper:]" "[:lower:]" | grep -q virtualbox
-    if (( $? == 0 )); then
-        IN_VIRTUAL_BOX=1
-    else
-        IN_VIRTUAL_BOX=0
-    fi
+  local vbox=$(journalctl -b | grep -E "DMI:")
+  echo ${vbox} | tr "[:upper:]" "[:lower:]" | grep -q virtualbox
+  if (( $? == 0 )); then
+    IN_VIRTUAL_BOX=1
+  else
+    IN_VIRTUAL_BOX=0
+  fi
 }
 #
 # FIN FONCTIONS
@@ -113,10 +113,10 @@ check_is_in_virtualbox() {
 
 # => Passe en root
 if (( EUID != 0 )); then
-    printf '\n%s\n' "${BYellow}Le script doit être exécuté en «root»."
-    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
-    exec su -c "${0} ${1}"
-    exit ${?}
+  printf '\n%s\n' "${BYellow}Le script doit être exécuté en «root»."
+  printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
+  exec su -c "${0} ${1}"
+  exit ${?}
 fi
 
 # Titre

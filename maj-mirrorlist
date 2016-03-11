@@ -48,8 +48,8 @@ msg_titre() {
 }
 
 msg_newline() {
-        local mesg=$1; shift
-        printf "\n" "$@" >&2
+  local mesg=$1; shift
+  printf "\n" "$@" >&2
 }
 
 error() {
@@ -68,9 +68,9 @@ die() {
 }
 
 read_input_text(){
-    read -p "$1 [O/N]: " OPTION
-    msg_newline
-    OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
+  read -p "$1 [O/N]: " OPTION
+  msg_newline
+  OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
 }
 #
 # FIN FONCTIONS
@@ -82,10 +82,10 @@ read_input_text(){
 
 # => Passe en root
 if (( EUID != 0 )); then
-    printf '\n%s\n' "${BYellow}Le script doit être exécuté en «root»."
-    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
-    exec su -c "${0} ${1}"
-    exit ${?}
+  printf '\n%s\n' "${BYellow}Le script doit être exécuté en «root»."
+  printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
+  exec su -c "${0} ${1}"
+  exit ${?}
 fi
 
 # Titre

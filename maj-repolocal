@@ -19,8 +19,8 @@ NAME_REPOLOCAL=repolocal
 
 # FONCTIONS
 msg_titre() {
-        local mesg=$1; shift
-        printf "${Bold}${mesg}${Reset}\n" "$@" >&2
+  local mesg=$1; shift
+  printf "${Bold}${mesg}${Reset}\n" "$@" >&2
 }
 
 

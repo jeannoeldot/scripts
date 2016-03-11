@@ -44,44 +44,44 @@ BWhite=${Bold}$(tput setaf 7)
 
 # FONCTIONS
 msg_titre() {
-        local mesg=$1; shift
-        printf "${Bold}${mesg}${Reset}\n" "$@" >&2
+    local mesg=$1; shift
+    printf "${Bold}${mesg}${Reset}\n" "$@" >&2
 }
 
 msg() {
-        local mesg=$1; shift
-        printf "${Bold}:: ${mesg}${Reset}\n" "$@" >&2
+    local mesg=$1; shift
+    printf "${Bold}:: ${mesg}${Reset}\n" "$@" >&2
 }
 
 msg_green() {
-        local mesg=$1; shift
-        printf "${BGreen}:: ${mesg}${Reset}\n" "$@" >&2
+    local mesg=$1; shift
+    printf "${BGreen}:: ${mesg}${Reset}\n" "$@" >&2
 }
 
 msg_newline() {
-        local mesg=$1; shift
-        printf "\n" "$@" >&2
+    local mesg=$1; shift
+    printf "\n" "$@" >&2
 }
 
 error() {
-        local mesg=$1; shift
-        printf "${BRed}==> ERREUR:${Reset}${Bold} ${mesg}${Reset}\n" "$@" >&2
+    local mesg=$1; shift
+    printf "${BRed}==> ERREUR:${Reset}${Bold} ${mesg}${Reset}\n" "$@" >&2
 }
 
 cleanup() {
-        [[ $1 ]] && exit $1
+    [[ $1 ]] && exit $1
 }
 
 die() {
-        error "$*"
-        cleanup 1
+    error "$*"
+    cleanup 1
 }
 
 usage() {
-        printf '%s\n' "Arguments :"
-        printf '%s\n' "-h                 Cette aide."
-        printf '%s\n' "-m <motif>         motif : Motifs du commit. Facultatif: Par défaut = \"Mises à jour\""
-        cleanup 0
+    printf '%s\n' "Arguments :"
+    printf '%s\n' "-h                 Cette aide."
+    printf '%s\n' "-m <motif>         motif : Motifs du commit. Facultatif: Par défaut = \"Mises à jour\""
+    cleanup 0
 }
 
 
@@ -117,10 +117,10 @@ msg_newline
 arg_motif=
 
 while getopts 'h:m:' arg; do
-        case "$arg" in
-                m) arg_motif="$OPTARG" ;;
-                h|*) usage ;;
-        esac
+    case "$arg" in
+        m) arg_motif="$OPTARG" ;;
+        h|*) usage ;;
+    esac
 done
 
 # Test si arg_motif existe. Par défaut = "Mises à jour"

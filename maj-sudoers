@@ -39,6 +39,9 @@ DIR_SUDOERS=/etc
 NAME_SUDOERS=sudoers
 NAME_SUDOERS_PACNEW=sudoers.pacnew
 
+# NOM UTILSATEUR
+NAME_USER=${USER}
+
 # TIMESTAMP_TIMEOUT = 20 minutes
 TIMESTAMP_TIMEOUT=20
 
@@ -136,7 +139,7 @@ if [[ -s ${NAME_SUDOERS_PACNEW} ]]; then
     version_ob=$(openbox --version 2> /dev/null | awk '/Openbox/ {print $2}')
     if [[ ${version_ob} != "" ]]; then
         sed -i "/^## User alias specification/i## My User alias" ${tmpfile}
-        sed -i "/^## User alias specification/iUser_Alias ADMINS = ${USER}\n##" ${tmpfile}
+        sed -i "/^## User alias specification/iUser_Alias ADMINS = ${NAME_USER}\n##" ${tmpfile}
     
         sed -i "/^## Cmnd alias specification/i## My Cmnd alias" ${tmpfile}
 #         sed -i "/^## Cmnd alias specification/iCmnd_Alias SHUTDOWN_CMDS = /sbin/shutdown, /sbin/halt, /sbin/reboot, /sbin/poweroff" ${tmpfile}
@@ -150,8 +153,8 @@ if [[ -s ${NAME_SUDOERS_PACNEW} ]]; then
     fi
 
     # Modification de timestamp_timeout = 20 minutes
-    echo -e '\n## My Defaults timestamp_timeout = '${TIMESTAMP_TIMEOUT}' minutes' >> ${tmpfile}
-    echo -e 'Defaults:'"${USER}"' timestamp_timeout='${TIMESTAMP_TIMEOUT}'' >> ${tmpfile}
+    printf '%s\n' "\n## My Defaults timestamp_timeout = ${TIMESTAMP_TIMEOUT} minutes" >> ${tmpfile}
+    printf '%s\n' "Defaults:${NAME_USER} timestamp_timeout=${TIMESTAMP_TIMEOUT}" >> ${tmpfile}
 
     msg_newline
     msg "Ces modifications seront apportées :"
