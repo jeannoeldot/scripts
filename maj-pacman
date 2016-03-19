@@ -177,7 +177,8 @@ if [[ -f "${NAME_MAKEPKG_PACNEW}" ]]; then
     # Ajout de  -fdiagnostics-color=always
     sed -i "s/-O2 -pipe/-O2 -pipe -fdiagnostics-color=always/g" /tmp/${NAME_MAKEPKG}
     # lscpu  ==> nbre de processeurs : 5 = Nb Core + 1
-    nb_core=$(LC_ALL=C lscpu | grep "^Core" | awk '{print $4}')
+#    nb_core=$(LC_ALL=C lscpu | grep "^Core" | awk '{print $4}')
+    nb_core=$(LC_ALL=C lscpu | awk '/^Core/ {print $4}')
     nb_core_mf=$(( $nb_core + 1 ))
     sed -i "/^#MAKEFLAGS/c\MAKEFLAGS=\"-j$nb_core_mf\"" /tmp/${NAME_MAKEPKG}
     # PACKAGER
