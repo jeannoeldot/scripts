@@ -12,6 +12,9 @@
 # Example : $ iso2usb
 #
 
+# NOM UTILSATEUR
+NAME_USER=${USER}
+
 # COULEURS
 Bold=$(tput bold)
 Underline=$(tput sgr 0 1)
@@ -88,7 +91,7 @@ invalid_option() {
 IS_USB_KEY=0
 DEVICE_USB_KEY=""
 PATH_TO_ISO=""
-DIR_ISOS="$HOME/99-Isos"
+DIR_ISOS="/home/${NAME_USER}/99-Isos"
 
 # Variables du script
 nom_script="$0"
@@ -156,7 +159,7 @@ fi
 if (( $IS_USB_KEY == 1 )); then
     is_usb_key_disconnect=$(journalctl --since="${DATEDUJOUR}" | grep -E "USB disconnect, device number")
     echo ${is_usb_key_disconnect} | tr "[:upper:]" "[:lower:]" | grep -q disconnect
-    if ( $? == 0 )); then
+    if (( $? == 0 )); then
         die "La clé USB a été débranchée."
         IS_USB_KEY=0
     else
@@ -168,7 +171,7 @@ fi
 if (( $IS_USB_KEY == 2 )); then
     is_usb_key_mounted=$(lsblk | grep -E "$DEVICE_USB_KEY""[1-9]" | awk '{print $7}')
     echo ${is_usb_key_mounted} | tr "[:upper:]" "[:lower:]" | grep -q media
-    if ( $? == 0 )); then
+    if (( $? == 0 )); then
         die "La clé USB est montée."
         IS_USB_KEY=0
     else
