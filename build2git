@@ -1,0 +1,183 @@
+#!/usr/bin/env bash
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015,2016
+#
+# Name : build2git
+#
+# Version : 0.1
+#
+# AVEC 1 paramètres : build2git -m "motifs du commit"
+# Example : $ build2git -m "Modifs COULEURS. echo ==> printf. Revu test if"
+# Example : $ build2git -m "Modifs COULEURS. echo ==> printf. Revu if, PATH, ls et find"
+# ou
+# SANS paramètre : build2git
+# Example : $ build2git
+# Par défaut : motifs = "Mises à jour"
+#
+
+################################
+## POUR TEST
+#set -x
+################################
+
+# COULEURS
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
+
+# FONCTIONS
+msg_titre() {
+    local mesg=$1; shift
+    printf "${Bold}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg() {
+    local mesg=$1; shift
+    printf "${Bold}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_green() {
+    local mesg=$1; shift
+    printf "${BGreen}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+    local mesg=$1; shift
+    printf "\n" "$@" >&2
+}
+
+error() {
+    local mesg=$1; shift
+    printf "${BRed}==> ERREUR:${Reset}${Bold} ${mesg}${Reset}\n" "$@" >&2
+}
+
+cleanup() {
+    [[ $1 ]] && exit $1
+}
+
+die() {
+    error "$*"
+    cleanup 1
+}
+
+usage() {
+    printf '%s\n' "Arguments :"
+    printf '%s\n' "-h                 Cette aide."
+    printf '%s\n' "-m <motif>         motif : Motifs du commit. Facultatif: Par défaut = \"Mises à jour\""
+    cleanup 0
+}
+
+
+# Variables globales
+DIR_BUILDS="$HOME/05-builds"
+DIR_GIT="$HOME/02-git/builds"
+
+MOTIF_PAR_DEFAUT="Mises à jour"
+
+CONTENU_MOTIF=""
+
+
+# Variables du script
+# nom_script="$0"
+# nombre_d_argument="$#"
+# contenu_motif="$1"
+
+
+# Titre
+msg_titre " +--------------------------------------------+"
+msg_titre " |                                            |"
+msg_titre " |                 BUILD2GIT                  |"
+msg_titre " |                                            |"
+msg_titre " | Usage : build2git [-m \"motifs du commit\"]  |"
+msg_titre " |                                            |"
+msg_titre " | build2git -h pour lire l'aide              |"
+msg_titre " +--------------------------------------------+"
+msg_newline
+
+
+# DÉBUTS DES TESTS DES ARGUMENTS
+# Variables tests arguments
+arg_motif=
+
+while getopts 'h:m:' arg; do
+    case "$arg" in
+        m) arg_motif="$OPTARG" ;;
+        h|*) usage ;;
+    esac
+done
+
+# Test si arg_motif existe. Par défaut = "Mises à jour"
+if [[ "$arg_motif" != "" ]]; then
+#    echo "==> Argument -m \"motifs du commit\" = "$arg_motif
+    CONTENU_MOTIF="$arg_motif"
+#    echo "CONTENU_MOTIF = "${CONTENU_MOTIF}
+else
+    CONTENU_MOTIF="${MOTIF_PAR_DEFAUT}"
+#    echo "PAR DEFAUT, CONTENU_MOTIF = "${CONTENU_MOTIF}
+fi
+
+# DÉBUTS MISES À JOUR SUR GIT
+# Effacement des fichiers ~ dans ${DIR_BUILDS}
+msg_newline
+msg "Effacement des fichiers « *~ » dans « ${DIR_BUILDS} »"
+find -name *~ -exec /usr/bin/rm -vf {} \;
+find ${DIR_BUILDS} -name *~ -exec /usr/bin/rm -vf {} \;
+
+# Copie des fichiers de ${DIR_BUILDS} vers ${DIR_GIT}
+msg_newline
+msg "Copie des fichiers de « ${DIR_BUILDS} » vers « ${DIR_GIT} »"
+cp -Rvf ${DIR_BUILDS}/* ${DIR_GIT}/
+
+# Effacement de ${DIR_GIT}/README
+rm -f ${DIR_GIT}/README
+# Création nouveau ${DIR_GIT}/README
+printf '%s\n' "Repository des fichiers builds contenus dans ~/05-builds." > ${DIR_GIT}/README
+printf '%s\n' "=========================================================" >> ${DIR_GIT}/README
+
+# Commande git add --all
+msg_newline
+msg "Commande « git add --all »"
+cd ${DIR_GIT}
+git add --all
+
+# Commande git commit -m "motifs du commit"
+msg_newline
+msg "Commande « git commit -m \"${CONTENU_MOTIF}\" »"
+git commit -m "\"${CONTENU_MOTIF}\""
+
+# Commande git push origin master"
+msg_newline
+msg "Commande « git push origin master »"
+git push origin master
+
+
+
+cd
+
+################################
+## POUR TEST
+#set +x
+################################
+
+exit 0
+
+=======================================================================================
+## POUR TEST
+

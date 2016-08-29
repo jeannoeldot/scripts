@@ -164,6 +164,7 @@ cp -vf ${DIR_SCRIPTS}/Maj-startkde/maj-startkde ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-sudoers/maj-sudoers ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Modif-qt-conf/modif-qt4-conf ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Modif-qt-conf/modif-qt5-conf ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/To-git/build2git ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/To-git/dev2git ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/To-git/script2git ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/verif-deps/verif-deps ${DIR_GIT}/
@@ -215,6 +216,7 @@ printf '%s\n' " -> modif-qt4-conf" >> ${DIR_GIT}/README
 printf '%s\n' " -> modif-qt5-conf" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : To-git" >> ${DIR_GIT}/README
+printf '%s\n' " -> build2git" >> ${DIR_GIT}/README
 printf '%s\n' " -> dev2git" >> ${DIR_GIT}/README
 printf '%s\n' " -> script2git" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
