@@ -143,7 +143,10 @@ find ${DIR_BUILDS} -name *~ -exec /usr/bin/rm -vf {} \;
 # Effacement des répertoires et fichiers dans ${DIR_GIT}
 msg_newline
 msg "Suppression des répertoires et des fichiers dans « ${DIR_GIT} »"
-rm -vf ${DIR_GIT}/*
+rm -rvf ${DIR_GIT}/*
+msg_newline
+msg " TEST : appuyer sur une touche pour continuer"
+read
 
 # Copie des fichiers de ${DIR_BUILDS} vers ${DIR_GIT}
 msg_newline
