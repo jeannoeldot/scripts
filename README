@@ -49,6 +49,7 @@ Répertoire : verif-deps
 Racine :
  -> clean-backups
  -> dpi.py
+ -> find-optdeps
  -> lls
  -> ompload
  -> rpmextract.sh

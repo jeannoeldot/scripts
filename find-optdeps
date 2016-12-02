@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# VOIR : https://bbs.archlinux.org/viewtopic.php?id=220151
+# Trilby 2016-11-30 15:05:08
+# https://bbs.archlinux.org/viewtopic.php?pid=1673127#p1673127
+
+LC_ALL=C pacman -Qi | awk -F: '
+   function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s; }
+   /^Name/ { pkg=ltrim($2); }
+   /^Optional Deps/ && $2 != " None" {
+      n = 0;
+      while (1) {
+         if ($NF !~ /\[installed\]/) {
+            if (++n == 1) printf "\033[34;1m%s\033[0m\n", pkg;
+            printf "\t\033[1m%s:\033[0m %s\n", ltrim($(NF-1)), ltrim($NF);
+         }
+         getline;
+         if ($1 ~ /^Required/) break;
+      }
+   }
+'

@@ -170,6 +170,7 @@ cp -vf ${DIR_SCRIPTS}/To-git/script2git ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/verif-deps/verif-deps ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/clean-backups ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/dpi.py ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/find-optdeps ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/lls ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/ompload ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/rpmextract.sh ${DIR_GIT}/
@@ -227,6 +228,7 @@ printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Racine :" >> ${DIR_GIT}/README
 printf '%s\n' " -> clean-backups" >> ${DIR_GIT}/README
 printf '%s\n' " -> dpi.py" >> ${DIR_GIT}/README
+printf '%s\n' " -> find-optdeps" >> ${DIR_GIT}/README
 printf '%s\n' " -> lls" >> ${DIR_GIT}/README
 printf '%s\n' " -> ompload" >> ${DIR_GIT}/README
 printf '%s\n' " -> rpmextract.sh" >> ${DIR_GIT}/README
