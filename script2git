@@ -175,6 +175,7 @@ cp -vf ${DIR_SCRIPTS}/lls ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/ompload ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/rpmextract.sh ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/search.sh ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/whoneeds ${DIR_GIT}/
 
 # Création nouveau ${DIR_GIT}/README
 printf '%s\n' "Repository de mes scripts contenus dans ~/01-scripts." > ${DIR_GIT}/README
@@ -233,6 +234,7 @@ printf '%s\n' " -> lls" >> ${DIR_GIT}/README
 printf '%s\n' " -> ompload" >> ${DIR_GIT}/README
 printf '%s\n' " -> rpmextract.sh" >> ${DIR_GIT}/README
 printf '%s\n' " -> search.sh" >> ${DIR_GIT}/README
+printf '%s\n' " -> whoneeds" >> ${DIR_GIT}/README
 
 
 # Commande git add --all
