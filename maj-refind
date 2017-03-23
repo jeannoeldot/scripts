@@ -101,7 +101,7 @@ check_is_in_virtualbox() { #{{{
 } #}}}
 
 check_and_return_name_partition_esp() {
-    local esp=(`LC_ALL=C fdisk -l | awk '/EFI System/ {print $1}'`)
+    local esp=$(LC_ALL=C fdisk -l | awk '/EFI System/ {print $1}')
     if [[ "${esp}" != "" ]];then
         IS_NAME_ESP_EXISTE=1
         NAME_PARTITION_ESP=${esp}
@@ -111,9 +111,10 @@ check_and_return_name_partition_esp() {
 #        echo "PAS de partition ESP !"
     fi
 }
+
 check_if_refind_update_active() {
-    local status=(`systemctl status refind_update.path | awk '/Active/ {print $2}'`)
-    if [[ "${status}" != "inactive" ]];then
+    local status=$(LC_ALL=C systemctl status refind_update.path 2> /dev/null | awk '/Active/ {print $2}')
+    if [[ "${status}" == "active" ]];then
         IS_REDIND_UPDATE_ACTIVE=1
     else
         IS_REDIND_UPDATE_ACTIVE=0
