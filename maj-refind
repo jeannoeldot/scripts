@@ -1,74 +1,80 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014-2017
 #
-# Version 0.2
+# Version 0.3
 #
 
 ## POUR TEST
 #set -x
 
 # VARIABLES
+# NOM UTILSATEUR
+NAME_USER=${USER}
+
 IN_VIRTUAL_BOX=0
 IS_REDIND_UPDATE_ACTIVE=1
-
 
 NAME_REP_DEST_BOOT_MGR=""
 NAME_DEST_BOOT_MGR=""
 
-#
 NAME_REP_INSTALLATION_PKG_REFIND="/usr/share/refind"
 NAME_INSTALLATION_PKG_REFIND="refind_x64.efi"
 NAME_CONF_INSTALLATION_PKG_REFIND="refind.conf-sample"
 NAME_CONF_DEST_BOOT_MGR="refind.conf"
 NAME_REP_ICONS_PKG_REFIND="icons"
 NAME_REP_DEST_ICONS="icons"
-NAME_REP_MY_ARCH_ICONS="/home/jnd/01-scripts/Maj-refind/icones-arch"
+NAME_REP_MY_ARCH_ICONS="/home/${NAME_USER}/01-scripts/Maj-refind/icones-arch"
 #
 
 
-# COLORS
+# COULEURS
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
 # Regular Colors
-Normal='\e[0m'          # Normal
-Black='\e[0;30m'        # Black
-Blue='\e[0;34m'         # Blue
-Cyan='\e[0;36m'         # Cyan
-Green='\e[0;32m'        # Green
-Purple='\e[0;35m'       # Purple
-Red='\e[0;31m'          # Red
-White='\e[0;37m'        # White
-Yellow='\e[0;33m'       # Yellow
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
 # Bold
-BBlack='\e[1;30m'       # Black
-BBlue='\e[1;34m'        # Blue
-BCyan='\e[1;36m'        # Cyan
-BGreen='\e[1;32m'       # Green
-BPurple='\e[1;35m'      # Purple
-BRed='\e[1;31m'         # Red
-BWhite='\e[1;37m'       # White
-BYellow='\e[1;33m'      # Yellow
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
 
 #
 # FONCTIONS
 #
 msg() {
   local mesg=$1; shift
-  printf "${BWhite}:: ${mesg}${Normal}\n" "$@" >&2
+  printf "${BWhite}:: ${mesg}${Reset}\n" "$@" >&2
 }
 
 msg_info() {
   local mesg=$1; shift
-  printf "${BWhite}==> ${mesg}${Normal}\n" "$@" >&2
+  printf "${BWhite}==> ${mesg}${Reset}\n" "$@" >&2
 }
 
 msg_titre() {
   local mesg=$1; shift
-  printf "${BWhite}${mesg}${Normal}\n" "$@" >&2
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+    local mesg=$1; shift
+    printf "\n" "$@" >&2
 }
 
 error() {
   local mesg=$1; shift
-  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Normal}\n" "$@" >&2
+  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Reset}\n" "$@" >&2
 }
 
 cleanup() {
@@ -81,11 +87,13 @@ die() {
   cleanup 1
 }
 
-# DANS VIRTUALBOX OU NON {{{
+# DANS VIRTUALBOX OU NON
+# OUI ==> IN_VIRTUAL_BOX=1
+# NON ==> IN_VIRTUAL_BOX=0
 check_is_in_virtualbox() { #{{{
-    local vbox=`journalctl -b | grep -E "DMI:"`
+    local vbox=$(journalctl -b | grep -E "DMI:")
     echo ${vbox} | tr "[:upper:]" "[:lower:]" | grep -q virtualbox
-    if [[ $? -eq 0 ]]; then
+    if (( $? == 0 )); then
         IN_VIRTUAL_BOX=1
     else
         IN_VIRTUAL_BOX=0
@@ -93,7 +101,7 @@ check_is_in_virtualbox() { #{{{
 } #}}}
 
 check_and_return_name_partition_esp() {
-    local esp=(`fdisk -l | awk '/EFI System/ {print $1}'`)
+    local esp=(`LC_ALL=C fdisk -l | awk '/EFI System/ {print $1}'`)
     if [[ "${esp}" != "" ]];then
         IS_NAME_ESP_EXISTE=1
         NAME_PARTITION_ESP=${esp}
@@ -124,10 +132,10 @@ check_if_refind_update_active() {
 # nombre d'argument = $#
 # liste des arguments = $*
 # => Passe en root
-if [ ! $( id -u ) -eq 0 ]; then
-    echo -e "\n${BYellow}Le script "$0" doit être exécuté en << root >>."
-    echo -e "Entrer le mot de passe de << root >>${Normal}"
-    exec su -c "${0} ${*}"
+if (( EUID != 0 )); then
+    printf '\n%s\n' "${BYellow}Le script $0 doit être exécuté en «root»."
+    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
+    exec su -c "${0} ${1}"
     exit ${?}
 fi
 
@@ -139,14 +147,14 @@ msg_titre "|    Copie du fichier refind_x64.efi           |"
 msg_titre "|    Copie du Répertoire icons                 |"
 msg_titre "+----------------------------------------------+"
 
-echo -e "\n"
+msg_newline
 
 # POUR TEST =1 SINON =0
 MISE_AU_POINT=0
 
 # Test si dans VirtualBox
 check_is_in_virtualbox
-if [[ $IN_VIRTUAL_BOX -eq 1 ]]; then
+if (( $IN_VIRTUAL_BOX == 1 )); then
     msg_info "Installation dans Oracle VM VirtualBox."
     NAME_REP_DEST_BOOT_MGR="/boot/efi/EFI/BOOT"
     NAME_DEST_BOOT_MGR="bootx64.efi"
@@ -155,33 +163,33 @@ else
     NAME_REP_DEST_BOOT_MGR="/boot/efi/EFI/refind"
     NAME_DEST_BOOT_MGR="refind_x64.efi"
 fi
-echo -e "\n"
+msg_newline
 
 check_if_refind_update_active
-if [[ $IS_REDIND_UPDATE_ACTIVE -eq 1 ]]; then
+if (( $IS_REDIND_UPDATE_ACTIVE == 1 )); then
     msg_info "Service refind_update.path actif. Arrêt du service refind_update.path."
     systemctl stop refind_update.path
     systemctl disable refind_update.path
 else
     msg_info "Service refind_update.path NON actif."
 fi
-echo -e "\n"
-echo -e "\n"
+msg_newline
+msg_newline
 
 
 # NAME_INSTALLATION_PKG_REFIND="refind_x64.efi"
 msg "Copie de ${NAME_INSTALLATION_PKG_REFIND} dans ${NAME_REP_DEST_BOOT_MGR}/${NAME_DEST_BOOT_MGR}."
-if [[ MISE_AU_POINT -eq 0 ]]; then
+if (( $MISE_AU_POINT == 0 )); then
     cp -v ${NAME_REP_INSTALLATION_PKG_REFIND}/${NAME_INSTALLATION_PKG_REFIND} ${NAME_REP_DEST_BOOT_MGR}/${NAME_DEST_BOOT_MGR}
-    echo -e "\n"
+    msg_newline
 else
     echo -e "\nMISE AU POINT - La commande suivante sera éxécutée :"
     echo -e "cp -v ${NAME_REP_INSTALLATION_PKG_REFIND}/${NAME_INSTALLATION_PKG_REFIND} ${NAME_REP_DEST_BOOT_MGR}/${NAME_DEST_BOOT_MGR}"
-    echo -e "\n"
+    msg_newline
 fi
 
 msg "Copie de ${NAME_REP_ICONS_PKG_REFIND} dans ${NAME_REP_DEST_BOOT_MGR}/."
-if [[ MISE_AU_POINT -eq 0 ]]; then
+if (( $MISE_AU_POINT == 0 )); then
     cp -R ${NAME_REP_INSTALLATION_PKG_REFIND}/${NAME_REP_ICONS_PKG_REFIND} ${NAME_REP_DEST_BOOT_MGR}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_1.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_1_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
@@ -189,19 +197,18 @@ if [[ MISE_AU_POINT -eq 0 ]]; then
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_2_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_3.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_3_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
-    echo -e "\n"
+    msg_newline
 else
     echo -e "\nMISE AU POINT - La commande suivante sera éxécutée :"
     echo -e "cp -R ${NAME_REP_INSTALLATION_PKG_REFIND}/${NAME_REP_ICONS_PKG_REFIND} ${NAME_REP_DEST_BOOT_MGR}/"
-    echo -e "\n"
+    msg_newline
 fi
 
 
 # FIN
-if [[ MISE_AU_POINT -eq 0 ]]; then
+if (( $MISE_AU_POINT == 0 )); then
     msg "Fin de l'installation suite à la mise à jour de refind-efi"
-    echo -e "\n"
-
+    msg_newline
 # Vérifications
     msg_info "Pour vérifier le fichier ${NAME_REP_DEST_BOOT_MGR}/${NAME_CONF_DEST_BOOT_MGR}."
     msg_info "Entrer les commandes suivantes en USER :"
@@ -209,7 +216,7 @@ if [[ MISE_AU_POINT -eq 0 ]]; then
     msg_info "kwrite /usr/share/refind/refind.conf-sample &"
 else
     echo -e "\nMISE AU POINT - Fin du test de l'installation suite à la mise à jour de refind-efi"
-    echo -e "\n"
+    msg_newline
 # Vérifications
     msg_info "Pour vérifier le fichier ${NAME_REP_DEST_BOOT_MGR}/${NAME_CONF_DEST_BOOT_MGR}."
     msg_info "Entrer la commande suivante en USER :"
