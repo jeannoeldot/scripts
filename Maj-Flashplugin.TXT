@@ -1,0 +1,32 @@
+1) MAJ flashplugin
+==================
+
+!!! EN USER
+!!! VIDER CACHE
+!!! ARRETER FIREFOX
+
+$ profile-cleaner f
+
+$ systemctl --user stop psd.service
+
+!!! Vérifier $HOME/.mozilla/firefox/profiles.ini
+$ cat ~/.mozilla/firefox/profiles.ini
+$ rm -i ~/.mozilla/firefox/idy48li7.default/pluginreg.dat
+
+
+EN ROOT
+========
+# cd
+# maj
+OU
+# pacman -Syu
+
+
+!!! EN USER
+============
+
+$ systemctl --user start psd.service
+
+$ psd preview
+
+ 

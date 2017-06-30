@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2017
+#
+# Version : 01
+#
+
+# COULEURS
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+
+# NOMS RÉPERTOIRES
+NAME_DIR_SCRIPTS="01-scripts/Maj-flashplugin"
+# NOMS FICHIERS
+NAME_FICHIERS_TXT="Maj-Flashplugin.TXT"
+
+
+# FONCTIONS
+msg_titre() {
+  local mesg=$1; shift
+  printf "${Bold}${mesg}${Reset}\n" "$@" >&2
+}
+
+
+cd
+
+kwrite $HOME/${NAME_DIR_SCRIPTS}/${NAME_FICHIERS_TXT} &
+
+
+exit 0

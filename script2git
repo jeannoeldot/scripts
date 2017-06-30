@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015,2016
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015,2016,2017
 #
 # Name : script2git
 #
-# Version : 0.1.4
+# Version : 0.1.5
 #
 # AVEC 1 paramètres : script2git -m "motifs du commit"
 # Example : $ script2git -m "Modifs COULEURS. echo ==> printf. Revu test if"
@@ -154,6 +154,8 @@ cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-tmpfs ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-chroot-repo ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/init-mirrorlist-pacnew/maj-mirrorlist ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/iso2usb/iso2usb ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/maj-flashplugin ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/Maj-Flashplugin.TXT ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-pacman/maj-pacman ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-refind/maj-refind ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-refind/modif-refind-conf ${DIR_GIT}/
@@ -195,6 +197,10 @@ printf '%s\n' " -> maj-mirrorlist" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : iso2usb" >> ${DIR_GIT}/README
 printf '%s\n' " -> iso2usb" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Maj-flashplugin" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-flashplugin" >> ${DIR_GIT}/README
+printf '%s\n' " -> Maj-Flashplugin.TXT" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Maj-pacman" >> ${DIR_GIT}/README
 printf '%s\n' " -> maj-pacman" >> ${DIR_GIT}/README
