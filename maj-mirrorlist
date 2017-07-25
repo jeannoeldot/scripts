@@ -174,17 +174,16 @@ fi
 
 # Fin ou Erreur
 if (( retour == 0 )); then
-  # Synchronise les nouveaux mirroirs.
-  msg_newline
-  msg "Synchronisation des nouveaux mirroirs..."
-  pacman -Syy
-
   # Supprime le fichier mirrorlist.pacnew
   msg_newline
   msg "Suppression du fichier "${NAME_MIRROR_PACNEW}"."
   rm -v -f "${NAME_MIRROR_PACNEW}"
   msg_newline
   msg "Fin de la configuration du fichier mirrorlist."
+  # Affiche message pour synchroniser les nouveaux mirroirs et mettre à jour.
+  msg_newline
+  msg "Lancer la commande suivante ${BWhite}pacman -Syu${Reset} pour synchroniser les nouveaux mirroirs et mettre à jour Arch..."
+#  pacman -Syu
 else
   msg_newline
   msg "Échec de la configuration du fichier mirrorlist... Éditer manuellement le fichier « /etc/pacman.d/mirrorlist »."
