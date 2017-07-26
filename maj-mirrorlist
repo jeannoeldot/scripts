@@ -182,7 +182,7 @@ if (( retour == 0 )); then
   msg "Fin de la configuration du fichier mirrorlist."
   # Affiche message pour synchroniser les nouveaux mirroirs et mettre à jour.
   msg_newline
-  msg "Lancer la commande suivante ${BWhite}pacman -Syu${Reset} pour synchroniser les nouveaux mirroirs et mettre à jour Arch..."
+  msg "Lancer la commande suivante ${BYellow}pacman -Syu${Reset} pour synchroniser les nouveaux mirroirs et mettre à jour Arch..."
 #  pacman -Syu
 else
   msg_newline
