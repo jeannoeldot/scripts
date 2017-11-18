@@ -357,11 +357,11 @@ print_bold_cyan "   ou"
 print_bold_cyan " > À sauver sur : https://hubic.com/home/browser/ dans 00-SAVE-ARCH-OB-CK"
 msg_newline
 msg_newline
-print_bold_cyan " > À sauver sur : /0-DataLinux/00-ARCH_2-OB-CK/"
+print_bold_cyan " > À sauver sur : /0-DataLinux/00-SAVE-ARCH2-OB//"
 print_bold_jaune "Commandes :"
 print_bold_jaune "-----------"
-printf '%s\n' "rm -f /0-DataLinux/00-ARCH_2-OB-CK/*.tar.*"
-printf '%s\n' "cp -v ${SAUVE}/*.tar.* /0-DataLinux/00-ARCH_2-OB-CK/"
+printf '%s\n' "rm -f /0-DataLinux/00-SAVE-ARCH2-OB//*.tar.*"
+printf '%s\n' "cp -v ${SAUVE}/*.tar.* /0-DataLinux/00-SAVE-ARCH2-OB//"
 printf '%s\n' "sync"
 msg_newline
 msg_newline

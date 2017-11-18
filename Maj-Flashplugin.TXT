@@ -1,5 +1,5 @@
-1) MAJ flashplugin
-==================
+1) MAJ flashplugin ET/OU firefox-adblock-plus
+=============================================
 
 !!! EN USER
 !!! VIDER CACHE
