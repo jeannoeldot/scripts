@@ -80,7 +80,7 @@ fi
 msg_titre "+----------------------------------------------------+"
 msg_titre "| Modification du fichier de configuration de rEFInd |"
 # msg_titre "| Version de rEFInd = 0.8.5                          |"
-msg_titre "| Version de rEFInd = ${VERSION_REFIND_EFI}                          |"
+msg_titre "| Version de rEFInd = ${VERSION_REFIND_EFI}                         |"
 msg_titre "| Modification de /boot/efi/EFI/refind/refind.conf   |"
 msg_titre "+----------------------------------------------------+"
 
@@ -102,7 +102,7 @@ msg_newline
 msg "Copie du nouveau fichier de configuration de rEFInd."
 cp -v /usr/share/refind/refind.conf-sample ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
 
-# rEFInd 0.8.3 :
+# rEFInd 0.8.3 :
 # A ETUDIER
 # #scanfor internal,external,optical,manual => scanfor internal,hdbios,external,optical,manual
 # #uefi_deep_legacy_scan => uefi_deep_legacy_scan true
@@ -114,7 +114,12 @@ msg_newline
 msg "Modification du nouveau fichier de configuration de rEFInd."
 sed -i "/^timeout/c\timeout 2" ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
 sed -i "/^#resolution 1024 768/c\resolution 1024 768" ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
-sed -i "/^#showtools/c\showtools shell,about,shutdown,reboot,firmware" ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
+# NOUVEAU DANS rEFInd 0.11.2
+sed -i "/^#enable_mouse/c\enable_mouse" ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
+sed -i "/^#showtools/c\showtools shell,about,hidden_tags,shutdown,reboot,firmware" ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
+#
+# rEFInd 0.10.8
+#sed -i "/^#showtools/c\showtools shell,about,shutdown,reboot,firmware" ${NAME_DIR_EFI}/${NAME_REFIND_CONF}
 # A ETUDIER
 # OK INSTALLATION REELLE
 # PAS OK : RAJOUTES ENTRÉES DS NVRAM => PLUS DE BOOT !!!
