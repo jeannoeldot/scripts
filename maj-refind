@@ -194,10 +194,19 @@ if (( $MISE_AU_POINT == 0 )); then
     cp -R ${NAME_REP_INSTALLATION_PKG_REFIND}/${NAME_REP_ICONS_PKG_REFIND} ${NAME_REP_DEST_BOOT_MGR}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_1.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_1_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_1_lts.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_2.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_2_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_2_lts.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_3.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
     cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_3_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_3_lts.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_4.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_4_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_4_lts.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_5.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_5_ck.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
+    cp -v ${NAME_REP_MY_ARCH_ICONS}/os_arch_5_lts.png ${NAME_REP_DEST_BOOT_MGR}/${NAME_REP_DEST_ICONS}/
     msg_newline
 else
     echo -e "\nMISE AU POINT - La commande suivante sera éxécutée :"
