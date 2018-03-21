@@ -155,17 +155,19 @@ else
     IS_USB_KEY=1
 fi
 
-# 2) Test si la clé USB est toujours branchée
-if (( $IS_USB_KEY == 1 )); then
-    is_usb_key_disconnect=$(journalctl --since="${DATEDUJOUR}" | grep -E "USB disconnect, device number")
-    echo ${is_usb_key_disconnect} | tr "[:upper:]" "[:lower:]" | grep -q disconnect
-    if (( $? == 0 )); then
-        die "La clé USB a été débranchée."
-        IS_USB_KEY=0
-    else
-        IS_USB_KEY=2
-    fi
-fi
+# # 2) Test si la clé USB est toujours branchée
+# if (( $IS_USB_KEY == 1 )); then
+#     is_usb_key_disconnect=$(journalctl --since="${DATEDUJOUR}" | grep -E "USB disconnect, device number")
+#     echo ${is_usb_key_disconnect} | tr "[:upper:]" "[:lower:]" | grep -q disconnect
+#     if (( $? == 0 )); then
+#         die "La clé USB a été débranchée."
+#         IS_USB_KEY=0
+#     else
+#         IS_USB_KEY=2
+#     fi
+# fi
+
+IS_USB_KEY=2
 
 # 3) Test si la clé USB n'est pas montée
 if (( $IS_USB_KEY == 2 )); then

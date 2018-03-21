@@ -1,5 +1,5 @@
-1) MAJ flashplugin ET/OU firefox-adblock-plus
-=============================================
+1) MAJ flashplugin ET/OU addons
+===============================
 
 !!! EN USER
 !!! VIDER CACHE
@@ -12,6 +12,7 @@ $ systemctl --user stop psd.service
 !!! Vérifier $HOME/.mozilla/firefox/profiles.ini
 $ cat ~/.mozilla/firefox/profiles.ini
 $ rm -i ~/.mozilla/firefox/5iyiyfx7.default/pluginreg.dat
+$ rm -i ~/.mozilla/firefox/5iyiyfx7.default/extensions.json
 
 
 EN ROOT
