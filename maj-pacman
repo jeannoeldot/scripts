@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2016
-# Version : 02
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2018
+# Version : 03
 
 ## POUR TEST
 #set -x
@@ -103,6 +103,19 @@ check_is_in_virtualbox() {
     IN_VIRTUAL_BOX=0
   fi
 }
+
+# TEST SI DANS PLASMA/KDE5 OU NON
+# OUI ==> IN_PLASMA=1
+# NON ==> IN_PLASMA=0
+check_is_in_plasma() {
+  local in_plasma=$(kwin_x11 -v | grep -E "kwin")
+  echo ${in_plasma} | tr "[:upper:]" "[:lower:]" | grep -q kwin
+  if (( $? == 0 )); then
+    IN_PLASMA=1
+  else
+    IN_PLASMA=0
+  fi
+}
 #
 # FIN FONCTIONS
 #
@@ -131,6 +144,9 @@ msg_titre "+------------------------------------------------------------+"
 
 # DANS VIRTUALBOX OU NON
 check_is_in_virtualbox
+
+# DANS PLASMA/KDE5 OU NON
+check_is_in_plasma
 
 # Variable de retour : init à 9
 retour=9
@@ -243,13 +259,19 @@ msg_newline
 if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
     # 1) MODIFS SUR FICHIERS TEMPS
     cp ${NAME_PACMAN_PACNEW} /tmp/${NAME_PACMAN}
-    #ADD COLOR TO PACMAN.CONF
+    if (( $IN_PLASMA == 1 )); then
+    # MODIF OPTION #CacheDir    = /var/cache/pacman/pkg/
+        sed -i "/^#CacheDir/c\CacheDir    = /0-DataLinux/01-cache-pacman-pkg/" /tmp/${NAME_PACMAN}
+    fi
+    # ADD COLOR TO PACMAN.CONF
     sed -i "/^#Color/c\Color" /tmp/${NAME_PACMAN}
-    #ADD VerbosePkgLists TO PACMAN.CONF
+    # ADD VerbosePkgLists TO PACMAN.CONF
     sed -i "/^#VerbosePkgLists/c\VerbosePkgLists" /tmp/${NAME_PACMAN}
     if (( $IN_VIRTUAL_BOX == 0 )); then
-        # ENABLE REPO-CK REPOSITORY
-        sed -i "/^\[core\]/i\[repo-ck]\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\n" /tmp/${NAME_PACMAN}
+        if (( $IN_PLASMA == 0 )); then
+            # ENABLE REPO-CK REPOSITORY
+            sed -i "/^\[core\]/i\[repo-ck]\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\n" /tmp/${NAME_PACMAN}
+        fi
     fi
     # ENABLE MULTILIB REPOSITORY
     ligne_multilib=$(grep -n "\[multilib\]" /tmp/${NAME_PACMAN} | cut -f1 -d:)
@@ -263,11 +285,11 @@ if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
         printf '%s\n' "SigLevel = Optional TrustAll" >> /tmp/${NAME_PACMAN}
         printf '%s\n' "Server = file:///home/${NAME_USER}/${NAME_DIR_REPOLOCAL}" >> /tmp/${NAME_PACMAN}
     fi
-    # ENABLE archlinuxf REPOSITORY
-    printf '%s\n' "" >> /tmp/${NAME_PACMAN}
-    printf '%s\n' "[archlinuxfr]" >> /tmp/${NAME_PACMAN}
-    printf '%s\n' "SigLevel = Never" >> /tmp/${NAME_PACMAN}
-    printf '%s\n' "Server = http://repo.archlinux.fr/\$arch" >> /tmp/${NAME_PACMAN}
+#     # ENABLE archlinuxfr REPOSITORY
+#     printf '%s\n' "" >> /tmp/${NAME_PACMAN}
+#     printf '%s\n' "[archlinuxfr]" >> /tmp/${NAME_PACMAN}
+#     printf '%s\n' "SigLevel = Never" >> /tmp/${NAME_PACMAN}
+#     printf '%s\n' "Server = http://repo.archlinux.fr/\$arch" >> /tmp/${NAME_PACMAN}
     # ENABLE Xyne REPOSITORY : http://xyne.archlinux.ca/projects/
     printf '%s\n' "" >> /tmp/${NAME_PACMAN}
     printf '%s\n' "[xyne-x86_64]" >> /tmp/${NAME_PACMAN}
