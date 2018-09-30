@@ -47,7 +47,11 @@ rm -f ${NAME_REPOLOCAL}.files.tar.gz
 #repo-add ${NAME_REPOLOCAL}.db.tar.gz *.pkg.tar.gz
 #
 # Si -any.pkg et tar.xz
-repo-add ${NAME_REPOLOCAL}.db.tar.gz *.pkg.tar.*
+#repo-add ${NAME_REPOLOCAL}.db.tar.gz *.pkg.tar.*
+#
+# AJOUT LC_ALL=C
+LC_ALL=C repo-add ${NAME_REPOLOCAL}.db.tar.gz *.pkg.tar.*
+
 
 # Supprimé suite maj pacman 5.0.0
 # repo-add -f ${NAME_REPOLOCAL}.files.tar.gz *.pkg.tar.*
