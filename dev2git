@@ -4,7 +4,7 @@
 #
 # Name : dev2git
 #
-# Version : 0.1.4
+# Version : 0.1.5
 #
 # Examples :
 # dev2git -s jndqcbgrd -d jndqcbgrd-qt5 -m "Revu alignement titre ds modification nom catégories" -t v0.1.8
@@ -89,7 +89,8 @@ usage() {
 
 
 # Variables globales
-DIR_DEV="$HOME/01-dev/00-qtcreator"
+DIR_DEV="$HOME/01-dev/00-qtcreator/"
+#DIR_DEV="$HOME/01-dev/00-qtcreator/00-progs-qt5/"
 DIR_GIT="$HOME/02-git"
 
 MOTIF_PAR_DEFAUT="Mises à jour"
@@ -157,7 +158,11 @@ fi
 # Test si $arg_destination = 1 répertoire qui existe
 if [[ "$arg_destination" != "" ]]; then
 #     echo "==> Argument -d destination = "$arg_destination
-    path_to_destination=$(find ${DIR_GIT} -name "$arg_destination")
+#     echo "==> DIR_GIT = "${DIR_GIT}
+#     path_to_destination=$(find ${DIR_GIT} -name "$arg_destination")
+#     echo "==> path_to_destination ="${path_to_destination}
+    path_to_destination=${DIR_GIT}/$arg_destination
+#     echo "==> path_to_destination ="${path_to_destination}
     if [[ ! -d "${path_to_destination}" ]]; then
         die "Le répertoire « ""$arg_destination"" » n'existe pas. Usage : dev2git -s source -d destination  [-m \"motifs du commit\"] [-t v1.0]""\n"
     else
