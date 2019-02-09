@@ -198,7 +198,7 @@ if [[ -f "${NAME_MAKEPKG_PACNEW}" ]]; then
     nb_core_mf=$(( $nb_core + 1 ))
     sed -i "/^#MAKEFLAGS/c\MAKEFLAGS=\"-j$nb_core_mf\"" /tmp/${NAME_MAKEPKG}
     # PACKAGER
-    sed -i "/^#PACKAGER/c\PACKAGER=\"Jean-Noel Dot <jean.noel.dot@sfr.fr>\"" /tmp/${NAME_MAKEPKG}
+    sed -i "/^#PACKAGER/c\PACKAGER=\"Name <name@fai.com>\"" /tmp/${NAME_MAKEPKG}
 
     msg_newline
     msg "Ces modifications seront apportées à «${NAME_MAKEPKG}» :"
@@ -259,10 +259,10 @@ msg_newline
 if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
     # 1) MODIFS SUR FICHIERS TEMPS
     cp ${NAME_PACMAN_PACNEW} /tmp/${NAME_PACMAN}
-    if (( $IN_PLASMA == 1 )); then
-    # MODIF OPTION #CacheDir    = /var/cache/pacman/pkg/
-        sed -i "/^#CacheDir/c\CacheDir    = /0-DataLinux/01-cache-pacman-pkg/" /tmp/${NAME_PACMAN}
-    fi
+#     if (( $IN_PLASMA == 1 )); then
+#     # MODIF OPTION #CacheDir    = /var/cache/pacman/pkg/
+#         sed -i "/^#CacheDir/c\CacheDir    = /0-DataLinux/01-cache-pacman-pkg/" /tmp/${NAME_PACMAN}
+#     fi
     # ADD COLOR TO PACMAN.CONF
     sed -i "/^#Color/c\Color" /tmp/${NAME_PACMAN}
     # ADD VerbosePkgLists TO PACMAN.CONF

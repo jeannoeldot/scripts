@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2015
-# Version : 02 DU 30/11/2015
+# Version : 03 DU 20/01/2019
+# NE SAUVE PAS 00-3D 05-Photos 10-Musiques 10-Videos 99-Isos
 #
 
 clear
@@ -81,8 +82,6 @@ AUJOURDHUI=$(date +%Y-%m-%d)
 # mettre ici le chemin vers les repertoires a sauvegarder
 SOURCES="
  /$REP_ETC
- $DATAS/$REP_3D
- $DATAS/$REP_PHOTOS
  $HOME/$REP_THEMES
  $HOME/$REP_CONKY
  $HOME/$REP_DEV
@@ -101,8 +100,6 @@ SOURCES="
 
 SOURCES_TAR="
  $REP_ETC
- $REP_3D
- $REP_PHOTOS
  $REP_THEMES
  $REP_CONKY
  $REP_DEV

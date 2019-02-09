@@ -11,8 +11,8 @@ $ systemctl --user stop psd.service
 
 !!! Vérifier $HOME/.mozilla/firefox/profiles.ini
 $ cat ~/.mozilla/firefox/profiles.ini
-$ rm -i ~/.mozilla/firefox/aihhh0sq.default/pluginreg.dat
-$ rm -i ~/.mozilla/firefox/aihhh0sq.default/extensions.json
+$ rm -i ~/.mozilla/firefox/g5vf1dva.default/pluginreg.dat
+$ rm -i ~/.mozilla/firefox/g5vf1dva.default/extensions.json
 
 
 EN ROOT
@@ -20,7 +20,7 @@ EN ROOT
 # cd
 # maj
 OU
-# pacman -Syu
+# LC_ALL=C pacman -Syu
 
 
 !!! EN USER

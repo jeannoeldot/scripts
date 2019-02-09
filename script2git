@@ -150,6 +150,7 @@ rm -f ${DIR_GIT}/README
 cp -vf ${DIR_SCRIPTS}/Backup/backup ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Backup/backup-nosauve ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Backup/backup-ob ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Backup/backup-ssd ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-tmpfs ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-chroot-repo ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/init-mirrorlist-pacnew/maj-mirrorlist ${DIR_GIT}/
@@ -186,6 +187,7 @@ printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Backup" >> ${DIR_GIT}/README
 printf '%s\n' " -> backup" >> ${DIR_GIT}/README
 printf '%s\n' " -> backup-ob" >> ${DIR_GIT}/README
+printf '%s\n' " -> backup-ssd" >> ${DIR_GIT}/README
 printf '%s\n' " -> backup-nosauve" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Creation-PKG-Tempfs" >> ${DIR_GIT}/README
