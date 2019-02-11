@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2015
-# Version : 02 DU 30/11/2015
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2019
+# Version : 03 DU 11/02/2019
 #
 
 clear
@@ -81,8 +81,8 @@ AUJOURDHUI=$(date +%Y-%m-%d)
 # mettre ici le chemin vers les repertoires a sauvegarder
 SOURCES="
  /$REP_ETC
- $DATAS/$REP_3D
  $DATAS/$REP_PHOTOS
+ $HOME/$REP_3D
  $HOME/$REP_THEMES
  $HOME/$REP_CONKY
  $HOME/$REP_DEV
