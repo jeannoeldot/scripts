@@ -57,6 +57,7 @@ Racine :
  -> find-optdeps
  -> lls
  -> ompload
+ -> restartaudio
  -> rpmextract.sh
  -> search.sh
  -> whoneeds

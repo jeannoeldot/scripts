@@ -179,6 +179,7 @@ cp -vf ${DIR_SCRIPTS}/ompload ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/rpmextract.sh ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/search.sh ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/whoneeds ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/restartaudio ${DIR_GIT}/
 
 # Création nouveau ${DIR_GIT}/README
 printf '%s\n' "Repository de mes scripts contenus dans ~/01-scripts." > ${DIR_GIT}/README
@@ -240,6 +241,7 @@ printf '%s\n' " -> dpi.py" >> ${DIR_GIT}/README
 printf '%s\n' " -> find-optdeps" >> ${DIR_GIT}/README
 printf '%s\n' " -> lls" >> ${DIR_GIT}/README
 printf '%s\n' " -> ompload" >> ${DIR_GIT}/README
+printf '%s\n' " -> restartaudio" >> ${DIR_GIT}/README
 printf '%s\n' " -> rpmextract.sh" >> ${DIR_GIT}/README
 printf '%s\n' " -> search.sh" >> ${DIR_GIT}/README
 printf '%s\n' " -> whoneeds" >> ${DIR_GIT}/README

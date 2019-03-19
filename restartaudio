@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Restart Audio after suspend/resume
+# Voir : https://bbs.archlinux.org/viewtopic.php?pid=1835611#p1835611
+# [root@arch1kde ~]# lspci -D
+# 0000:00:1f.3 Audio device: Intel Corporation 200 Series PCH HD Audio
+
+
+[[ $UID = 0 ]] || exec sudo "$0"
+
+echo 1 > '/sys/bus/pci/devices/0000:00:1f.3/remove'
+sleep 1
+echo 1 > /sys/bus/pci/rescan
