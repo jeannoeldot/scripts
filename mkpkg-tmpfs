@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015,2016
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015,2016,2019
 # 
 
-# VERSION=1.1.1
+# VERSION=1.1.2
 VERS="@VERSION@"
 
 ################################
@@ -95,12 +95,12 @@ die() {
 
 usage() {
         printf '%s\n' "Arguments :"
-        printf '%s\n' "-h                Cette aide"
-        printf '%s\n' "-m <march>        march : generic ou native ou fast. Obligatoire"
-        printf '%s\n' "-g <8G|16G>        Taille du chroot en Giga : 8G ou 16G. Facultatif : 8G par défaut"
-        printf '%s\n' "-l <logs>         Conservations des logs. Facultatif : NON conservés par défaut"
-        printf '%s\n' "-q <qt|qt4>       UI Framework : qt(5) ou qt4. Facultatif"
-        printf '%s\n' "-v <git|svn>      Version Control System : git ou svn. Facultatif"
+        printf '%s\n' "-h               Cette aide"
+        printf '%s\n' "-m <march>       march : generic ou native ou fast. Obligatoire"
+        printf '%s\n' "-g <8G|16G>      Taille du chroot en Giga : 8G ou 16G. Facultatif : 8G par défaut"
+        printf '%s\n' "-l <logs>        Conservations des logs. Facultatif : NON conservés par défaut"
+        printf '%s\n' "-q <qt>          UI Framework : qt(5). Facultatif"
+        printf '%s\n' "-v <git|svn>     Version Control System : git ou svn. Facultatif"
 # Inutile depuis maj devtools 24.10.2014
 #         clean_own "${rep_paquet}" "$uid_nobody" &>/dev/null
 #         clean_own "${rep_paquet}" "$uid_root" &>/dev/null
@@ -147,9 +147,8 @@ setup_mount() {
 
 #
 # $1 : $arg_qt = "qt"
-# $2 : $arg_qt4 = "qt4"
-# $3 : $arg_git = "git"
-# $4 : $arg_svn = "subversion"
+# $2 : $arg_git = "git"
+# $3 : $arg_svn = "subversion"
 #
 setup_chroot() {
 #        mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf "${REP_TMPFS}"/root base base-devel sudo qt &>/dev/null
@@ -164,9 +163,6 @@ setup_chroot() {
         if [[ -n "$3" ]]; then
           arg_chroot+=" $3"
         fi
-        if [[ -n "$4" ]]; then
-          arg_chroot+=" $4"
-        fi
 #        mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf "${REP_TMPFS}"/root base base-devel sudo ${arg_chroot}
         # Suite maj pacman 4.2
         mkarchroot "${REP_TMPFS}"/root base base-devel sudo ${arg_chroot}
@@ -178,22 +174,11 @@ setup_chroot() {
 
 #
 # $1 : si qt ( $1 = "$avec_qt" =  false ou = true)
-# $2 : si qt4 ( $2 = "$avec_qt4" =  false ou = true)
-# $3 : arg_flags = "generic" ou "native" ou "fast"
+# $2 : arg_flags = "generic" ou "native" ou "fast"
 #
 setup_copies() {
         if [[ "$1" = true ]]; then
           sudo cp -f "${REP_COPIES}"/qt-gcc-base.conf "${REP_TMPFS}"/root/usr/lib/qt/mkspecs/common/gcc-base.conf
-          if (( $? != 0 )); then
-            return 9
-          fi
-        fi
-        if [[ "$2" = true ]]; then
-          sudo cp -f "${REP_COPIES}"/qt4-g++-base.conf "${REP_TMPFS}"/root/usr/share/qt4/mkspecs/common/g++-base.conf
-          if (( $? != 0 )); then
-            return 9
-          fi
-          sudo cp -f "${REP_COPIES}"/qt4-gcc-base.conf "${REP_TMPFS}"/root/usr/share/qt4/mkspecs/common/gcc-base.conf
           if (( $? != 0 )); then
             return 9
           fi
@@ -206,12 +191,12 @@ setup_copies() {
         if (( $? != 0 )); then
           return 9
         fi
-        if [[ "$3" == "fast" ]]; then
+        if [[ "$2" == "fast" ]]; then
           sudo cp -f "${REP_COPIES}"/makepkg.conf.fast "${REP_TMPFS}"/root/etc/makepkg.conf
           if (( $? != 0 )); then
             return 9
           fi
-        elif [[ "$3" == "native" ]]; then
+        elif [[ "$2" == "native" ]]; then
           sudo cp -f "${REP_COPIES}"/makepkg.conf.native "${REP_TMPFS}"/root/etc/makepkg.conf
           if (( $? != 0 )); then
             return 9
@@ -222,17 +207,6 @@ setup_copies() {
             return 9
           fi
         fi
-#         if [[ "$3" == "native" ]]; then
-#           sudo cp -f "${REP_COPIES}"/makepkg.conf.native "${REP_TMPFS}"/root/etc/makepkg.conf
-#           if (( $? != 0 )); then
-#             return 9
-#           fi
-#         else
-#           sudo cp -f "${REP_COPIES}"/makepkg.conf.generic "${REP_TMPFS}"/root/etc/makepkg.conf
-#           if (( $? != 0 )); then
-#             return 9
-#           fi
-#         fi
         return 0
 }
 
@@ -347,17 +321,17 @@ clean_log() {
 #
 
 # Titre
-msg_titre "+------------------------------------------------------------------------------------------------------------+"
-msg_titre "|                                     Création de paquets en RAM                                             |"
-msg_titre "|                                        ( chroot en tmpfs )                                                 |"
-msg_titre "|                                          Version = $VERS                                                   |"
-msg_titre "|                                                                                                            |"
-msg_titre "| Usage : mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt|qt4] [-v git|svn]                  |"
-msg_titre "| ou                                                                                                         |"
-msg_titre "| Usage : $HOME/bin/mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt|qt4] [-v git|svn]    |"
-msg_titre "|                                                                                                            |"
-msg_titre "| mkpkg-tmpfs -h pour lire l'aide                                                                            |"
-msg_titre "+------------------------------------------------------------------------------------------------------------+"
+msg_titre "+--------------------------------------------------------------------------------------------------------+"
+msg_titre "|                                     Création de paquets en RAM                                         |"
+msg_titre "|                                        ( chroot en tmpfs )                                             |"
+msg_titre "|                                          Version = $VERS                                               |"
+msg_titre "|                                                                                                        |"
+msg_titre "| Usage : mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt] [-v git|svn]                  |"
+msg_titre "| ou                                                                                                     |"
+msg_titre "| Usage : $HOME/bin/mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt] [-v git|svn]    |"
+msg_titre "|                                                                                                        |"
+msg_titre "| mkpkg-tmpfs -h pour lire l'aide                                                                        |"
+msg_titre "+--------------------------------------------------------------------------------------------------------+"
 msg_newline
 
 # VARIABLES DU SCRIPT
@@ -371,8 +345,7 @@ gid_root=$(id -g root)
 # Nom du script
 nom_script="$0"
 
-# Drapeau si qt ou qt4 existe; false = NON , true = OUI
-avec_qt4=false
+# Drapeau si qt existe; false = NON , true = OUI
 avec_qt=false
 
 # Drapeau si logs existe; false = NON , true = OUI
@@ -380,7 +353,6 @@ avec_logs=false
 
 # Arguments pour setup_chroot()
 arg_flags=""
-arg_qt4=""
 arg_qt=""
 arg_git=""
 arg_svn=""
@@ -400,7 +372,7 @@ fi
 # DÉBUTS DES TESTS DES ARGUMENTS
 # Variables tests arguments
 arg_march=
-arg_qt_4_5=
+arg_qt_5=
 arg_vcs=
 arg_giga=
 arg_logs=
@@ -411,7 +383,7 @@ while getopts 'hm:g:l:q:v:' arg; do
                 m) arg_march="$OPTARG" ;;
                 g) arg_giga="$OPTARG" ;;
                 l) arg_logs="$OPTARG" ;;
-                q) arg_qt_4_5="$OPTARG" ;;
+                q) arg_qt_5="$OPTARG" ;;
                 v) arg_vcs="$OPTARG" ;;
         esac
 done
@@ -440,7 +412,7 @@ else
     arg_size="8G"
 fi
 
-# avec_logs=false
+# avec_logs=false (défaut)
 # Test si arg_logs existe et = logs. NON conservés par défaut
 if [[ "$arg_logs" != "" ]]; then
     if [[ "$arg_logs" == "logs" ]]; then
@@ -453,16 +425,14 @@ else
 fi
 
 
-# Test si arg_qt_4_5 existe et = qt ou qt4
-if [[ "$arg_qt_4_5" != "" ]]; then
-    if [[ "$arg_qt_4_5" == "qt" ]]; then
+# avec_qt=false (défaut)
+# Test si arg_qt_5 existe et = qt
+if [[ "$arg_qt_5" != "" ]]; then
+    if [[ "$arg_qt_5" == "qt" ]]; then
       avec_qt=true
       arg_qt="qt"
-    elif [[ "$arg_qt_4_5" == "qt4" ]]; then
-      avec_qt4=true
-      arg_qt4="qt4"
     else
-      die "Argument <qt|qt4> erroné. Usage : ${nom_script} -m generic|native|fast -q qt|qt4"
+      die "Argument <qt> erroné. Usage : ${nom_script} -m generic|native|fast -q qt"
     fi
 fi
 
@@ -536,12 +506,12 @@ if (( $? != 0 )); then
   die "Impossible d'effectuer le montage de « ${REP_TMPFS} »."
 fi
 
-setup_chroot "$arg_qt" "$arg_qt4" "$arg_git" "$arg_svn"
+setup_chroot "$arg_qt" "$arg_git" "$arg_svn"
 if (( $? != 0 )); then
   die "Création chroot impossible."
 fi
 
-setup_copies $avec_qt $avec_qt4 "$arg_flags"
+setup_copies $avec_qt "$arg_flags"
 if (( $? != 0 )); then
   die "Copie des fichiers impossible."
 fi
