@@ -4,7 +4,7 @@
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015,2016,2019
 # 
 
-# VERSION=1.1.2
+# VERSION=1.1.3
 VERS="@VERSION@"
 
 ################################
@@ -96,7 +96,7 @@ die() {
 usage() {
         printf '%s\n' "Arguments :"
         printf '%s\n' "-h               Cette aide"
-        printf '%s\n' "-m <march>       march : generic ou native ou fast. Obligatoire"
+        printf '%s\n' "-m <march>       march : generic ou native ou fast ou floop. Obligatoire"
         printf '%s\n' "-g <8G|16G>      Taille du chroot en Giga : 8G ou 16G. Facultatif : 8G par défaut"
         printf '%s\n' "-l <logs>        Conservations des logs. Facultatif : NON conservés par défaut"
         printf '%s\n' "-q <qt>          UI Framework : qt(5). Facultatif"
@@ -174,7 +174,7 @@ setup_chroot() {
 
 #
 # $1 : si qt ( $1 = "$avec_qt" =  false ou = true)
-# $2 : arg_flags = "generic" ou "native" ou "fast"
+# $2 : arg_flags = "generic" ou "native" ou "fast" ou "floop"
 #
 setup_copies() {
         if [[ "$1" = true ]]; then
@@ -191,7 +191,12 @@ setup_copies() {
         if (( $? != 0 )); then
           return 9
         fi
-        if [[ "$2" == "fast" ]]; then
+        if [[ "$2" == "floop" ]]; then
+          sudo cp -f "${REP_COPIES}"/makepkg.conf.floop "${REP_TMPFS}"/root/etc/makepkg.conf
+          if (( $? != 0 )); then
+            return 9
+          fi
+        elif [[ "$2" == "fast" ]]; then
           sudo cp -f "${REP_COPIES}"/makepkg.conf.fast "${REP_TMPFS}"/root/etc/makepkg.conf
           if (( $? != 0 )); then
             return 9
@@ -321,17 +326,17 @@ clean_log() {
 #
 
 # Titre
-msg_titre "+--------------------------------------------------------------------------------------------------------+"
-msg_titre "|                                     Création de paquets en RAM                                         |"
-msg_titre "|                                        ( chroot en tmpfs )                                             |"
-msg_titre "|                                          Version = $VERS                                               |"
-msg_titre "|                                                                                                        |"
-msg_titre "| Usage : mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt] [-v git|svn]                  |"
-msg_titre "| ou                                                                                                     |"
-msg_titre "| Usage : $HOME/bin/mkpkg-tmpfs -m generic|native|fast [-g 8G|16G] [-l logs] [-q qt] [-v git|svn]    |"
-msg_titre "|                                                                                                        |"
-msg_titre "| mkpkg-tmpfs -h pour lire l'aide                                                                        |"
-msg_titre "+--------------------------------------------------------------------------------------------------------+"
+msg_titre "+--------------------------------------------------------------------------------------------------------------+"
+msg_titre "|                                     Création de paquets en RAM                                               |"
+msg_titre "|                                        ( chroot en tmpfs )                                                   |"
+msg_titre "|                                          Version = $VERS                                                     |"
+msg_titre "|                                                                                                              |"
+msg_titre "| Usage : mkpkg-tmpfs -m generic|native|fast|floop [-g 8G|16G] [-l logs] [-q qt] [-v git|svn]                  |"
+msg_titre "| ou                                                                                                           |"
+msg_titre "| Usage : $HOME/bin/mkpkg-tmpfs -m generic|native|fast|floop [-g 8G|16G] [-l logs] [-q qt] [-v git|svn]    |"
+msg_titre "|                                                                                                              |"
+msg_titre "| mkpkg-tmpfs -h pour lire l'aide                                                                              |"
+msg_titre "+--------------------------------------------------------------------------------------------------------------+"
 msg_newline
 
 # VARIABLES DU SCRIPT
@@ -388,15 +393,17 @@ while getopts 'hm:g:l:q:v:' arg; do
         esac
 done
 
-# Test si arg_march = generic ou native ou fast
+# Test si arg_march = generic ou native ou fast ou floop
     if [[ "$arg_march" == "generic" ]]; then
       arg_flags="generic"
     elif [[ "$arg_march" == "native" ]]; then
       arg_flags="native"
     elif [[ "$arg_march" == "fast" ]]; then
       arg_flags="fast"
+    elif [[ "$arg_march" == "floop" ]]; then
+      arg_flags="floop"
     else
-      die "Argument <march> erroné. Usage : ${nom_script} -m generic|native|fast"
+      die "Argument <march> erroné. Usage : ${nom_script} -m generic|native|fast|floop"
     fi
 
 # Test si arg_giga existe et = 8G ou 16G. 8G par défaut
@@ -406,7 +413,7 @@ if [[ "$arg_giga" != "" ]]; then
     elif [[ "$arg_giga" == "16G" ]]; then
       arg_size="16G"
     else
-      die "Argument <8G|16G> erroné. Usage : ${nom_script} -m generic|native|fast -g 8G|16G"
+      die "Argument <8G|16G> erroné. Usage : ${nom_script} -m generic|native|fast|floop -g 8G|16G"
     fi
 else
     arg_size="8G"
@@ -418,7 +425,7 @@ if [[ "$arg_logs" != "" ]]; then
     if [[ "$arg_logs" == "logs" ]]; then
       avec_logs=true
     else
-      die "Argument <logs> erroné. Usage : ${nom_script} -m generic|native|fast -l logs"
+      die "Argument <logs> erroné. Usage : ${nom_script} -m generic|native|fast|floop -l logs"
     fi
 else
     avec_logs=false
@@ -432,7 +439,7 @@ if [[ "$arg_qt_5" != "" ]]; then
       avec_qt=true
       arg_qt="qt"
     else
-      die "Argument <qt> erroné. Usage : ${nom_script} -m generic|native|fast -q qt"
+      die "Argument <qt> erroné. Usage : ${nom_script} -m generic|native|fast|floop -q qt"
     fi
 fi
 
@@ -443,7 +450,7 @@ if [[ "$arg_vcs" != "" ]]; then
     elif [[ "$arg_vcs" == "svn" ]]; then
         arg_svn="subversion"
     else
-      die "Argument <git|svn> erroné. Usage : ${nom_script} -m generic|native|fast -v git|svn"
+      die "Argument <git|svn> erroné. Usage : ${nom_script} -m generic|native|fast|floop -v git|svn"
     fi
 fi
 
