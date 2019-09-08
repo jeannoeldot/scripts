@@ -4,7 +4,7 @@
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015,2016,2019
 # 
 
-# VERSION=1.1.3
+# VERSION=1.1.4
 VERS="@VERSION@"
 
 ################################
@@ -188,6 +188,10 @@ setup_copies() {
           return 9
         fi
         sudo cp -f "${REP_COPIES}"/pacman.conf.chroot "${REP_TMPFS}"/root/etc/pacman.conf
+        if (( $? != 0 )); then
+          return 9
+        fi
+        sudo sed -i "s#PATHTOREPOLOCAL#${REP_TMPFS}/$USER#g" "${REP_TMPFS}"/root/etc/pacman.conf
         if (( $? != 0 )); then
           return 9
         fi
