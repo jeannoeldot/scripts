@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2012-2015
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2012-2019
 # 
 # Purpose: Vérifie les dépendances de mes paquets
-# situés dans ~/00-repolocal
+# situés dans $HOME/00-repolocal
 #
 #
-# Version : 0.8.2
+# Version : 0.8.3
 #
 
 # REPERTOIRES
 ## TEST
-#DIR_REPO=/home/jnd/01-scripts/verif-deps/Construction_V-06/repo_vd
-DIR_REPO=~/00-repolocal
+#DIR_REPO=$HOME/01-scripts/verif-deps/Construction_V-06/repo_vd
+DIR_REPO=$HOME/00-repolocal
 ##
 DIR_TEMP=/tmp/jndvdeps
 
@@ -162,7 +162,7 @@ msg_titre "+-----------------------------------------------+"
 
 #msg "Création d'une copie de travail de "${DIR_REPO}" dans "${DIR_TEMP}"."
 # copie paquets de 00-repolocal dans /tmp/jndvdeps
-cp "${DIR_REPO}"/*.pkg.tar.xz "${DIR_TEMP}"
+cp "${DIR_REPO}"/*.pkg.tar.* "${DIR_TEMP}"
 
 ## POUR TEST
 #echo "Contenu de ""${DIR_TEMP}"
@@ -187,7 +187,7 @@ nb_paquet_a_traiter=0
 for paquet in "${liste_pkg[@]}"
 do
   # ici paquet = amaya-11.4.4-1-x86_64.pkg.tar.xz
-  pkg="$(echo -n $paquet | sed -e "s/-[0-9].*.tar.xz$//")"
+  pkg="$(echo -n $paquet | sed -e "s/-[0-9].*.tar.*$//")"
   # ici pkg = amaya
 
   nb_paquet_a_traiter=$(($nb_paquet_a_traiter+1))
