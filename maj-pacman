@@ -294,7 +294,9 @@ if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
     printf '%s\n' "" >> /tmp/${NAME_PACMAN}
     printf '%s\n' "[xyne-x86_64]" >> /tmp/${NAME_PACMAN}
     printf '%s\n' "SigLevel = Required" >> /tmp/${NAME_PACMAN}
-    printf '%s\n' "Server = http://xyne.archlinux.ca/repos/xyne" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "#Server = http://xyne.archlinux.ca/repos/xyne" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "#Workaround" >> /tmp/${NAME_PACMAN}
+    printf '%s\n' "Server = https://xyne.archlinux.ca/bin/repo.php?file=" >> /tmp/${NAME_PACMAN}
 
     msg_newline
     msg "Ces modifications seront apportées à «${NAME_PACMAN}» :"
