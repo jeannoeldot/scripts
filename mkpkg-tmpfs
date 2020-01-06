@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015,2016,2019
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013,2014,2015,2016,2019,2020
 # 
 
-# VERSION=1.1.4
+# VERSION=1.1.5
 VERS="@VERSION@"
 
 ################################
@@ -462,9 +462,9 @@ fi
 # Lecture de CARCH="x86_64" ds /etc/makepkg.conf
 eval $(grep 'CARCH=' "/etc/makepkg.conf")
 architecture="${CARCH}"
-# Lecture de PKGEXT ds /etc/makepkg.conf
-eval $(grep 'PKGEXT=' "/etc/makepkg.conf")
-extension_paquet="${PKGEXT}"
+## Lecture de PKGEXT ds /etc/makepkg.conf
+#eval $(grep 'PKGEXT=' "/etc/makepkg.conf")
+#extension_paquet="${PKGEXT}"
 
 
 # Nom Paquet, Version et Release
@@ -558,15 +558,21 @@ make_paquet "${rep_paquet}"
 #   die "Terminé."
 # fi
 # makechrootpkg NE retourne PLUS de code d'erreur
-if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}${extension_paquet}" ]]; then
-  if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any${extension_paquet}" ]]; then
-    error "Fabrication du paquet « $nom_paquet » impossible."
-    warning "Faire : cd ${REP_TMPFS}/${USER}/build pour inspection."
-    warning "Quand fini :"
-    warning "==> fermer tous les fichiers ouverts."
-    warning "==> appuyer sur une touche pour quitter le script."
-    read -e -sn 1 -p "..."
-    die "Terminé."
+#if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}${extension_paquet}" ]]; then
+#  if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any${extension_paquet}" ]]; then
+if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}.pkg.tar.xz" ]]; then
+  if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}.pkg.tar.zst" ]]; then
+    if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any.pkg.tar.xz" ]]; then
+      if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any.pkg.tar.zst" ]]; then
+        error "Fabrication du paquet « $nom_paquet » impossible."
+        warning "Faire : cd ${REP_TMPFS}/${USER}/build pour inspection."
+        warning "Quand fini :"
+        warning "==> fermer tous les fichiers ouverts."
+        warning "==> appuyer sur une touche pour quitter le script."
+        read -e -sn 1 -p "..."
+        die "Terminé."
+      fi
+    fi
   fi
 fi
 
