@@ -1,0 +1,86 @@
+1) MAJ flashplugin ET/OU addons
+===============================
+
+!!! EN USER
+!!! VIDER CACHE
+!!! ARRETER FIREFOX
+
+$ profile-cleaner f
+
+$ systemctl --user stop psd.service
+
+!!! Vérifier $HOME/.mozilla/firefox/profiles.ini
+$ cat ~/.mozilla/firefox/profiles.ini
+$ rm -i ~/.mozilla/firefox/g5vf1dva.default/pluginreg.dat
+$ rm -i ~/.mozilla/firefox/g5vf1dva.default/extensions.json
+
+EN ROOT
+========
+# cd
+# maj
+OU
+# LC_ALL=C pacman -Syu
+
+!!! EN USER
+============
+
+$ systemctl --user start psd.service
+
+$ psd preview
+
+ 
+2) MAJ PSD
+==========
+
+!!! EN USER
+!!! VIDER CACHE
+!!! ARRETER FIREFOX
+
+$ profile-cleaner f
+
+$ systemctl --user stop psd.service
+
+EN ROOT
+========
+# cd
+# maj
+OU
+# LC_ALL=C pacman -Syu
+
+!!! EN USER
+============
+$ systemctl --user daemon-reload
+$ systemctl --user start psd.service
+$ systemctl --user status psd.service
+$ psd preview
+
+SI DIFF ENTRE /usr/share/psd/psd.conf ET ~/.config/psd/psd.conf
+---------------------------------------------------------------
+$ kwrite /usr/share/psd/psd.conf &
+$ kwrite $HOME/.config/psd/psd.conf &
+
+$ systemctl --user stop psd.service
+$ rm -i ~/.config/psd/psd.conf
+
+$ systemctl --user daemon-reload
+
+$ systemctl --user start psd.service
+$ systemctl --user stop psd.service
+
+$ kwrite $HOME/.config/psd/psd.conf &
+15  #USE_OVERLAYFS="no"   ==>  A LAISSER
+50  #BROWSERS=""          ==>  BROWSERS="firefox"
+58  #USE_BACKUPS="yes"    ==>  A LAISSER
+64  #BACKUP_LIMIT=5       ==>  A LAISSER
+
+$ rm -i $HOME/.config/psd/psd.conf~
+
+$ systemctl --user start psd.service
+
+$ systemctl --user status psd.service
+$ systemctl --user status psd-resync.service
+
+$ psd preview   ou    $ psd parse
+$ cat ~/.mozilla/firefox/profiles.ini
+
+
