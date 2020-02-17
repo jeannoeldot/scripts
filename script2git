@@ -204,6 +204,8 @@ printf '%s\n' "Répertoire : iso2usb" >> ${DIR_GIT}/README
 printf '%s\n' " -> iso2usb" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Maj-flashplugin" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-flash-psd-addons" >> ${DIR_GIT}/README
+printf '%s\n' " -> Maj-FlashPsdAddons.TXT" >> ${DIR_GIT}/README
 printf '%s\n' " -> maj-flashplugin" >> ${DIR_GIT}/README
 printf '%s\n' " -> Maj-Flashplugin.TXT" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
