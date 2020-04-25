@@ -61,7 +61,7 @@ msg_newline() {
 #
 
 # Version de rEFInd
-VERSION_REFIND_EFI=$(pacman -Qi "refind-efi" 2>/dev/null | awk '/Version/ {print $3}' | sed -e "s/-[0-9]$//")
+VERSION_REFIND_EFI=$(pacman -Qi "refind" 2>/dev/null | awk '/Version/ {print $3}' | sed -e "s/-[0-9]$//")
 
 cd
 msg "Ouverture du fichier /usr/share/refind/refind.conf-sample avec kwrite"

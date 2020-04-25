@@ -143,7 +143,7 @@ fi
 
 # Titre
 msg_titre "+----------------------------------------------+"
-msg_titre "|    Suite à la mise à jour de refind-efi      |"
+msg_titre "|    Suite à la mise à jour de refind          |"
 msg_titre "|    Copie du fichier refind_x64.efi           |"
 msg_titre "|    Copie du Répertoire icons                 |"
 msg_titre "+----------------------------------------------+"
@@ -217,7 +217,7 @@ fi
 
 # FIN
 if (( $MISE_AU_POINT == 0 )); then
-    msg "Fin de l'installation suite à la mise à jour de refind-efi"
+    msg "Fin de l'installation suite à la mise à jour de refind"
     msg_newline
 # Vérifications
     msg_info "Pour vérifier le fichier ${NAME_REP_DEST_BOOT_MGR}/${NAME_CONF_DEST_BOOT_MGR}."
@@ -225,7 +225,7 @@ if (( $MISE_AU_POINT == 0 )); then
     msg_info "kwrite ${NAME_REP_DEST_BOOT_MGR}/${NAME_CONF_DEST_BOOT_MGR} &"
     msg_info "kwrite /usr/share/refind/refind.conf-sample &"
 else
-    echo -e "\nMISE AU POINT - Fin du test de l'installation suite à la mise à jour de refind-efi"
+    echo -e "\nMISE AU POINT - Fin du test de l'installation suite à la mise à jour de refind"
     msg_newline
 # Vérifications
     msg_info "Pour vérifier le fichier ${NAME_REP_DEST_BOOT_MGR}/${NAME_CONF_DEST_BOOT_MGR}."
