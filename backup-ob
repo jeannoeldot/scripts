@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2015
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2020
 #
 # Version pour Arch-2(-CK) OpenBox
-# Version : 02 DU 30/11/2015
+# Version : 05 DU 27/04/2020
 #
 
 clear

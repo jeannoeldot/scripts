@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2019
-# Version : 04 DU 11/02/2019
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2020
+# Version : 05 DU 27/04/2020
 # NE SAUVE PAS 05-Photos 10-Musiques 10-Videos 99-Isos
 #
 
@@ -198,9 +198,20 @@ find -name *~ -exec /usr/bin/rm -vf {} \;
 find -name *~ -exec /usr/bin/rm -vf {} \;
 msg_newline
 
-# LES FICHIERS blend1,2,3, DANS /0-DataLinux/00-3D
-print_bold_vert "Vérification existence de fichiers blend1,2,3,... dans $DATAS/$REP_3D"
-print_bold_vert "-------------------------------------------------------------------------"
+## LES FICHIERS blend1,2,3, DANS /0-DataLinux/00-3D
+#print_bold_vert "Vérification existence de fichiers blend1,2,3,... dans $DATAS/$REP_3D"
+#print_bold_vert "-------------------------------------------------------------------------"
+#find $DATAS/$REP_3D -name *.blend[1-9]
+#msg_newline
+#print_bold_magenta "!!! ATTENTION !!!"
+#print_bold_magenta "-----------------"
+#printf '%s\n' "Si des fichiers ${BYellow}blend1,2,3,...${BWhite} existent, les supprimer."
+#attendre_appui_touche
+#msg_newline
+
+# LES FICHIERS blend1,2,3, DANS /00-3D
+print_bold_vert "Vérification existence de fichiers blend1,2,3,... dans ${REP_3D}"
+print_bold_vert "------------------------------------------------------------"
 find $DATAS/$REP_3D -name *.blend[1-9]
 msg_newline
 print_bold_magenta "!!! ATTENTION !!!"
