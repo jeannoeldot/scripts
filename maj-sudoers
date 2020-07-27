@@ -153,7 +153,9 @@ if [[ -s ${NAME_SUDOERS_PACNEW} ]]; then
     fi
 
     # Modification de timestamp_timeout = 20 minutes
-    printf '%s\n' "\n## My Defaults timestamp_timeout = ${TIMESTAMP_TIMEOUT} minutes" >> ${tmpfile}
+#    printf '%s\n' "\n## My Defaults timestamp_timeout = ${TIMESTAMP_TIMEOUT} minutes" >> ${tmpfile}
+    printf '%s\n' >> ${tmpfile}
+    printf '%s\n' "## My Defaults timestamp_timeout = ${TIMESTAMP_TIMEOUT} minutes" >> ${tmpfile}
     printf '%s\n' "Defaults:${NAME_USER} timestamp_timeout=${TIMESTAMP_TIMEOUT}" >> ${tmpfile}
 
     msg_newline
