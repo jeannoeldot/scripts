@@ -406,21 +406,23 @@ print_bold_cyan "   ou"
 print_bold_cyan " > À sauver sur : https://hubic.com/home/browser/ dans 00-SAVE-ARCH64"
 msg_newline
 msg_newline
+print_bold_cyan " > À sauver sur : /MYBOOK/00-ARCH64/"
+print_bold_jaune "Commandes :"
+print_bold_jaune "-----------"
+printf '%s\n' "rm -f /run/media/${USER}/MYBOOK/00-ARCH64/*.tar.*"
+printf '%s\n' "cp -v ${SAUVE}/*.tar.* /run/media/${USER}/MYBOOK/00-ARCH64/"
+printf '%s\n' "ou"
+printf '%s\n' "mv -v ${SAUVE}/*.tar.* /run/media/${USER}/MYBOOK/00-ARCH64/"
+printf '%s\n' "sync"
+msg_newline
+msg_newline
 print_bold_cyan " > À sauver sur : /0-DataLinux/00-SAVE-ARCH1-KDE/"
 print_bold_jaune "Commandes :"
 print_bold_jaune "-----------"
 printf '%s\n' "rm -f /0-DataLinux/00-SAVE-ARCH1-KDE/*.tar.*"
 printf '%s\n' "cp -v ${SAUVE}/*.tar.* /0-DataLinux/00-SAVE-ARCH1-KDE/"
-printf '%s\n' "sync"
-msg_newline
-msg_newline
-print_bold_cyan " > À sauver sur : /MYBOOK/00-ARCH64/"
-print_bold_jaune "Commandes :"
-print_bold_jaune "-----------"
-printf '%s\n' "rm -f /run/media/${USER}/MYBOOK/00-ARCH64/*.tar.*"
-printf '%s\n' "mv -v ${SAUVE}/*.tar.* /run/media/${USER}/MYBOOK/00-ARCH64/"
 printf '%s\n' "ou"
-printf '%s\n' "cp -v ${SAUVE}/*.tar.* /run/media/${USER}/MYBOOK/00-ARCH64/"
+printf '%s\n' "mv -v ${SAUVE}/*.tar.* /0-DataLinux/00-SAVE-ARCH1-KDE/"
 printf '%s\n' "sync"
 msg_newline
 
