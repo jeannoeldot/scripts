@@ -3,7 +3,7 @@
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2020
 #
 # Version pour Arch-2(-CK) OpenBox
-# Version : 05 DU 27/04/2020
+# Version : 06 DU 13/12/2020
 #
 
 clear
@@ -302,7 +302,7 @@ cp -v $HOME/.gitconfig $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.gitconfig.$
 msg_newline
 
 # Sauvegarde Fichiers fichiers config de blender
-VERSION_BLENDER=$(blender -v 2> /dev/null | awk '/Blender/ {print $2}')
+VERSION_BLENDER=$(blender -v 2> /dev/null | awk '/Blender/ {print $2}' | sed 's/\.[0-9]$//')
 
 print_bold_vert "Sauvegarde des fichiers config de blender ${BYellow}${VERSION_BLENDER}"
 print_bold_vert "----------------------------------------------"

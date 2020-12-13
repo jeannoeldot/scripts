@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2020
-# Version : 05 DU 27/04/2020
+# Version : 06 DU 13/12/2020
 #
 
 clear
@@ -352,7 +352,7 @@ cp -v $HOME/.yasp.script $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.yasp.scri
 msg_newline
 
 # Sauvegarde Fichiers fichiers config de blender
-VERSION_BLENDER=$(blender -v 2> /dev/null | awk '/Blender/ {print $2}')
+VERSION_BLENDER=$(blender -v 2> /dev/null | awk '/Blender/ {print $2}' | sed 's/\.[0-9]$//')
 
 print_bold_vert "Sauvegarde des fichiers config de blender ${BYellow}${VERSION_BLENDER}"
 print_bold_vert "----------------------------------------------"
