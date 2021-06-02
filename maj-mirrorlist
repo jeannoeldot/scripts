@@ -1,8 +1,8 @@
  
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013.2015
-# Version : 08
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013.2015,2021
+# Version : 09
 
 ## POUR TEST
 #set -x
@@ -122,10 +122,12 @@ cp -v ${NAME_MIRROR} ${NAME_MIRROR}.backup.${LADATE}
 cp -v ${NAME_MIRROR_PACNEW} ${NAME_MIRROR_PACNEW}.backup.${LADATE}
 
 # Configure le fichier /etc/pacman.d/mirrorlist.
+# reflector --country "FR" --sort rate --protocol http --protocol https --save /tmp/reflector
 url="https://www.archlinux.org/mirrorlist/?country=FR&use_mirror_status=on"
 tmpfile=$(mktemp --suffix=-mirrorlist)
 # Get latest mirror list and save to tmpfile
-curl -so ${tmpfile} ${url}
+#curl -so ${tmpfile} ${url}
+curl -s -L ${url} -o ${tmpfile}
 
 # Backup and replace current mirrorlist file (if new file is non-zero)
 if [[ -s ${tmpfile} ]]; then
@@ -182,8 +184,8 @@ if (( retour == 0 )); then
   msg "Fin de la configuration du fichier mirrorlist."
   # Affiche message pour synchroniser les nouveaux mirroirs et mettre à jour.
   msg_newline
-  msg "Lancer la commande suivante ${BYellow}pacman -Syu${Reset} pour synchroniser les nouveaux mirroirs et mettre à jour Arch..."
-#  pacman -Syu
+  msg "Lancer la commande suivante ${BYellow}LC_ALL=C pacman -Syu${Reset} pour synchroniser les nouveaux mirroirs et mettre à jour Arch..."
+# LC_ALL=C pacman -Syu
 else
   msg_newline
   msg "Échec de la configuration du fichier mirrorlist... Éditer manuellement le fichier « /etc/pacman.d/mirrorlist »."
