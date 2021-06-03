@@ -4,7 +4,7 @@
 #
 # Name : script2git
 #
-# Version : 0.1.5
+# Version : 0.1.6
 #
 # AVEC 1 paramètres : script2git -m "motifs du commit"
 # Example : $ script2git -m "Modifs COULEURS. echo ==> printf. Revu test if"
@@ -182,6 +182,7 @@ cp -vf ${DIR_SCRIPTS}/rpmextract.sh ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/search.sh ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/whoneeds ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/restartaudio ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/CPU-Capability.sh ${DIR_GIT}/
 
 # Création nouveau ${DIR_GIT}/README
 printf '%s\n' "Repository de mes scripts contenus dans ~/01-scripts." > ${DIR_GIT}/README
@@ -241,6 +242,7 @@ printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Racine :" >> ${DIR_GIT}/README
 printf '%s\n' " -> clean-backups" >> ${DIR_GIT}/README
+printf '%s\n' " -> CPU-Capability.sh" >> ${DIR_GIT}/README
 printf '%s\n' " -> dpi.py" >> ${DIR_GIT}/README
 printf '%s\n' " -> find-optdeps" >> ${DIR_GIT}/README
 printf '%s\n' " -> lls" >> ${DIR_GIT}/README

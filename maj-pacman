@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2018
-# Version : 03
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2018,2021
+# Version : 04
 
 ## POUR TEST
 #set -x
@@ -192,7 +192,7 @@ if [[ -f "${NAME_MAKEPKG_PACNEW}" ]]; then
     fi
     # Ajout de  -fdiagnostics-color=always
     sed -i "s/-O2 -pipe/-O2 -pipe -fdiagnostics-color=always/g" /tmp/${NAME_MAKEPKG}
-    # lscpu  ==> nbre de processeurs : 5 = Nb Core + 1
+    # lscpu  ==> nbre de processeurs : 7 = Nb Core + 1
 #    nb_core=$(LC_ALL=C lscpu | grep "^Core" | awk '{print $4}')
     nb_core=$(LC_ALL=C lscpu | awk '/^Core/ {print $4}')
     nb_core_mf=$(( $nb_core + 1 ))
@@ -267,12 +267,15 @@ if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
     sed -i "/^#Color/c\Color" /tmp/${NAME_PACMAN}
     # ADD VerbosePkgLists TO PACMAN.CONF
     sed -i "/^#VerbosePkgLists/c\VerbosePkgLists" /tmp/${NAME_PACMAN}
-    if (( $IN_VIRTUAL_BOX == 0 )); then
-        if (( $IN_PLASMA == 0 )); then
-            # ENABLE REPO-CK REPOSITORY
-            sed -i "/^\[core\]/i\[repo-ck]\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\n" /tmp/${NAME_PACMAN}
-        fi
-    fi
+#    # PAS OK : Erreurs...
+#    # ADD ParallelDownloads = 5 TO PACMAN.CONF
+#    sed -i "/^#ParallelDownloads/c\ParallelDownloads = 5" /tmp/${NAME_PACMAN}
+#    if (( $IN_VIRTUAL_BOX == 0 )); then
+#        if (( $IN_PLASMA == 0 )); then
+#            # ENABLE REPO-CK REPOSITORY
+#            sed -i "/^\[core\]/i\[repo-ck]\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\nServer = http://repo-ck.com/\$arch\n" /tmp/${NAME_PACMAN}
+#        fi
+#    fi
     # ENABLE MULTILIB REPOSITORY
     ligne_multilib=$(grep -n "\[multilib\]" /tmp/${NAME_PACMAN} | cut -f1 -d:)
     sed -i "${ligne_multilib}s/^#//" /tmp/${NAME_PACMAN}
