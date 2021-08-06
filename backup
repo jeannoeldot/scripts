@@ -361,6 +361,8 @@ cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/bookmarks.txt $HOME/${REP_
 cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/recent-files.txt $HOME/${REP_CONF}/Blender-config/home-${USER}-.config-blender-${VERSION_BLENDER}-config-recent-files.txt.${AUJOURDHUI}
 cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/startup.blend $HOME/${REP_CONF}/Blender-config/home-${USER}-.config-blender-${VERSION_BLENDER}-config-startup.blend.${AUJOURDHUI}
 cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/userpref.blend $HOME/${REP_CONF}/Blender-config/home-${USER}-.config-blender-${VERSION_BLENDER}-config-userpref.blend.${AUJOURDHUI}
+tar -czvf home-${USER}-.config-blender-${VERSION_BLENDER}.${AUJOURDHUI}.tar.gz $HOME/.config/blender/${VERSION_BLENDER}/
+mv -v home-${USER}-.config-blender-${VERSION_BLENDER}.${AUJOURDHUI}.tar.gz $HOME/${REP_CONF}/Blender-config/
 msg_newline
 
 
