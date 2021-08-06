@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2020
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2021
 #
 # Version pour Arch-2(-CK) OpenBox
-# Version : 06 DU 13/12/2020
+# Version : 07 DU 06/08/2021
 #
 
 clear
@@ -299,6 +299,7 @@ cp -v $HOME/.gtkrc-2.0 $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.gtkrc-2.0.$
 cp -v $HOME/.xinitrc $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.xinitrc.${AUJOURDHUI}
 
 cp -v $HOME/.gitconfig $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-.gitconfig.${AUJOURDHUI}
+cp -v $HOME/git-pat.txt $HOME/${REP_CONF}/${SAVE_CONFS}/home-${USER}-git-pat.txt.${AUJOURDHUI}
 msg_newline
 
 # Sauvegarde Fichiers fichiers config de blender
@@ -308,6 +309,8 @@ print_bold_vert "Sauvegarde des fichiers config de blender ${BYellow}${VERSION_B
 print_bold_vert "----------------------------------------------"
 cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/bookmarks.txt $HOME/${REP_CONF}/Blender-config/home-${USER}-.config-blender-${VERSION_BLENDER}-config-bookmarks.txt.${AUJOURDHUI}
 cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/recent-files.txt $HOME/${REP_CONF}/Blender-config/home-${USER}-.config-blender-${VERSION_BLENDER}-config-recent-files.txt.${AUJOURDHUI}
+cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/startup.blend $HOME/${REP_CONF}/Blender-config/home-${USER}-.config-blender-${VERSION_BLENDER}-config-startup.blend.${AUJOURDHUI}
+cp -v $HOME/.config/blender/${VERSION_BLENDER}/config/userpref.blend $HOME/${REP_CONF}/Blender-config/home-${USER}-.config-blender-${VERSION_BLENDER}-config-userpref.blend.${AUJOURDHUI}
 msg_newline
 
 
@@ -329,8 +332,9 @@ REP_TAR=""
   for REP_TAR in ${SOURCES_TAR};
         do
         print_bold_cyan " ==> Compression de : ${REP_TAR}"
-	bsdtar -cf - ${REP_TAR} > ${REP_TAR}-${DATE_JOUR_HEURE}.tar
-	xz -z -f ${REP_TAR}-${DATE_JOUR_HEURE}.tar
+        bsdtar -cf - ${REP_TAR} > ${REP_TAR}-${DATE_JOUR_HEURE}.tar
+#        xz -z -f ${REP_TAR}-${DATE_JOUR_HEURE}.tar
+        zstd -z -f -q ${REP_TAR}-${DATE_JOUR_HEURE}.tar
         done
 
 cd
@@ -350,7 +354,7 @@ print_bold_vert "--------------------------------------"
 msg_newline
 print_bold_magenta "!!! ATTENTION !!!"
 print_bold_magenta "-----------------"
-print_bold_magenta "Fichiers XXX-${DATE_JOUR_HEURE}.tar.xz dans ${SAUVE}"
+print_bold_magenta "Fichiers XXX-${DATE_JOUR_HEURE}.tar.zst dans ${SAUVE}"
 msg_newline
 print_bold_cyan " > À sauver sur : https://www.dropbox.com/ dans 00-SAVE_ARCH-KDE"
 print_bold_cyan "   ou"
