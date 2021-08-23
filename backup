@@ -333,7 +333,7 @@ if is_package_installed "grub-bios" ; then
   msg_newline
 fi
 
-if is_package_installed "refind-efi" ; then
+if is_package_installed "refind" ; then
   print_bold_vert "Sauvegarde de /boot/efi/EFI/refind/refind.conf"
   print_bold_vert "----------------------------------------------"
   sudo cp -v /boot/efi/EFI/refind/refind.conf $HOME/${REP_CONF}/Refind-Fichiers-Conf/boot-efi-EFI-refind-refind.conf.${AUJOURDHUI}
