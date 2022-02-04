@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2016
-# Version : 03
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2016,2022
+# Version : 04
 
 ## POUR TEST
 #set -x
@@ -129,9 +129,9 @@ if [[ -s ${NAME_SUDOERS_PACNEW} ]]; then
     cp -p ${NAME_SUDOERS_PACNEW} ${tmpfile}
 
     # Uncomment to allow members of group wheel to execute any command
-    sed -i '/%wheel ALL=(ALL) ALL/s/^# //' ${tmpfile}
+    sed -i "/^# %wheel ALL=(ALL:ALL) ALL/s/^# //" ${tmpfile}
     ## Same thing without a password (not secure)
-    #sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/s/^# //' ${tmpfile}
+    #sed -i '/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/s/^# //' ${tmpfile}
 
     # LE 17/11/2015 : SED Commentés car inutiles
     # Version OpenBox : init à ""
