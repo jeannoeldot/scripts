@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2012-2019
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2012-2022
 # 
 # Purpose: Vérifie les dépendances de mes paquets
 # situés dans $HOME/00-repolocal
 #
 #
-# Version : 0.8.3
+# Version : 0.8.4
 #
 
 # REPERTOIRES
@@ -82,8 +82,22 @@ die() {
 test_dependance() {
   package="$1"
   # sort out some files which are not supposed to be ELF files anyway.
-  packagefiles=`pacman -Qql $package | grep -v "\/$\|\.a\|\.png\|\.la\|\.ttf\|\.gz\|\.html\|\.css\|\.h\|\.xml\|\.rgb\|\.gif\|\.wav\|\.ogg\|\.mp3\|\.po\|\.txt\|\.jpg\|\.jpeg\|\.bmp\|\.xcf\|\.mo\|\.rb\|\.py\|\.lua\|\.config\|\.svg\|\.desktop\|\.conf\|\.pdf\|\.cfg"`
 #  packagefiles=($(pacman -Qql $package | grep -v "\/$\|\.a\|\.png\|\.la\|\.ttf\|\.gz\|\.html\|\.css\|\.h\|\.xml\|\.rgb\|\.gif\|\.wav\|\.ogg\|\.mp3\|\.po\|\.txt\|\.jpg\|\.jpeg\|\.bmp\|\.xcf\|\.mo\|\.rb\|\.py\|\.lua\|\.config\|\.svg\|\.desktop\|\.conf\|\.pdf\|\.cfg"))
+#  packagefiles=`pacman -Qql $package | grep -v "\/$\|\.a\|\.png\|\.la\|\.ttf\|\.gz\|\.html\|\.css\|\.h\|\.xml\|\.rgb\|\.gif\|\.wav\|\.ogg\|\.mp3\|\.po\|\.txt\|\.jpg\|\.jpeg\|\.bmp\|\.xcf\|\.mo\|\.rb\|\.py\|\.lua\|\.config\|\.svg\|\.desktop\|\.conf\|\.pdf\|\.cfg"`
+# Suite maj grep : Warning: stray \ before /
+#  packagefiles=`pacman -Qql $package | grep -v "/$\|\.a\|\.png\|\.la\|\.ttf\|\.gz\|\.html\|\.css\|\.h\|\.xml\|\.rgb\|\.gif\|\.wav\|\.ogg\|\.mp3\|\.po\|\.txt\|\.jpg\|\.jpeg\|\.bmp\|\.xcf\|\.mo\|\.rb\|\.py\|\.lua\|\.config\|\.svg\|\.desktop\|\.conf\|\.pdf\|\.cfg"`
+  local exclure="/$\|\.a\|\.png\|\.la\|\.ttf\|\.gz\|\.html\|\.css\|\.h\|\.xml\|\.rgb\|\.gif\|\.wav\|\.ogg\|\.mp3\|\.po\|\.txt\|\.jpg\|\.jpeg\|\.bmp\|\.xcf\|\.mo\|\.rb\|\.py\|\.lua\|\.config\|\.svg\|\.desktop\|\.conf\|\.pdf\|\.cfg"
+  # standard
+  exclure+="\|\.cmake\|\.pc\|\.qm\|\.md\|LICENSE\|THIRD-PARTY"
+  # awesomebump
+  exclure+="\|\.obj\|\.mtl\|\.ini"
+  # blender
+  exclure+="\|\.dat\|\.exr\|\.oso\|\.osl\|\.woff2\|\.blend\|\.js\|\.json"
+  # conky
+  exclure+="\|\.nanorc\|\.vim"
+  # embree
+  exclure+="\|\.isph"
+  packagefiles=`pacman -Qql $package | grep -v "${exclure}"`
   IFS=$'\n'
   for file in $packagefiles; do # check the files
       if (( $(file $file | grep -c 'ELF') != 0 )); then
@@ -154,7 +168,7 @@ traite_paquet() {
 #
 msg_titre "+-----------------------------------------------+"
 msg_titre "|  Vérification des dépendances de mes paquets  |"
-msg_titre "|  Version : 0.8.1                              |"
+msg_titre "|  Version : 0.8.4                              |"
 msg_titre "+-----------------------------------------------+"
 
 # check if DIR_TEMP exists if it's missing, create it.
