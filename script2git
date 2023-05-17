@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015,2016,2017,2020
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015,2016,2017,2020,2023
 #
 # Name : script2git
 #
@@ -155,6 +155,8 @@ cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-tmpfs ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-chroot-repo ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/init-mirrorlist-pacnew/maj-mirrorlist ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/iso2usb/iso2usb ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-Blender/blenderl ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-Blender/maj-blender ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/maj-flashplugin ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/Maj-Flashplugin.TXT ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/maj-flash-psd-addons ${DIR_GIT}/
@@ -203,6 +205,10 @@ printf '%s\n' " -> maj-mirrorlist" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : iso2usb" >> ${DIR_GIT}/README
 printf '%s\n' " -> iso2usb" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Maj-Blender" >> ${DIR_GIT}/README
+printf '%s\n' " -> blenderl" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-blender" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Maj-flashplugin" >> ${DIR_GIT}/README
 printf '%s\n' " -> maj-flash-psd-addons" >> ${DIR_GIT}/README

@@ -70,7 +70,7 @@ $ systemctl --user stop psd.service
 $ kwrite $HOME/.config/psd/psd.conf &
 15  #USE_OVERLAYFS="no"   ==>  A LAISSER
 20  #USE_SUSPSYNC="no"    ==>  A LAISSER
-56  #BROWSERS=()          ==>  BROWSERS=(firefox)
+56  #BROWSERS=()          ==>  BROWSERS=(firefox chromium)
 64  #USE_BACKUPS="yes"    ==>  A LAISSER
 70  #BACKUP_LIMIT=5       ==>  A LAISSER
 

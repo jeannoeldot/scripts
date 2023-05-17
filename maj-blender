@@ -1,0 +1,270 @@
+#!/usr/bin/env bash
+#
+# Décompression de blender-*-release.tar.xz ==> $HOME/Blender
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2023
+# Version : 01
+
+## POUR TEST
+#set -x
+
+# REPERTOIRES
+DIR_DWL=$HOME/99-dwl-temp/
+DIR_BLENDER=$HOME/Blender
+
+# COLORS
+# Regular Colors
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
+#
+# FONCTIONS
+#
+msg() {
+  local mesg=$1; shift
+  printf "${BWhite}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_titre() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+  local mesg=$1; shift
+  printf "\n" "$@" >&2
+}
+
+error() {
+  local mesg=$1; shift
+  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Reset}\n" "$@" >&2
+}
+
+cleanup() {
+  cd
+  [[ $1 ]] && exit $1
+}
+
+die() {
+  error "$*"
+  cleanup 1
+}
+
+read_input_text(){
+  read -p "$1 [O/N]: " OPTION
+  msg_newline
+  OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
+}
+
+contains_element() {
+    #check if an element exist in a string
+    for e in "${@:2}"; do [[ $e == $1 ]] && break; done;
+}
+
+invalid_option() {
+    printf '%s\n' "${BRed}Option invalide. Essayez une autre option.${Reset}"
+}
+
+#
+# FIN FONCTIONS
+#
+
+#
+# DEBUT DU SCRIPT
+#
+# Titre
+msg_titre "+----------------------------------------------------+"
+msg_titre "|                                                    |"
+msg_titre "|     Décompression de blender-*-release.tar.xz      |"
+msg_titre "|                                                    |"
+msg_titre "+----------------------------------------------------+"
+
+# La date du jour
+LADATE=$(date +%Y-%m-%d)
+
+# TEST
+#DIR_BLENDER=$HOME/99-temp
+# TEST : ENLEVER OPTIONS -v : rm -v cp -v
+# TEST
+
+# Test si DIR_BLENDER existe sinon: création
+if [[ ! -d "$DIR_BLENDER" ]]; then
+    msg_newline
+    msg "Création du répertoire «$DIR_BLENDER»"
+    mkdir -p $DIR_BLENDER
+# TEST
+#else
+#    msg_newline
+#    msg "Répertoire "$DIR_BLENDER" exste déjà."
+# TEST
+fi
+
+cd $DIR_BLENDER
+
+# Suppression ancien répertoire blender.backup
+if [[ -d blender.backup.* ]]; then
+    msg_newline
+    msg "Suppression de l'ancien répertoire blender.backup existant."
+#rm -v -rf blender.backup.*
+    rm -rf blender.backup.*
+fi
+
+# Sauvegarde répertoire blender
+if [[ -d blender ]]; then
+    msg_newline
+    msg "Sauvegarde du répertoire blender existant."
+#cp -v -r blender blender.backup.${LADATE}
+    cp -r blender blender.backup.${LADATE}
+fi
+
+# Suppression répertoire blender
+if [[ -d blender ]]; then
+    msg_newline
+    msg "Suppression du répertoire blender existant."
+#rm -v -rf blender
+    rm -rf blender
+fi
+
+cd ${DIR_DWL}
+
+# TEST SI 1 FICHIER BLENDER release.tar.xz EXISTE
+liste_blender=($(ls -la | grep release.tar.xz | awk '{print $9}'))
+# TEST
+#echo $liste_blender
+## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
+# TEST
+if [[ $liste_blender == "" ]]; then
+    die "Aucun fichier blender-*-release.tar.xz trouvé."
+else
+    msg_newline
+    msg "Fichier «$liste_blender» trouvé."
+fi
+
+
+# TEST SI 1 FICHIER BLENDER release.tar.xz.sha256 EXISTE
+liste_sha256=($(ls -la | grep release.tar.xz.sha256 | awk '{print $9}'))
+# TEST
+#echo $liste_sha256
+## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
+# TEST
+if [[ $liste_sha256 == "" ]]; then
+    die "Aucun fichier blender-*-release.tar.xz.sha256 trouvé."
+else
+    msg_newline
+    msg "Fichier «$liste_sha256» trouvé."
+fi
+
+# Lecture SHA256SUM de blender
+sha256sum_sha256=$(cat $liste_sha256)
+# TEST
+#echo $sha256sum_sha256
+# TEST
+
+# Calcul SHA256SUM de blender
+msg_newline
+msg "Calcul du SHA256SUM de blender-*-release.tar.xz."
+sha256sum_blender=$(sha256sum $liste_blender | cut -d " " -f 1)
+# TEST
+#echo $sha256sum_blender
+# TEST
+
+# Test si sha256sum ok
+if [[ $sha1sum_sha256 != $sha1sum_blender ]]; then
+    die "SHA256SUM de «$liste_blender» erroné."
+else
+    msg_newline
+    msg "SHA256SUM de «$liste_blender» OK."
+fi
+
+# Décompresse blender-*-release.tar.xz ds $DIR_BLENDER
+msg_newline
+msg "Décompression de «$liste_blender» dans «$DIR_BLENDER»"
+#tar -x --xz -f blender-*-release.tar.xz -C $DIR_BLENDER
+tar -x --xz -f $liste_blender -C $DIR_BLENDER
+
+msg_newline
+cd $DIR_BLENDER
+mv -v blender-*-release blender
+
+cd ${DIR_DWL}
+
+msg_newline
+msg "Suppression de «$liste_sha256»."
+rm -i $liste_sha256
+
+msg_newline
+msg "Suppression de «$liste_blender»."
+rm -i $liste_blender
+
+# FIN
+msg "MAJ de «$liste_blender» dans «$DIR_BLENDER» réalisée avec succès."
+exit 0
+
+#======================================================================
+# TEST
+#exit 0
+# TEST
+
+# TEST
+#ls | grep blender
+# TEST
+
+# TEST
+# Commande tar
+# tar -x --zstd -f 00-Conky-*.tar.zst -C ~/
+# tar -x Extract files from an archive.
+# --zstd Filter the archive through zstd(1)
+# -f --file=ARCHIVE Use  archive  file
+# -C --directory=DIR Change to DIR before performing any operations.
+# TEST
+
+# TEST
+# CHOIX FICHIER BLENDER
+## ls -la | grep release.tar.xz | awk '{print $6 " " $7 " " $8 " " $9 " "}'
+## 14 mai 16:50 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
+## 14 mai 16:12 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
+# TEST
+#liste_blenders=$(ls -la | grep release.tar.xz | awk '{print $6 " " $7 " " $8 " " $9 " "}')
+# TEST
+#echo $liste_blenders
+# TEST
+#PS3="Entrer le n° de l'option choisie: "
+#printf '\n%s\n' "${BWhite}Sélectionner le fichier blender à décompresser :${Reset}"
+#select CHOIX_BLENDER in "${liste_blenders[@]}"; do
+#    if contains_element "$CHOIX_BLENDER" "${liste_blenders[@]}"; then
+#        break
+#    else
+#        invalid_option
+#    fi
+#done
+#NOM_FICHIER_BLENDER="$CHOIX_BLENDER"
+# TEST
+##Sélectionner le fichier blender à décompresser :
+##1) 14 mai 16:50 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
+##14 mai 16:12 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
+##Entrer le n° de l'option choisie: 1
+# TEST
+
+# TEST
+#msg_newline
+#msg "NOM DU FICHIER BLENDER CHOISI :«$NOM_FICHIER_BLENDER»"
+##:: NOM DU FICHIER BLENDER CHOISI :«14 mai 16:50 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
+##14 mai 16:12 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256 »
+# TEST
+
