@@ -155,8 +155,8 @@ cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-tmpfs ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Creation-PKG-Tempfs/mkpkg-chroot-repo ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/init-mirrorlist-pacnew/maj-mirrorlist ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/iso2usb/iso2usb ${DIR_GIT}/
-cp -vf ${DIR_SCRIPTS}/Maj-Blender/blenderl ${DIR_GIT}/
-cp -vf ${DIR_SCRIPTS}/Maj-Blender/maj-blender ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-Blender/blender-bf ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-Blender/untar-blender-bf ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/maj-flashplugin ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/Maj-Flashplugin.TXT ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/maj-flash-psd-addons ${DIR_GIT}/
@@ -207,8 +207,8 @@ printf '%s\n' "Répertoire : iso2usb" >> ${DIR_GIT}/README
 printf '%s\n' " -> iso2usb" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Maj-Blender" >> ${DIR_GIT}/README
-printf '%s\n' " -> blenderl" >> ${DIR_GIT}/README
-printf '%s\n' " -> maj-blender" >> ${DIR_GIT}/README
+printf '%s\n' " -> blender-bf" >> ${DIR_GIT}/README
+printf '%s\n' " -> untar-blender-bf" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Maj-flashplugin" >> ${DIR_GIT}/README
 printf '%s\n' " -> maj-flash-psd-addons" >> ${DIR_GIT}/README

@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+#
+# Launceur de blender dans $HOME/Blender
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2023
+# Version : 01
+
+## POUR TEST
+#set -x
+
+# REPERTOIRES
+DIR_BLENDER=$HOME/Blender/blender
+
+
+# COLORS
+# Regular Colors
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
+#
+# FONCTIONS
+#
+msg() {
+  local mesg=$1; shift
+  printf "${BWhite}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_titre() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+  local mesg=$1; shift
+  printf "\n" "$@" >&2
+}
+
+error() {
+  local mesg=$1; shift
+  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Reset}\n" "$@" >&2
+}
+
+cleanup() {
+  cd
+  [[ $1 ]] && exit $1
+}
+
+die() {
+  error "$*"
+  cleanup 1
+}
+
+read_input_text(){
+  read -p "$1 [O/N]: " OPTION
+  msg_newline
+  OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
+}
+
+contains_element() {
+    #check if an element exist in a string
+    for e in "${@:2}"; do [[ $e == $1 ]] && break; done;
+}
+
+invalid_option() {
+    printf '%s\n' "${BRed}Option invalide. Essayez une autre option.${Reset}"
+}
+
+#
+# FIN FONCTIONS
+#
+
+#
+# DEBUT DU SCRIPT
+#
+# Titre
+msg_titre "+------------------------------------------------+"
+msg_titre "|                                                |"
+msg_titre "|     Lancement de $HOME/Blender/blender     |"
+msg_titre "|                                                |"
+msg_titre "+------------------------------------------------+"
+
+# TEST
+#DIR_BLENDER=$HOME/99-temp/blender
+# TEST
+
+# Test si DIR_BLENDER existe sinon ERREUR
+if [[ ! -d "$DIR_BLENDER" ]]; then
+    die "Répertoire "$DIR_BLENDER" n'exste pas."
+fi
+
+# Test si blender existe sinon ERREUR
+if [[ ! -f "$DIR_BLENDER/blender" ]]; then
+    die "Fichier "$DIR_BLENDER/blender" n'exste pas."
+fi
+
+cd $DIR_BLENDER
+./blender
+cd
+
+# FIN
+exit 0
