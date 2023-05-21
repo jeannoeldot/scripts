@@ -124,7 +124,7 @@ liste_blender=($(ls -la | grep release.tar.xz | awk '{print $9}'))
 ## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
 # TEST
 if [[ $liste_blender == "" ]]; then
-    die "Aucun fichier blender-*-release.tar.xz trouvé."
+    die "Aucun fichier blender-*-release.tar.xz trouvé dans ${DIR_DWL}."
 else
     msg_newline
     msg "Fichier «$liste_blender» trouvé."
@@ -137,7 +137,7 @@ liste_sha256=($(ls -la | grep release.tar.xz.sha256 | awk '{print $9}'))
 ## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
 # TEST
 if [[ $liste_sha256 == "" ]]; then
-    die "Aucun fichier blender-*-release.tar.xz.sha256 trouvé."
+    die "Aucun fichier blender-*-release.tar.xz.sha256 trouvé dans ${DIR_DWL}."
 else
     msg_newline
     msg "Fichier «$liste_sha256» trouvé."
