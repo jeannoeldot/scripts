@@ -146,12 +146,8 @@ fi
 cd $DIR_BLENDER
 
 # Suppression ancien répertoire blender.backup
-if [[ -d blender.backup.* ]]; then
-    msg_newline
-    msg "Suppression de l'ancien répertoire blender.backup existant."
 #rm -v -rf blender.backup.*
     rm -rf blender.backup.*
-fi
 
 # Sauvegarde répertoire blender
 if [[ -d blender ]]; then
