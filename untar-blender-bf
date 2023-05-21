@@ -115,6 +115,34 @@ if [[ ! -d "$DIR_BLENDER" ]]; then
 # TEST
 fi
 
+cd ${DIR_DWL}
+
+# TEST SI 1 FICHIER BLENDER release.tar.xz EXISTE
+liste_blender=($(ls -la | grep release.tar.xz | awk '{print $9}'))
+# TEST
+#echo $liste_blender
+## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
+# TEST
+if [[ $liste_blender == "" ]]; then
+    die "Aucun fichier blender-*-release.tar.xz trouvé."
+else
+    msg_newline
+    msg "Fichier «$liste_blender» trouvé."
+fi
+
+# TEST SI 1 FICHIER BLENDER release.tar.xz.sha256 EXISTE
+liste_sha256=($(ls -la | grep release.tar.xz.sha256 | awk '{print $9}'))
+# TEST
+#echo $liste_sha256
+## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
+# TEST
+if [[ $liste_sha256 == "" ]]; then
+    die "Aucun fichier blender-*-release.tar.xz.sha256 trouvé."
+else
+    msg_newline
+    msg "Fichier «$liste_sha256» trouvé."
+fi
+
 cd $DIR_BLENDER
 
 # Suppression ancien répertoire blender.backup
@@ -143,35 +171,8 @@ fi
 
 cd ${DIR_DWL}
 
-# TEST SI 1 FICHIER BLENDER release.tar.xz EXISTE
-liste_blender=($(ls -la | grep release.tar.xz | awk '{print $9}'))
-# TEST
-#echo $liste_blender
-## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
-# TEST
-if [[ $liste_blender == "" ]]; then
-    die "Aucun fichier blender-*-release.tar.xz trouvé."
-else
-    msg_newline
-    msg "Fichier «$liste_blender» trouvé."
-fi
-
-
-# TEST SI 1 FICHIER BLENDER release.tar.xz.sha256 EXISTE
-liste_sha256=($(ls -la | grep release.tar.xz.sha256 | awk '{print $9}'))
-# TEST
-#echo $liste_sha256
-## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
-# TEST
-if [[ $liste_sha256 == "" ]]; then
-    die "Aucun fichier blender-*-release.tar.xz.sha256 trouvé."
-else
-    msg_newline
-    msg "Fichier «$liste_sha256» trouvé."
-fi
-
 # Lecture SHA256SUM de blender
-sha256sum_sha256=$(cat $liste_sha256)
+sha256sum_sha256=$(awk '{print $1}' $liste_sha256)
 # TEST
 #echo $sha256sum_sha256
 # TEST
