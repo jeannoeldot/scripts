@@ -386,6 +386,8 @@ REP_TAR=""
         bsdtar -cf - ${REP_TAR} > ${REP_TAR}-${DATE_JOUR_HEURE}.tar
 #        xz -z -f ${REP_TAR}-${DATE_JOUR_HEURE}.tar
         zstd -z -f -q ${REP_TAR}-${DATE_JOUR_HEURE}.tar
+        # SUPPRIME ${REP_TAR}-${DATE_JOUR_HEURE}.tar
+        rm -f ${REP_TAR}-${DATE_JOUR_HEURE}.tar
         done
 
 cd
