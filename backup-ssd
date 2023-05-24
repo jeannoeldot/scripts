@@ -409,11 +409,6 @@ print_bold_magenta "!!! ATTENTION !!!"
 print_bold_magenta "-----------------"
 print_bold_magenta "Fichiers XXX-${DATE_JOUR_HEURE}.tar.zst dans ${SAUVE}"
 msg_newline
-print_bold_cyan " > À sauver sur : https://www.dropbox.com/ dans 00-SAVE_ARCH-KDE"
-print_bold_cyan "   ou"
-print_bold_cyan " > À sauver sur : https://hubic.com/home/browser/ dans 00-SAVE-ARCH64"
-msg_newline
-msg_newline
 print_bold_cyan " > À sauver sur : /MYBOOK/00-ARCH64/"
 print_bold_jaune "Commandes :"
 print_bold_jaune "-----------"
