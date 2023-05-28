@@ -210,6 +210,8 @@ msg "Suppression de «$liste_blender»."
 rm -i $liste_blender
 
 # FIN
+msg_newline
+msg_newline
 msg "MAJ de «$liste_blender» dans «$DIR_BLENDER» réalisée avec succès."
 exit 0
 
