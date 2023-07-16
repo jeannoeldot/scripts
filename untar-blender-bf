@@ -143,6 +143,28 @@ else
     msg "Fichier «$liste_sha256» trouvé."
 fi
 
+# Lecture SHA256SUM de blender
+sha256sum_sha256=$(awk '{print $1}' $liste_sha256)
+# TEST
+#echo $sha256sum_sha256
+# TEST
+
+# Calcul SHA256SUM de blender
+msg_newline
+msg "Calcul du SHA256SUM de blender-*-release.tar.xz."
+sha256sum_blender=$(sha256sum $liste_blender | cut -d " " -f 1)
+# TEST
+#echo $sha256sum_blender
+# TEST
+
+# Test si sha256sum ok
+if [[ $sha1sum_sha256 != $sha1sum_blender ]]; then
+    die "SHA256SUM de «$liste_blender» erroné."
+else
+    msg_newline
+    msg "SHA256SUM de «$liste_blender» OK."
+fi
+
 cd $DIR_BLENDER
 
 # Suppression ancien répertoire blender.backup
@@ -166,28 +188,6 @@ if [[ -d blender ]]; then
 fi
 
 cd ${DIR_DWL}
-
-# Lecture SHA256SUM de blender
-sha256sum_sha256=$(awk '{print $1}' $liste_sha256)
-# TEST
-#echo $sha256sum_sha256
-# TEST
-
-# Calcul SHA256SUM de blender
-msg_newline
-msg "Calcul du SHA256SUM de blender-*-release.tar.xz."
-sha256sum_blender=$(sha256sum $liste_blender | cut -d " " -f 1)
-# TEST
-#echo $sha256sum_blender
-# TEST
-
-# Test si sha256sum ok
-if [[ $sha1sum_sha256 != $sha1sum_blender ]]; then
-    die "SHA256SUM de «$liste_blender» erroné."
-else
-    msg_newline
-    msg "SHA256SUM de «$liste_blender» OK."
-fi
 
 # Décompresse blender-*-release.tar.xz ds $DIR_BLENDER
 msg_newline
