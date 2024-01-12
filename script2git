@@ -147,7 +147,7 @@ msg "Copie des scripts de « ${DIR_SCRIPTS} » vers « ${DIR_GIT} »"
 # Effacement de ${DIR_GIT}/README
 rm -f ${DIR_GIT}/README
 # Copie des scripts
-cp -vf ${DIR_SCRIPTS}/Backup/backup ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Backup/backup-kde ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Backup/backup-nosauve ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Backup/backup-ob ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Backup/backup-ssd ${DIR_GIT}/
@@ -191,7 +191,7 @@ printf '%s\n' "Repository de mes scripts contenus dans ~/01-scripts." > ${DIR_GI
 printf '%s\n' "=====================================================" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Backup" >> ${DIR_GIT}/README
-printf '%s\n' " -> backup" >> ${DIR_GIT}/README
+printf '%s\n' " -> backup-kde" >> ${DIR_GIT}/README
 printf '%s\n' " -> backup-ob" >> ${DIR_GIT}/README
 printf '%s\n' " -> backup-ssd" >> ${DIR_GIT}/README
 printf '%s\n' " -> backup-nosauve" >> ${DIR_GIT}/README
