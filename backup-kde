@@ -263,17 +263,17 @@ cp -v $HOME/.local/share/kate/sessions/* $HOME/${REP_CONF}/kate-sessions/
 msg_newline
 
 # Sauvegarde config KDE
-print_bold_vert "Sauvegarde des configs de KDE5"
+print_bold_vert "Sauvegarde des configs de KDE6"
 print_bold_vert "------------------------------"
-rm -f $HOME/${REP_CONF}/KDE5-config-rc/*
-cp -v $HOME/.config/*rc $HOME/${REP_CONF}/KDE5-config-rc/
+rm -f $HOME/${REP_CONF}/KDE6-config-rc/*
+cp -v $HOME/.config/*rc $HOME/${REP_CONF}/KDE6-config-rc/
 msg_newline
 
 print_bold_vert "Sauvegarde de la configs de DOLPHIN"
 print_bold_vert "-----------------------------------"
-# rm -f $HOME/${REP_CONF}/KDE5-Dolphin/*
-cp -v $HOME/.local/share/user-places.xbel $HOME/${REP_CONF}/KDE5-Dolphin/user-places.xbel.${AUJOURDHUI}
-cp -v $HOME/.local/share/user-places.xbel.avec.mes.emplacements $HOME/${REP_CONF}/KDE5-Dolphin/user-places.xbel.avec.mes.emplacements.${AUJOURDHUI}
+# rm -f $HOME/${REP_CONF}/KDE6-Dolphin/*
+cp -v $HOME/.local/share/user-places.xbel $HOME/${REP_CONF}/KDE6-Dolphin/user-places.xbel.${AUJOURDHUI}
+cp -v $HOME/.local/share/user-places.xbel.avec.mes.emplacements $HOME/${REP_CONF}/KDE6-Dolphin/user-places.xbel.avec.mes.emplacements.${AUJOURDHUI}
 msg_newline
 
 # Sauvegarde des bookmark Firefox

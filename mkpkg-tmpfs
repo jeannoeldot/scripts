@@ -343,7 +343,7 @@ msg_titre "|                                            Version = $VERS         
 msg_titre "|                                                                                                                  |"
 msg_titre "| Usage : mkpkg-tmpfs -m generic|native|fast|floop [-g 8G|24G|32G] [-l logs] [-q qt] [-v git|svn]                  |"
 msg_titre "| ou                                                                                                               |"
-msg_titre "| Usage : $HOME/bin/mkpkg-tmpfs -m generic|native|fast|floop [-g 8G|24G|32G] [-l logs] [-q qt] [-v git|svn]        |"
+msg_titre "| Usage : $HOME/bin/mkpkg-tmpfs -m generic|native|fast|floop [-g 8G|24G|32G] [-l logs] [-q qt] [-v git|svn]    |"
 msg_titre "|                                                                                                                  |"
 msg_titre "| mkpkg-tmpfs -h pour lire l'aide                                                                                  |"
 msg_titre "+------------------------------------------------------------------------------------------------------------------+"
