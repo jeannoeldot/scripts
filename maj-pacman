@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2018,2021
-# Version : 04
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2018,2021,2024
+# Version : 05
 
 ## POUR TEST
 #set -x
@@ -199,7 +199,8 @@ if [[ -f "${NAME_MAKEPKG_PACNEW}" ]]; then
     sed -i "/^#MAKEFLAGS/c\MAKEFLAGS=\"-j$nb_core_mf\"" /tmp/${NAME_MAKEPKG}
     # PACKAGER
     sed -i "/^#PACKAGER/c\PACKAGER=\"Name <name@fai.com>\"" /tmp/${NAME_MAKEPKG}
-
+    # Modifs COMPRESSZST => (zstd -c -T0 --ultra -18 -)
+    sed -i "/^COMPRESSZST/c\COMPRESSZST=(zstd -c -T0 --ultra -18 -)" /tmp/${NAME_MAKEPKG}
     msg_newline
     msg "Ces modifications seront apportées à «${NAME_MAKEPKG}» :"
     sed '/#/d;/^$/d' /tmp/${NAME_MAKEPKG}
