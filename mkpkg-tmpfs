@@ -5,7 +5,7 @@
 # 2013,2014,2015,2016,2019,2020,2021,2024
 # 
 
-# VERSION=1.1.9
+# VERSION=1.2.0
 VERS="@VERSION@"
 
 ################################
@@ -479,6 +479,7 @@ architecture="${CARCH}"
 nom_paquet=""
 num_version=""
 num_release=""
+num_epoque=""
 cd "${rep_paquet}"
 if [[ -f "PKGBUILD" ]]; then
   eval $(grep '^pkgname=' "PKGBUILD")
@@ -497,6 +498,10 @@ if [[ -f "PKGBUILD" ]]; then
   eval $(grep '^pkgrel=' "PKGBUILD")
   if [[ -n "${pkgrel}" ]]; then
     num_release="${pkgrel}"
+  fi
+  eval $(grep '^epoch=' "PKGBUILD")
+  if [[ -n "${epoch}" ]]; then
+    num_epoque="${epoch}"
   fi
 else
   die "Aucun fichier « PKGBUILD » présent"
@@ -568,17 +573,25 @@ make_paquet "${rep_paquet}"
 # makechrootpkg NE retourne PLUS de code d'erreur
 #if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}${extension_paquet}" ]]; then
 #  if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any${extension_paquet}" ]]; then
-if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}.pkg.tar.xz" ]]; then
-  if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}.pkg.tar.zst" ]]; then
-    if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any.pkg.tar.xz" ]]; then
-      if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any.pkg.tar.zst" ]]; then
-        error "Fabrication du paquet « $nom_paquet » impossible."
-        warning "Faire : cd ${REP_TMPFS}/${USER}/build pour inspection."
-        warning "Quand fini :"
-        warning "==> fermer tous les fichiers ouverts."
-        warning "==> appuyer sur une touche pour quitter le script."
-        read -e -sn 1 -p "..."
-        die "Terminé."
+if [[ ! -f "${rep_paquet}/$nom_paquet-$num_epoque:$num_version-$num_release-${architecture}.pkg.tar.xz" ]]; then
+  if [[ ! -f "${rep_paquet}/$nom_paquet-$num_epoque:$num_version-$num_release-${architecture}.pkg.tar.zst" ]]; then
+    if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}.pkg.tar.xz" ]]; then
+      if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-${architecture}.pkg.tar.zst" ]]; then
+        if [[ ! -f "${rep_paquet}/$nom_paquet-$num_epoque:$num_version-$num_release-any.pkg.tar.xz" ]]; then
+          if [[ ! -f "${rep_paquet}/$nom_paquet-$num_epoque:$num_version-$num_release-any.pkg.tar.zst" ]]; then
+            if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any.pkg.tar.xz" ]]; then
+              if [[ ! -f "${rep_paquet}/$nom_paquet-$num_version-$num_release-any.pkg.tar.zst" ]]; then
+                error "Fabrication du paquet « $nom_paquet » impossible."
+                warning "Faire : cd ${REP_TMPFS}/${USER}/build pour inspection."
+                warning "Quand fini :"
+                warning "==> fermer tous les fichiers ouverts."
+                warning "==> appuyer sur une touche pour quitter le script."
+                read -e -sn 1 -p "..."
+                die "Terminé."
+              fi
+            fi
+          fi
+        fi
       fi
     fi
   fi
