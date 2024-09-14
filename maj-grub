@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2024
+#
+# Version 0.1
+#
+
+## POUR TEST
+#set -x
+
+# VARIABLES
+# NOM UTILSATEUR
+NAME_USER=${USER}
+
+IN_VIRTUAL_BOX=0
+#
+
+# COULEURS
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
+#
+# FONCTIONS
+#
+msg() {
+  local mesg=$1; shift
+  printf "${BWhite}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_info() {
+  local mesg=$1; shift
+  printf "${BWhite}==> ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_titre() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+    local mesg=$1; shift
+    printf "\n" "$@" >&2
+}
+
+error() {
+  local mesg=$1; shift
+  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Reset}\n" "$@" >&2
+}
+
+cleanup() {
+  cd
+  [[ $1 ]] && exit $1
+}
+
+die() {
+  error "$*"
+  cleanup 1
+}
+
+# DANS VIRTUALBOX OU NON
+# OUI ==> IN_VIRTUAL_BOX=1
+# NON ==> IN_VIRTUAL_BOX=0
+check_is_in_virtualbox() {
+    local vbox=$(journalctl -b | grep -E "DMI:")
+    echo ${vbox} | tr "[:upper:]" "[:lower:]" | grep -q virtualbox
+    if (( $? == 0 )); then
+        IN_VIRTUAL_BOX=1
+    else
+        IN_VIRTUAL_BOX=0
+    fi
+}
+
+check_and_return_name_partition_esp() {
+    local esp=$(LC_ALL=C fdisk -l | awk '/EFI System/ {print $1}')
+    if [[ "${esp}" != "" ]];then
+        IS_NAME_ESP_EXISTE=1
+        NAME_PARTITION_ESP=${esp}
+#        echo "une partition ESP existe et est : "${NAME_PARTITION_ESP}
+    else
+        IS_NAME_ESP_EXISTE=0
+#        echo "PAS de partition ESP !"
+    fi
+}
+
+#
+# FIN FONCTIONS
+#
+
+#
+# DEBUT DU SCRIPT
+#
+
+# nom du script = $0
+# nombre d'argument = $#
+# liste des arguments = $*
+# => Passe en root
+if (( EUID != 0 )); then
+    printf '\n%s\n' "${BYellow}Le script $0 doit être exécuté en «root»."
+    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
+    exec su -c "${0} ${1}"
+    exit ${?}
+fi
+
+
+# Titre
+msg_titre "+----------------------------------------------------+"
+msg_titre "|    Suite à la mise à jour de grub                  |"
+msg_titre "|    Modification du fichier /etc/default/grub       |"
+msg_titre "|    Modification du fichier /etc/grub.d/40_custom   |"
+msg_titre "|    Génération du fichier /boot/grub/grub.cfg       |"
+msg_titre "+----------------------------------------------------+"
+
+msg_newline
+
+# POUR TEST =1 SINON =0
+MISE_AU_POINT=0
+
+# Test si dans VirtualBox
+check_is_in_virtualbox
+if (( $IN_VIRTUAL_BOX == 1 )); then
+    msg_info "Installation dans Oracle VM VirtualBox."
+    msg_info "Ajout option force_addr=0xaddr."
+    msg_info "Ajout option --removable."
+else
+    msg_info "Installation réelle."
+fi
+msg_newline
+
+        msg "Modification du fichier /etc/default/grub"
+        # /etc/default/grub
+        sed -i "/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved" /etc/default/grub
+        sed -i "/^GRUB_TIMEOUT=/c\GRUB_TIMEOUT=3" /etc/default/grub
+        if (( $IN_VIRTUAL_BOX == 1 )); then
+            sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"rw force_addr=0xaddr systemd.unit=graphical.target quiet\"" /etc/default/grub
+            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"\"" /etc/default/grub
+        else
+            sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"rw systemd.unit=graphical.target quiet\"" /etc/default/grub
+            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"nvidia_drm.modeset=1 nvidia.NVreg_PreserveVideoMemoryAllocations=1\"" /etc/default/grub
+            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"\"" /etc/default/grub
+        fi
+        sed -i "/#GRUB_SAVEDEFAULT/s/^#//" /etc/default/grub
+        sed -i "/#GRUB_DISABLE_SUBMENU/s/^#//" /etc/default/grub
+        sed -i "/#GRUB_DISABLE_OS_PROBER/s/^#//" /etc/default/grub
+
+        msg "Modification du fichier /etc/grub.d/40_custom"
+        # /etc/grub.d/40_custom
+        # "Shutdown" menu entry
+        printf '%s\n' "menuentry 'System shutdown' {" >> /etc/grub.d/40_custom
+        printf '%s\n' "   echo 'System shutting down...'" >> /etc/grub.d/40_custom
+        printf '%s\n' '   halt' >> /etc/grub.d/40_custom
+        printf '%s\n' '}' >> /etc/grub.d/40_custom
+        # "Restart" menu entry
+        printf '%s\n' "menuentry 'System restart' {" >> /etc/grub.d/40_custom
+        printf '%s\n' "   echo 'System rebooting...'" >> /etc/grub.d/40_custom
+        printf '%s\n' '   reboot' >> /etc/grub.d/40_custom
+        printf '%s\n' '}' >> /etc/grub.d/40_custom
+        #
+
+        msg "Installation de GRUB..."
+        # Installation de GRUB
+        if (( $IN_VIRTUAL_BOX == 1 )); then
+            grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH --removable
+        else
+            grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH
+        fi
+
+        msg "Génération du fichier /boot/grub/grub.cfg..."
+        # Configuration et Génération du fichier /boot/grub/grub.cfg
+        LC_ALL=C grub-mkconfig -o /boot/grub/grub.cfg
+
+
+# FIN
+
+
+## POUR TEST
+#set +x
+
+cd
+exit 0
+
+#==============================================================================
+# ESSAIS
+#==============================================================================
