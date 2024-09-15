@@ -153,7 +153,6 @@ msg_newline
         else
             sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"rw systemd.unit=graphical.target quiet\"" /etc/default/grub
             sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"nvidia_drm.modeset=1 nvidia.NVreg_PreserveVideoMemoryAllocations=1\"" /etc/default/grub
-            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"\"" /etc/default/grub
         fi
         sed -i "/#GRUB_SAVEDEFAULT/s/^#//" /etc/default/grub
         sed -i "/#GRUB_DISABLE_SUBMENU/s/^#//" /etc/default/grub
