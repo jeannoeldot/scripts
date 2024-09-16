@@ -5,7 +5,7 @@
 # 2013,2014,2015,2016,2019,2020,2021,2024
 # 
 
-# VERSION=1.2.0
+# VERSION=1.2.2
 VERS="@VERSION@"
 
 ################################
@@ -42,6 +42,7 @@ BWhite=${Bold}$(tput setaf 7)
 REP_TMPFS="$HOME/05-builds/0-chroot/00-tmpfs-chroot"
 REP_COPIES="$HOME/05-builds/0-copie-fichiers-chroot"
 REP_REPO="/tmp/chrootrepo"
+REP_CHROOTREPO="/00-chrootrepolocal"
 
 #
 # FONCTIONS
@@ -82,6 +83,10 @@ cleanup() {
         rm -rf "${REP_TMPFS}" &>/dev/null
         if (( $? != 0 )); then
           error "Impossible de supprimer le répertoire « ${REP_TMPFS} »"
+        fi
+        sudo rm -rf "${REP_CHROOTREPO}" &>/dev/null
+        if (( $? != 0 )); then
+          error "Impossible de supprimer le répertoire « ${REP_CHROOTREPO} »"
         fi
         [[ $1 ]] && exit $1
 }
@@ -181,7 +186,8 @@ setup_chroot() {
 #
 # $1 : si qt ( $1 = "$avec_qt" =  false ou = true)
 # $2 : arg_flags = "generic" ou "native" ou "fast" ou "floop"
-#
+# REP_CHROOTREPO="/00-chrootrepolocal"
+
 setup_copies() {
         if [[ "$1" = true ]]; then
           sudo cp -f "${REP_COPIES}"/qt-gcc-base.conf "${REP_TMPFS}"/root/usr/lib/qt/mkspecs/common/gcc-base.conf
@@ -197,7 +203,7 @@ setup_copies() {
         if (( $? != 0 )); then
           return 9
         fi
-        sudo sed -i "s#PATHTOREPOLOCAL#${REP_TMPFS}/$USER#g" "${REP_TMPFS}"/root/etc/pacman.conf
+        sudo sed -i "s#PATHTOREPOLOCAL#${REP_CHROOTREPO}#g" "${REP_TMPFS}"/root/etc/pacman.conf
         if (( $? != 0 )); then
           return 9
         fi
@@ -226,20 +232,28 @@ setup_copies() {
 }
 
 setup_chroot_repolocal() {
-        sudo mkdir "${REP_TMPFS}"/root/chrootrepolocal
+        sudo mkdir "${REP_CHROOTREPO}"
         if (( $? != 0 )); then
           return 9
         fi
-        sudo cp -f "${REP_REPO}"/*.pkg.tar.* "${REP_TMPFS}"/root/chrootrepolocal/
+        sudo cp -f "${REP_REPO}"/*.pkg.tar.* "${REP_CHROOTREPO}"
         if (( $? != 0 )); then
           return 9
         fi
-        sudo rm -f "${REP_TMPFS}"/root/chrootrepolocal/chroot-repolocal.db.tar.gz
+        sudo rm -f "${REP_CHROOTREPO}"/chroot-repolocal.db.tar.gz
+        if (( $? != 0 )); then
+          return 9
+        fi
+        sudo rm -f "${REP_CHROOTREPO}"/chroot-repolocal.files.tar.gz
         if (( $? != 0 )); then
           return 9
         fi
 #        repo-add chroot-repolocal.db.tar.gz *.pkg.tar.* &>/dev/null
-        sudo repo-add "${REP_TMPFS}"/root/chrootrepolocal/chroot-repolocal.db.tar.gz "${REP_TMPFS}"/root/chrootrepolocal/*.pkg.tar.*
+        sudo repo-add "${REP_CHROOTREPO}"/chroot-repolocal.db.tar.gz "${REP_CHROOTREPO}"/*.pkg.tar.*
+        if (( $? != 0 )); then
+          return 9
+        fi
+        sudo chown :alpm -R  "${REP_CHROOTREPO}"
         if (( $? != 0 )); then
           return 9
         fi

@@ -34,10 +34,10 @@ msg_titre " +----------------------------------------+"
 
 #sleep 0.5
 
-cd $HOME/${NAME_DIR_REPOLOCAL}/
+cd /${NAME_DIR_REPOLOCAL}/
 
-rm -f ${NAME_REPOLOCAL}.db.tar.gz
-rm -f ${NAME_REPOLOCAL}.files.tar.gz
+sudo rm -f ${NAME_REPOLOCAL}.db.tar.gz
+sudo rm -f ${NAME_REPOLOCAL}.files.tar.gz
 
 #
 # Si pas de -any.pkg.tar.gz
@@ -50,12 +50,15 @@ rm -f ${NAME_REPOLOCAL}.files.tar.gz
 #repo-add ${NAME_REPOLOCAL}.db.tar.gz *.pkg.tar.*
 #
 # AJOUT LC_ALL=C
-LC_ALL=C repo-add ${NAME_REPOLOCAL}.db.tar.gz *.pkg.tar.*
+sudo LC_ALL=C repo-add ${NAME_REPOLOCAL}.db.tar.gz *.pkg.tar.*
 
 
 # Supprimé suite maj pacman 5.0.0
 # repo-add -f ${NAME_REPOLOCAL}.files.tar.gz *.pkg.tar.*
 
 cd
+
+sudo chown :alpm -R /00-repolocal
+
 
 exit 0
