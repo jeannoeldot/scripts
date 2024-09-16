@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2015,2018,2021,2024
-# Version : 05
+# Version : 06
 
 ## POUR TEST
 #set -x
@@ -273,7 +273,8 @@ if [[ -f "${NAME_PACMAN_PACNEW}" ]]; then
     sed -i "/^#ParallelDownloads/c\ParallelDownloads = 2" /tmp/${NAME_PACMAN}
     # COMMENTE DownloadUser = alpm TO PACMAN.CONF
     # PAS OK AU 14/09/2024
-    sed -i "/^DownloadUser/c\#DownloadUser = alpm" /tmp/${NAME_PACMAN}
+    # OK: Corrigéle 16/09/2024
+    #sed -i "/^DownloadUser/c\#DownloadUser = alpm" /tmp/${NAME_PACMAN}
 #    if (( $IN_VIRTUAL_BOX == 0 )); then
 #        if (( $IN_PLASMA == 0 )); then
 #            # ENABLE REPO-CK REPOSITORY
