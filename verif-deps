@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2012-2022
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2012,2022,2024
 # 
 # Purpose: Vérifie les dépendances de mes paquets
 # situés dans $HOME/00-repolocal
 #
 #
-# Version : 0.8.4
+# Version : 0.8.5
 #
 
 # REPERTOIRES
 ## TEST
 #DIR_REPO=$HOME/01-scripts/verif-deps/Construction_V-06/repo_vd
-DIR_REPO=$HOME/00-repolocal
+#DIR_REPO=$HOME/00-repolocal
+# Suite maj pacman 7.0
+DIR_REPO=/00-repolocal
 ##
 DIR_TEMP=/tmp/jndvdeps
 
@@ -168,7 +170,7 @@ traite_paquet() {
 #
 msg_titre "+-----------------------------------------------+"
 msg_titre "|  Vérification des dépendances de mes paquets  |"
-msg_titre "|  Version : 0.8.4                              |"
+msg_titre "|  Version : 0.8.5                              |"
 msg_titre "+-----------------------------------------------+"
 
 # check if DIR_TEMP exists if it's missing, create it.
