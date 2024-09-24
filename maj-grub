@@ -19,16 +19,9 @@ NAME_DEFAULT_GRUB=grub
 NAME_DEFAULT_GRUB_PACNEW=grub.pacnew
 NAME_40_CUSTOM=40_custom
 NAME_40_CUSTOM_PACNEW=40_custom.pacnew
-# # REPERTOIRES
-# DIR_CONF_DEFAULT_GRUB=/etc/default
-# DIR_CONF_40_CUSTOM=/etc/grub.d
-
-## POUR TEST
 # REPERTOIRES
-DIR_CONF_DEFAULT_GRUB="$HOME/01-scripts/Maj-grub/0-Tests/"
-DIR_CONF_40_CUSTOM="$HOME/01-scripts/Maj-grub/0-Tests/"
-## POUR TEST
-##
+DIR_CONF_DEFAULT_GRUB=/etc/default
+DIR_CONF_40_CUSTOM=/etc/grub.d
 
 # COULEURS
 Bold=$(tput bold)
@@ -135,20 +128,16 @@ check_and_return_name_partition_esp() {
 # DEBUT DU SCRIPT
 #
 
-## POUR TEST
-# PASSAGE EN ROOT COMMENTÉ
-## POUR TEST
-
 # nom du script = $0
 # nombre d'argument = $#
 # liste des arguments = $*
 # => Passe en root
-# if (( EUID != 0 )); then
-#     printf '\n%s\n' "${BYellow}Le script $0 doit être exécuté en «root»."
-#     printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
-#     exec su -c "${0} ${1}"
-#     exit ${?}
-# fi
+if (( EUID != 0 )); then
+    printf '\n%s\n' "${BYellow}Le script $0 doit être exécuté en «root»."
+    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
+    exec su -c "${0} ${1}"
+    exit ${?}
+fi
 
 
 # Titre
@@ -208,26 +197,21 @@ if [[ -f "${NAME_DEFAULT_GRUB_PACNEW}" ]]; then
     GRUB_THEME_DEFAULT="${GRUB_THEME}"
     sed -i "/^#GRUB_THEME=/c\GRUB_THEME=\""${GRUB_THEME_DEFAULT}"\"" /tmp/${NAME_DEFAULT_GRUB}
     #
-
-## POUR TEST
-cat /tmp/${NAME_DEFAULT_GRUB}
-## POUR TEST
-
     msg_newline
     # 2) FAIT MODIFS SI REPONSE = o ou O
-    read_input_text "Confirmer les modifications du fichier «${NAME_DEFAULT_GRUB}»"
+    read_input_text "Confirmer les modifications du fichier «"${DIR_CONF_DEFAULT_GRUB}"/${NAME_DEFAULT_GRUB}»"
         case "$OPTION" in
           "o")
             # Modification fichier
-            msg "Modification de «${NAME_DEFAULT_GRUB}»."
+            msg "Modification de «"${DIR_CONF_DEFAULT_GRUB}"/${NAME_DEFAULT_GRUB}»."
             mv -v /tmp/${NAME_DEFAULT_GRUB} ${NAME_DEFAULT_GRUB}
             # Supprime le fichier .pacnew
             msg_newline
-            msg "Suppression du fichier «${NAME_DEFAULT_GRUB_PACNEW}»."
+            msg "Suppression du fichier «"${DIR_CONF_DEFAULT_GRUB}"/${NAME_DEFAULT_GRUB_PACNEW}»."
             rm -v -f "${NAME_DEFAULT_GRUB_PACNEW}"
             # FIN OK
             msg_newline
-            msg "Modifications de «${NAME_DEFAULT_GRUB}» terminées."
+            msg "Modifications de «"${DIR_CONF_DEFAULT_GRUB}"/${NAME_DEFAULT_GRUB}» terminées."
             retour=0
             ;;
           *)
@@ -235,18 +219,18 @@ cat /tmp/${NAME_DEFAULT_GRUB}
             # 3) SUPPRIME FICHIERS TEMPS
             rm -f /tmp/${NAME_DEFAULT_GRUB}
             msg_newline
-            msg "Modifications non apportées à «${NAME_DEFAULT_GRUB}»."
+            msg "Modifications non apportées à «"${DIR_CONF_DEFAULT_GRUB}"/${NAME_DEFAULT_GRUB}»."
             retour=2
             ;;
       esac
 else
       msg_newline
-      msg "Aucun fichier «${NAME_DEFAULT_GRUB_PACNEW}». Aucune modification à apporter."
+      msg "Aucun fichier «"${DIR_CONF_DEFAULT_GRUB}"/${NAME_DEFAULT_GRUB_PACNEW}». Aucune modification à apporter."
       retour=22
 fi
 
 msg_newline
-msg_2 "--------------------------------------------------------------"
+msg_2 "----------------------------------------------------------------------------"
 msg_newline
 
 # Répertoire de travail /etc/grub.d/40_custom
@@ -268,26 +252,21 @@ if [[ -f "${NAME_40_CUSTOM_PACNEW}" ]]; then
     printf '%s\n' '   halt' >> /tmp/${NAME_40_CUSTOM}
     printf '%s\n' '}' >> /tmp/${NAME_40_CUSTOM}
     #
-
-## POUR TEST
-cat /tmp/${NAME_40_CUSTOM}
-## POUR TEST
-
     msg_newline
     # 2) FAIT MODIFS SI REPONSE = o ou O
-    read_input_text "Confirmer les modifications du fichier «${NAME_40_CUSTOM}»"
+    read_input_text "Confirmer les modifications du fichier «"${DIR_CONF_40_CUSTOM}"/${NAME_40_CUSTOM}»"
         case "$OPTION" in
           "o")
             # Modification fichier
-            msg "Modification de «${NAME_40_CUSTOM}»."
+            msg "Modification de «"${DIR_CONF_40_CUSTOM}"/${NAME_40_CUSTOM}»."
             mv -v /tmp/${NAME_40_CUSTOM} ${NAME_40_CUSTOM}
             # Supprime le fichier .pacnew
             msg_newline
-            msg "Suppression du fichier «${NAME_40_CUSTOM_PACNEW}»."
+            msg "Suppression du fichier «"${DIR_CONF_40_CUSTOM}"/${NAME_40_CUSTOM_PACNEW}»."
             rm -v -f "${NAME_40_CUSTOM_PACNEW}"
             # FIN OK
             msg_newline
-            msg "Modifications de «${NAME_40_CUSTOM}» terminées."
+            msg "Modifications de «"${DIR_CONF_40_CUSTOM}"/${NAME_40_CUSTOM}» terminées."
             retour=0
             ;;
           *)
@@ -295,45 +274,35 @@ cat /tmp/${NAME_40_CUSTOM}
             # 3) SUPPRIME FICHIERS TEMPS
             rm -f /tmp/${NAME_40_CUSTOM}
             msg_newline
-            msg "Modifications non apportées à «${NAME_40_CUSTOM}»."
+            msg "Modifications non apportées à «"${DIR_CONF_40_CUSTOM}"/${NAME_40_CUSTOM}»."
             retour=2
             ;;
       esac
 else
       msg_newline
-      msg "Aucun fichier «${NAME_40_CUSTOM_PACNEW}». Aucune modification à apporter."
+      msg "Aucun fichier «"${DIR_CONF_40_CUSTOM}"/${NAME_40_CUSTOM_PACNEW}». Aucune modification à apporter."
       retour=22
 fi
 
 msg_newline
-msg_2 "--------------------------------------------------------------"
+msg_2 "---------------------------------------------------------------------------------"
 msg_newline
 
-## POUR TEST
-if (( retour == 0 )); then
-    echo "retour = "$retour
-    msg "Installation de GRUB dans /efi..."
-    msg "Génération du fichier /boot/grub/grub.cfg..."
+# A FAIRE SI $retour != 22 : SI PAS PACNEW = PAS INSTALL GRUB
+if (( retour != 22 )); then
+        msg "Installation de GRUB dans /efi..."
+        # Installation de GRUB
+        if (( $IN_VIRTUAL_BOX == 1 )); then
+            grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH --removable
+        else
+            grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH
+        fi
+        msg "Génération du fichier /boot/grub/grub.cfg..."
+        # Configuration et Génération du fichier /boot/grub/grub.cfg
+        LC_ALL=C grub-mkconfig -o /boot/grub/grub.cfg
 else
-    echo "retour = "$retour
-    msg "PAS Installation ni Génération de GRUB..."
+    error "PAS Installation ni Génération de GRUB..."
 fi
-
-## POUR TEST
-# !!!!!!!!
-# A FAIRE SI $retour = 0
-# !!!!!!!!
-#         msg "Installation de GRUB dans /efi..."
-#         # Installation de GRUB
-#         if (( $IN_VIRTUAL_BOX == 1 )); then
-#             grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH --removable
-#         else
-#             grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH
-#         fi
-#
-#         msg "Génération du fichier /boot/grub/grub.cfg..."
-#         # Configuration et Génération du fichier /boot/grub/grub.cfg
-#         LC_ALL=C grub-mkconfig -o /boot/grub/grub.cfg
 
 # FIN
 
@@ -347,6 +316,50 @@ exit $retour
 #==============================================================================
 # ESSAIS
 #==============================================================================
+
+# ## POUR TEST
+# # REPERTOIRES
+# DIR_CONF_DEFAULT_GRUB="$HOME/01-scripts/Maj-grub/0-Tests/"
+# DIR_CONF_40_CUSTOM="$HOME/01-scripts/Maj-grub/0-Tests/"
+# ## POUR TEST
+# ##
+#
+## POUR TEST
+# PASSAGE EN ROOT COMMENTÉ
+## POUR TEST
+
+
+# ## POUR TEST
+# cat /tmp/${NAME_DEFAULT_GRUB}
+# ## POUR TEST
+#
+# ## POUR TEST
+# cat /tmp/${NAME_40_CUSTOM}
+# ## POUR TEST
+
+# ## POUR TEST
+# if (( retour == 0 )); then
+#     echo "retour = "$retour
+#     msg "Installation de GRUB dans /efi..."
+#     msg "Génération du fichier /boot/grub/grub.cfg..."
+# else
+#     echo "retour = "$retour
+#     msg "PAS Installation ni Génération de GRUB..."
+# fi
+#
+## POUR TEST
+# if (( retour != 22 )); then
+#     echo "retour = "$retour
+#     msg "Installation de GRUB dans /efi..."
+#     msg "Génération du fichier /boot/grub/grub.cfg..."
+# else
+#     echo "retour = "$retour
+#     error "PAS Installation ni Génération de GRUB..."
+# fi
+## POUR TEST
+# !!!!!!!!
+# !!!!!!!!
+
     # #GRUB_GFXMODE="auto"
     # GRUB_GFXMODE="1280x1024"
     # #GRUB_THEME="/path/to/gfxtheme"
@@ -363,3 +376,13 @@ exit $retour
     # GRUB_THEME_DEFAULT="${GRUB_THEME}"
     # echo "GRUB_THEME_DEFAULT=" "${GRUB_THEME_DEFAULT}"
     # ==> GRUB_THEME_DEFAULT= /usr/share/grub/themes/grub-theme-dark-gray/theme.txt     <---------------ATTENTION AUX ""
+
+# :: Aucun fichier «/etc/default/grub.pacnew». Aucune modification à apporter.
+#
+# ----------------------------------------------------------------------------
+#
+#
+# :: Aucun fichier «//etc/grub.d/40_custom.pacnew». Aucune modification à apporter.
+#
+# ---------------------------------------------------------------------------------
+
