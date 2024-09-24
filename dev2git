@@ -226,10 +226,10 @@ msg_newline
 msg "Commande « git commit -m \"${CONTENU_MOTIF}\" »"
 git commit -m "\"${CONTENU_MOTIF}\""
 
-# Commande git push origin master"
+# Commande git push origin main"
 msg_newline
-msg "Commande « git push origin master »"
-git push origin master
+msg "Commande « git push origin main »"
+git push origin main
 
 # TAGS ( FACULTATIF )
 # $ git tag -a v0.1.7 -m "Version 0.1.7" 
@@ -253,7 +253,7 @@ cd
 
 exit 0
 
-=======================================================================================
+#=======================================================================================
 ## POUR TEST
 
 # # $ find ~/01-dev -name jndqcbgrd
@@ -309,7 +309,7 @@ exit 0
 # 
 # git commit -m "modif.......
 # 
-# git push origin master && cd
+# git push origin main && cd
 
 # SORTIES KONSOLE
 # $ dev2git jndqcbgrd jndqcbgrd-qt5 "Début Ajout N° Catégories dans Dialog"
@@ -331,12 +331,12 @@ exit 0
 # :: Commande « git add --all »
 # 
 # :: Commande « git commit -m "Début Ajout N° Catégories dans Dialog" »
-# Sur la branche master
-# Votre branche est en avance sur 'origin/master' de 1 commit.
+# Sur la branche main
+# Votre branche est en avance sur 'origin/main' de 1 commit.
 #   (utilisez "git push" pour publier vos commits locaux)
 # rien à valider, la copie de travail est propre
 # 
-# :: Commande « git push origin master »
+# :: Commande « git push origin main »
 # Username for 'https://github.com': jeannoeldot
 # Password for 'https://jeannoeldot@github.com': 
 # Décompte des objets: 9, fait.
@@ -345,5 +345,5 @@ exit 0
 # Écriture des objets: 100% (9/9), 6.51 KiB | 0 bytes/s, fait.
 # Total 9 (delta 7), reused 0 (delta 0)
 # To https://github.com/jeannoeldot/jndqcbgrd-qt5.git
-#    993dd30..831238d  master -> master
+#    993dd30..831238d  main -> main
 

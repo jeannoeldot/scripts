@@ -274,10 +274,10 @@ msg_newline
 msg "Commande « git commit -m \"${CONTENU_MOTIF}\" »"
 git commit -m "\"${CONTENU_MOTIF}\""
 
-# Commande git push origin master"
+# Commande git push origin main"
 msg_newline
-msg "Commande « git push origin master »"
-git push origin master
+msg "Commande « git push origin main »"
+git push origin main
 
 
 
@@ -290,6 +290,6 @@ cd
 
 exit 0
 
-=======================================================================================
+#=======================================================================================
 ## POUR TEST
 

@@ -13,7 +13,22 @@
 NAME_USER=${USER}
 
 IN_VIRTUAL_BOX=0
-#
+
+# NOMS FICHIERS REELS
+NAME_DEFAULT_GRUB=grub
+NAME_DEFAULT_GRUB_PACNEW=grub.pacnew
+NAME_40_CUSTOM=40_custom
+NAME_40_CUSTOM_PACNEW=40_custom.pacnew
+# # REPERTOIRES
+# DIR_CONF_DEFAULT_GRUB=/etc/default
+# DIR_CONF_40_CUSTOM=/etc/grub.d
+
+## POUR TEST
+# REPERTOIRES
+DIR_CONF_DEFAULT_GRUB="$HOME/01-scripts/Maj-grub/0-Tests/"
+DIR_CONF_40_CUSTOM="$HOME/01-scripts/Maj-grub/0-Tests/"
+## POUR TEST
+##
 
 # COULEURS
 Bold=$(tput bold)
@@ -44,6 +59,11 @@ msg() {
   printf "${BWhite}:: ${mesg}${Reset}\n" "$@" >&2
 }
 
+msg_2() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
 msg_info() {
   local mesg=$1; shift
   printf "${BWhite}==> ${mesg}${Reset}\n" "$@" >&2
@@ -72,6 +92,14 @@ cleanup() {
 die() {
   error "$*"
   cleanup 1
+}
+
+read_input_text() {
+  printf '%s' "${BGreen}"
+  read -p "$1 [O/N]: " OPTION
+  msg_newline
+  OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
+  printf '%s\n' "${Reset}"
 }
 
 # DANS VIRTUALBOX OU NON
@@ -107,16 +135,20 @@ check_and_return_name_partition_esp() {
 # DEBUT DU SCRIPT
 #
 
+## POUR TEST
+# PASSAGE EN ROOT COMMENTÉ
+## POUR TEST
+
 # nom du script = $0
 # nombre d'argument = $#
 # liste des arguments = $*
 # => Passe en root
-if (( EUID != 0 )); then
-    printf '\n%s\n' "${BYellow}Le script $0 doit être exécuté en «root»."
-    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
-    exec su -c "${0} ${1}"
-    exit ${?}
-fi
+# if (( EUID != 0 )); then
+#     printf '\n%s\n' "${BYellow}Le script $0 doit être exécuté en «root»."
+#     printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
+#     exec su -c "${0} ${1}"
+#     exit ${?}
+# fi
 
 
 # Titre
@@ -131,6 +163,7 @@ msg_newline
 
 # POUR TEST =1 SINON =0
 MISE_AU_POINT=0
+#set -x
 
 # Test si dans VirtualBox
 check_is_in_virtualbox
@@ -143,47 +176,164 @@ else
 fi
 msg_newline
 
-        msg "Modification du fichier /etc/default/grub"
-        # /etc/default/grub
-        sed -i "/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved" /etc/default/grub
-        sed -i "/^GRUB_TIMEOUT=/c\GRUB_TIMEOUT=3" /etc/default/grub
-        if (( $IN_VIRTUAL_BOX == 1 )); then
-            sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"rw force_addr=0xaddr systemd.unit=graphical.target quiet\"" /etc/default/grub
-            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"\"" /etc/default/grub
-        else
-            sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"rw systemd.unit=graphical.target quiet\"" /etc/default/grub
-            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"nvidia_drm.modeset=1 nvidia.NVreg_PreserveVideoMemoryAllocations=1\"" /etc/default/grub
-        fi
-        sed -i "/#GRUB_SAVEDEFAULT/s/^#//" /etc/default/grub
-        sed -i "/#GRUB_DISABLE_SUBMENU/s/^#//" /etc/default/grub
-        sed -i "/#GRUB_DISABLE_OS_PROBER/s/^#//" /etc/default/grub
+# Répertoire de travail /etc/default/grub
+cd "${DIR_CONF_DEFAULT_GRUB}"
 
-        msg "Modification du fichier /etc/grub.d/40_custom"
-        # /etc/grub.d/40_custom
-        # "Shutdown" menu entry
-        printf '%s\n' "menuentry 'System shutdown' {" >> /etc/grub.d/40_custom
-        printf '%s\n' "   echo 'System shutting down...'" >> /etc/grub.d/40_custom
-        printf '%s\n' '   halt' >> /etc/grub.d/40_custom
-        printf '%s\n' '}' >> /etc/grub.d/40_custom
-        # "Restart" menu entry
-        printf '%s\n' "menuentry 'System restart' {" >> /etc/grub.d/40_custom
-        printf '%s\n' "   echo 'System rebooting...'" >> /etc/grub.d/40_custom
-        printf '%s\n' '   reboot' >> /etc/grub.d/40_custom
-        printf '%s\n' '}' >> /etc/grub.d/40_custom
-        #
+# MODIFS /etc/default/grub
+# ========================
+if [[ -f "${NAME_DEFAULT_GRUB_PACNEW}" ]]; then
+    # 1) MODIFS SUR FICHIERS TEMPS
+    cp ${NAME_DEFAULT_GRUB_PACNEW} /tmp/${NAME_DEFAULT_GRUB}
+    sed -i "/^GRUB_DEFAULT=/c\GRUB_DEFAULT=saved" /tmp/${NAME_DEFAULT_GRUB}
+    sed -i "/^GRUB_TIMEOUT=/c\GRUB_TIMEOUT=3" /tmp/${NAME_DEFAULT_GRUB}
+    if (( $IN_VIRTUAL_BOX == 1 )); then
+        sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"rw force_addr=0xaddr systemd.unit=graphical.target quiet\"" /tmp/${NAME_DEFAULT_GRUB}
+        sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"\"" /tmp/${NAME_DEFAULT_GRUB}
+    else
+        sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"rw systemd.unit=graphical.target quiet\"" /tmp/${NAME_DEFAULT_GRUB}
+        sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"nvidia_drm.modeset=1 nvidia.NVreg_PreserveVideoMemoryAllocations=1\"" /tmp/${NAME_DEFAULT_GRUB}
+    fi
+    sed -i "/#GRUB_SAVEDEFAULT/s/^#//" /tmp/${NAME_DEFAULT_GRUB}
+    sed -i "/#GRUB_DISABLE_SUBMENU/s/^#//" /tmp/${NAME_DEFAULT_GRUB}
+    sed -i "/#GRUB_DISABLE_OS_PROBER/s/^#//" /tmp/${NAME_DEFAULT_GRUB}
+    # Theme si existe
+    contenu_grub_gfxmode=$(sed -n "/^GRUB_GFXMODE=/p" /tmp/${NAME_DEFAULT_GRUB})
+    # Commente la ligne GRUB_GFXMODE= originale
+    sed -i "/^GRUB_GFXMODE=/i\#${contenu_grub_gfxmode}" /tmp/${NAME_DEFAULT_GRUB}
+    # Inscrit modifs
+    eval $(grep '^GRUB_GFXMODE=' "${NAME_DEFAULT_GRUB}")
+    GRUB_GFXMODE_DEFAULT="${GRUB_GFXMODE}"
+    sed -i "/^GRUB_GFXMODE=/c\GRUB_GFXMODE=\""${GRUB_GFXMODE_DEFAULT}"\"" /tmp/${NAME_DEFAULT_GRUB}
+    eval $(grep '^GRUB_THEME=' "${NAME_DEFAULT_GRUB}")
+    GRUB_THEME_DEFAULT="${GRUB_THEME}"
+    sed -i "/^#GRUB_THEME=/c\GRUB_THEME=\""${GRUB_THEME_DEFAULT}"\"" /tmp/${NAME_DEFAULT_GRUB}
+    #
 
-        msg "Installation de GRUB..."
-        # Installation de GRUB
-        if (( $IN_VIRTUAL_BOX == 1 )); then
-            grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH --removable
-        else
-            grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH
-        fi
+## POUR TEST
+cat /tmp/${NAME_DEFAULT_GRUB}
+## POUR TEST
 
-        msg "Génération du fichier /boot/grub/grub.cfg..."
-        # Configuration et Génération du fichier /boot/grub/grub.cfg
-        LC_ALL=C grub-mkconfig -o /boot/grub/grub.cfg
+    msg_newline
+    # 2) FAIT MODIFS SI REPONSE = o ou O
+    read_input_text "Confirmer les modifications du fichier «${NAME_DEFAULT_GRUB}»"
+        case "$OPTION" in
+          "o")
+            # Modification fichier
+            msg "Modification de «${NAME_DEFAULT_GRUB}»."
+            mv -v /tmp/${NAME_DEFAULT_GRUB} ${NAME_DEFAULT_GRUB}
+            # Supprime le fichier .pacnew
+            msg_newline
+            msg "Suppression du fichier «${NAME_DEFAULT_GRUB_PACNEW}»."
+            rm -v -f "${NAME_DEFAULT_GRUB_PACNEW}"
+            # FIN OK
+            msg_newline
+            msg "Modifications de «${NAME_DEFAULT_GRUB}» terminées."
+            retour=0
+            ;;
+          *)
+            # Réponse = N/n
+            # 3) SUPPRIME FICHIERS TEMPS
+            rm -f /tmp/${NAME_DEFAULT_GRUB}
+            msg_newline
+            msg "Modifications non apportées à «${NAME_DEFAULT_GRUB}»."
+            retour=2
+            ;;
+      esac
+else
+      msg_newline
+      msg "Aucun fichier «${NAME_DEFAULT_GRUB_PACNEW}». Aucune modification à apporter."
+      retour=22
+fi
 
+msg_newline
+msg_2 "--------------------------------------------------------------"
+msg_newline
+
+# Répertoire de travail /etc/grub.d/40_custom
+cd "${DIR_CONF_40_CUSTOM}"
+
+# MODIFS /etc/grub.d/40_custom
+# ============================
+if [[ -f "${NAME_40_CUSTOM_PACNEW}" ]]; then
+    # 1) MODIFS SUR FICHIERS TEMPS
+    cp ${NAME_40_CUSTOM_PACNEW} /tmp/${NAME_40_CUSTOM}
+    # "Restart" menu entry
+    printf '%s\n' "menuentry 'System restart' --class restart {" >> /tmp/${NAME_40_CUSTOM}
+    printf '%s\n' "   echo 'System rebooting...'" >> /tmp/${NAME_40_CUSTOM}
+    printf '%s\n' '   reboot' >> /tmp/${NAME_40_CUSTOM}
+    printf '%s\n' '}' >> /tmp/${NAME_40_CUSTOM}
+    # "Shutdown" menu entry
+    printf '%s\n' "menuentry 'System shutdown' --class shutdown {" >> /tmp/${NAME_40_CUSTOM}
+    printf '%s\n' "   echo 'System shutting down...'" >> /tmp/${NAME_40_CUSTOM}
+    printf '%s\n' '   halt' >> /tmp/${NAME_40_CUSTOM}
+    printf '%s\n' '}' >> /tmp/${NAME_40_CUSTOM}
+    #
+
+## POUR TEST
+cat /tmp/${NAME_40_CUSTOM}
+## POUR TEST
+
+    msg_newline
+    # 2) FAIT MODIFS SI REPONSE = o ou O
+    read_input_text "Confirmer les modifications du fichier «${NAME_40_CUSTOM}»"
+        case "$OPTION" in
+          "o")
+            # Modification fichier
+            msg "Modification de «${NAME_40_CUSTOM}»."
+            mv -v /tmp/${NAME_40_CUSTOM} ${NAME_40_CUSTOM}
+            # Supprime le fichier .pacnew
+            msg_newline
+            msg "Suppression du fichier «${NAME_40_CUSTOM_PACNEW}»."
+            rm -v -f "${NAME_40_CUSTOM_PACNEW}"
+            # FIN OK
+            msg_newline
+            msg "Modifications de «${NAME_40_CUSTOM}» terminées."
+            retour=0
+            ;;
+          *)
+            # Réponse = N/n
+            # 3) SUPPRIME FICHIERS TEMPS
+            rm -f /tmp/${NAME_40_CUSTOM}
+            msg_newline
+            msg "Modifications non apportées à «${NAME_40_CUSTOM}»."
+            retour=2
+            ;;
+      esac
+else
+      msg_newline
+      msg "Aucun fichier «${NAME_40_CUSTOM_PACNEW}». Aucune modification à apporter."
+      retour=22
+fi
+
+msg_newline
+msg_2 "--------------------------------------------------------------"
+msg_newline
+
+## POUR TEST
+if (( retour == 0 )); then
+    echo "retour = "$retour
+    msg "Installation de GRUB dans /efi..."
+    msg "Génération du fichier /boot/grub/grub.cfg..."
+else
+    echo "retour = "$retour
+    msg "PAS Installation ni Génération de GRUB..."
+fi
+
+## POUR TEST
+# !!!!!!!!
+# A FAIRE SI $retour = 0
+# !!!!!!!!
+#         msg "Installation de GRUB dans /efi..."
+#         # Installation de GRUB
+#         if (( $IN_VIRTUAL_BOX == 1 )); then
+#             grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH --removable
+#         else
+#             grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB_ARCH
+#         fi
+#
+#         msg "Génération du fichier /boot/grub/grub.cfg..."
+#         # Configuration et Génération du fichier /boot/grub/grub.cfg
+#         LC_ALL=C grub-mkconfig -o /boot/grub/grub.cfg
 
 # FIN
 
@@ -192,8 +342,24 @@ msg_newline
 #set +x
 
 cd
-exit 0
+exit $retour
 
 #==============================================================================
 # ESSAIS
 #==============================================================================
+    # #GRUB_GFXMODE="auto"
+    # GRUB_GFXMODE="1280x1024"
+    # #GRUB_THEME="/path/to/gfxtheme"
+    # GRUB_THEME="/usr/share/grub/themes/grub-theme-dark-gray/theme.txt"
+
+    #            eval $(grep '^TYPE_KEYBOARD=' "/root/variables.ali")
+    #            TYPE_KEYBOARD="${TYPE_KEYBOARD}"
+
+    # eval $(grep '^GRUB_GFXMODE=' "/etc/default/grub")
+    # GRUB_GFXMODE_DEFAULT="${GRUB_GFXMODE}"
+    # echo "GRUB_GFXMODE_DEFAULT=" "${GRUB_GFXMODE_DEFAULT}"
+    # ==> GRUB_GFXMODE_DEFAULT= 1280x1024     <---------------ATTENTION AUX ""
+    # eval $(grep '^GRUB_THEME=' "/etc/default/grub")
+    # GRUB_THEME_DEFAULT="${GRUB_THEME}"
+    # echo "GRUB_THEME_DEFAULT=" "${GRUB_THEME_DEFAULT}"
+    # ==> GRUB_THEME_DEFAULT= /usr/share/grub/themes/grub-theme-dark-gray/theme.txt     <---------------ATTENTION AUX ""
