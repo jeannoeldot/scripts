@@ -180,7 +180,7 @@ if [[ -f "${NAME_DEFAULT_GRUB_PACNEW}" ]]; then
         sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"\"" /tmp/${NAME_DEFAULT_GRUB}
     else
         sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"rw systemd.unit=graphical.target quiet\"" /tmp/${NAME_DEFAULT_GRUB}
-        sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"nvidia_drm.modeset=1 nvidia.NVreg_PreserveVideoMemoryAllocations=1\"" /tmp/${NAME_DEFAULT_GRUB}
+        sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"\"" /tmp/${NAME_DEFAULT_GRUB}
     fi
     sed -i "/#GRUB_SAVEDEFAULT/s/^#//" /tmp/${NAME_DEFAULT_GRUB}
     sed -i "/#GRUB_DISABLE_SUBMENU/s/^#//" /tmp/${NAME_DEFAULT_GRUB}
