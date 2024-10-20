@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Décompression de blender-*-linux-x64.tar.xz ==> $HOME/Blender
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2024
+# Décompression de blender-*-release.tar.xz ==> $HOME/Blender
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2023
 # Version : 01
 
 ## POUR TEST
@@ -89,11 +89,11 @@ invalid_option() {
 # DEBUT DU SCRIPT
 #
 # Titre
-msg_titre "+------------------------------------------------------+"
-msg_titre "|                                                      |"
-msg_titre "|     Décompression de blender-*-linux-x64.tar.xz      |"
-msg_titre "|                                                      |"
-msg_titre "+------------------------------------------------------+"
+msg_titre "+----------------------------------------------------+"
+msg_titre "|                                                    |"
+msg_titre "|     Décompression de blender-*-release.tar.xz      |"
+msg_titre "|                                                    |"
+msg_titre "+----------------------------------------------------+"
 
 # La date du jour
 LADATE=$(date +%Y-%m-%d)
@@ -117,27 +117,27 @@ fi
 
 cd ${DIR_DWL}
 
-# TEST SI 1 FICHIER BLENDER blender-*-linux-x64.tar.xz EXISTE
-liste_blender=($(ls -la | grep linux-x64.tar.xz | awk '{print $9}'))
+# TEST SI 1 FICHIER BLENDER release.tar.xz EXISTE
+liste_blender=($(ls -la | grep release.tar.xz | awk '{print $9}'))
 # TEST
 #echo $liste_blender
-## ==> blender-3.6.0-linux.x86_64-linux-x64.tar.xz
+## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
 # TEST
 if [[ $liste_blender == "" ]]; then
-    die "Aucun fichier blender-*-linux-x64.tar.xz trouvé dans ${DIR_DWL}."
+    die "Aucun fichier blender-*-release.tar.xz trouvé dans ${DIR_DWL}."
 else
     msg_newline
     msg "Fichier «$liste_blender» trouvé."
 fi
 
-# TEST SI 1 FICHIER BLENDER blender-*.sha256 EXISTE
-liste_sha256=($(ls -la | grep blender-*.sha256 | awk '{print $9}'))
+# TEST SI 1 FICHIER BLENDER release.tar.xz.sha256 EXISTE
+liste_sha256=($(ls -la | grep release.tar.xz.sha256 | awk '{print $9}'))
 # TEST
 #echo $liste_sha256
-## ==> blender-4.2.3.sha256
+## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
 # TEST
 if [[ $liste_sha256 == "" ]]; then
-    die "Aucun fichier blender-*.sha256 trouvé dans ${DIR_DWL}."
+    die "Aucun fichier blender-*-release.tar.xz.sha256 trouvé dans ${DIR_DWL}."
 else
     msg_newline
     msg "Fichier «$liste_sha256» trouvé."
@@ -151,7 +151,7 @@ sha256sum_sha256=$(awk '{print $1}' $liste_sha256)
 
 # Calcul SHA256SUM de blender
 msg_newline
-msg "Calcul du SHA256SUM de blender-*-linux-x64.tar.xz."
+msg "Calcul du SHA256SUM de blender-*-release.tar.xz."
 sha256sum_blender=$(sha256sum $liste_blender | cut -d " " -f 1)
 # TEST
 #echo $sha256sum_blender
@@ -167,37 +167,37 @@ fi
 
 cd $DIR_BLENDER
 
-# Suppression ancien répertoire blender-bf.backup
-#rm -v -rf blender-bf.backup.*
-rm -rf blender-bf.backup.*
+# Suppression ancien répertoire blender.backup
+#rm -v -rf blender.backup.*
+    rm -rf blender.backup.*
 
 # Sauvegarde répertoire blender
-if [[ -d blender-bf ]]; then
+if [[ -d blender ]]; then
     msg_newline
-    msg "Sauvegarde du répertoire blender-bf existant."
-#cp -v -r blender-bf blender-bf.backup.${LADATE}
-    cp -r blender-bf blender-bf.backup.${LADATE}
+    msg "Sauvegarde du répertoire blender existant."
+#cp -v -r blender blender.backup.${LADATE}
+    cp -r blender blender.backup.${LADATE}
 fi
 
 # Suppression répertoire blender
-if [[ -d blender-bf ]]; then
+if [[ -d blender ]]; then
     msg_newline
-    msg "Suppression du répertoire blender-bf existant."
-#rm -v -rf blender-bf
-    rm -rf blender-bf
+    msg "Suppression du répertoire blender existant."
+#rm -v -rf blender
+    rm -rf blender
 fi
 
 cd ${DIR_DWL}
 
-# Décompresse blender-*-linux-x64.tar.xz ds $DIR_BLENDER
+# Décompresse blender-*-release.tar.xz ds $DIR_BLENDER
 msg_newline
 msg "Décompression de «$liste_blender» dans «$DIR_BLENDER»"
-#tar -x --xz -f blender-*-linux-x64.tar.xz -C $DIR_BLENDER
+#tar -x --xz -f blender-*-release.tar.xz -C $DIR_BLENDER
 tar -x --xz -f $liste_blender -C $DIR_BLENDER
 
 msg_newline
 cd $DIR_BLENDER
-mv -v blender-*-linux-x64 blender-bf
+mv -v blender-*-release blender
 
 cd ${DIR_DWL}
 
@@ -235,11 +235,11 @@ exit 0
 
 # TEST
 # CHOIX FICHIER BLENDER
-## ls -la | grep linux-x64.tar.xz | awk '{print $6 " " $7 " " $8 " " $9 " "}'
-## 14 mai 16:50 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-linux-x64.tar.xz
-## 14 mai 16:12 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-linux-x64.tar.xz.sha256
+## ls -la | grep release.tar.xz | awk '{print $6 " " $7 " " $8 " " $9 " "}'
+## 14 mai 16:50 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
+## 14 mai 16:12 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
 # TEST
-#liste_blenders=$(ls -la | grep linux-x64.tar.xz | awk '{print $6 " " $7 " " $8 " " $9 " "}')
+#liste_blenders=$(ls -la | grep release.tar.xz | awk '{print $6 " " $7 " " $8 " " $9 " "}')
 # TEST
 #echo $liste_blenders
 # TEST
@@ -255,15 +255,15 @@ exit 0
 #NOM_FICHIER_BLENDER="$CHOIX_BLENDER"
 # TEST
 ##Sélectionner le fichier blender à décompresser :
-##1) 14 mai 16:50 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-linux-x64.tar.xz
-##14 mai 16:12 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-linux-x64.tar.xz.sha256
+##1) 14 mai 16:50 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
+##14 mai 16:12 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
 ##Entrer le n° de l'option choisie: 1
 # TEST
 
 # TEST
 #msg_newline
 #msg "NOM DU FICHIER BLENDER CHOISI :«$NOM_FICHIER_BLENDER»"
-##:: NOM DU FICHIER BLENDER CHOISI :«14 mai 16:50 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-linux-x64.tar.xz
-##14 mai 16:12 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-linux-x64.tar.xz.sha256 »
+##:: NOM DU FICHIER BLENDER CHOISI :«14 mai 16:50 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
+##14 mai 16:12 blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256 »
 # TEST
 

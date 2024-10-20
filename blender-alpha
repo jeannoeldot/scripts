@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
 # Launceur de blender dans $HOME/Blender
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2024
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2023
 # Version : 01
 
 ## POUR TEST
 #set -x
 
 # REPERTOIRES
-DIR_BLENDER=$HOME/Blender/blender-bf
+DIR_BLENDER=$HOME/Blender/blender
 
 
 # COLORS
@@ -89,11 +89,11 @@ invalid_option() {
 # DEBUT DU SCRIPT
 #
 # Titre
-msg_titre "+---------------------------------------------------+"
-msg_titre "|                                                   |"
-msg_titre "|     Lancement de $HOME/Blender/blender-bf    |"
-msg_titre "|                                                   |"
-msg_titre "+---------------------------------------------------+"
+msg_titre "+------------------------------------------------+"
+msg_titre "|                                                |"
+msg_titre "|     Lancement de $HOME/Blender/blender     |"
+msg_titre "|                                                |"
+msg_titre "+------------------------------------------------+"
 
 # TEST
 #DIR_BLENDER=$HOME/99-temp/blender
