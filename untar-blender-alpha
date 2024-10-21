@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Décompression de blender-*-release.tar.xz ==> $HOME/Blender
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2023
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2023,2024
 # Version : 01
 
 ## POUR TEST
@@ -167,24 +167,24 @@ fi
 
 cd $DIR_BLENDER
 
-# Suppression ancien répertoire blender.backup
-#rm -v -rf blender.backup.*
-    rm -rf blender.backup.*
+# Suppression ancien répertoire blender-alpha.backup
+#rm -v -rf blender-alpha.backup.*
+    rm -rf blender-alpha.backup.*
 
-# Sauvegarde répertoire blender
-if [[ -d blender ]]; then
+# Sauvegarde répertoire blender-alpha
+if [[ -d blender-alpha ]]; then
     msg_newline
-    msg "Sauvegarde du répertoire blender existant."
-#cp -v -r blender blender.backup.${LADATE}
-    cp -r blender blender.backup.${LADATE}
+    msg "Sauvegarde du répertoire blender-alpha existant."
+#cp -v -r blender-alpha blender-alpha.backup.${LADATE}
+    cp -r blender-alpha blender-alpha.backup.${LADATE}
 fi
 
 # Suppression répertoire blender
-if [[ -d blender ]]; then
+if [[ -d blender-alpha ]]; then
     msg_newline
-    msg "Suppression du répertoire blender existant."
-#rm -v -rf blender
-    rm -rf blender
+    msg "Suppression du répertoire blender-alpha existant."
+#rm -v -rf blender-alpha
+    rm -rf blender-alpha
 fi
 
 cd ${DIR_DWL}
@@ -197,7 +197,7 @@ tar -x --xz -f $liste_blender -C $DIR_BLENDER
 
 msg_newline
 cd $DIR_BLENDER
-mv -v blender-*-release blender
+mv -v blender-*-release blender-alpha
 
 cd ${DIR_DWL}
 
