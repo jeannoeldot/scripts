@@ -144,7 +144,7 @@ else
 fi
 
 # Lecture SHA256SUM de blender
-sha256sum_sha256=$(awk '{print $1}' $liste_sha256)
+sha256sum_sha256=$(awk '/linux-x64/ {print $1}' $liste_sha256)
 # TEST
 #echo $sha256sum_sha256
 # TEST

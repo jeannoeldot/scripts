@@ -123,6 +123,8 @@ cp -v ${NAME_MIRROR_PACNEW} ${NAME_MIRROR_PACNEW}.backup.${LADATE}
 
 # Configure le fichier /etc/pacman.d/mirrorlist.
 # reflector --country "FR" --sort rate --protocol http --protocol https --save /tmp/reflector
+# MODIF LE 15/12/2024
+# reflector --latest 6 --country France,Germany --sort rate --protocol http,https --save /tmp/reflector
 url="https://www.archlinux.org/mirrorlist/?country=FR&use_mirror_status=on"
 tmpfile=$(mktemp --suffix=-mirrorlist)
 # Get latest mirror list and save to tmpfile
