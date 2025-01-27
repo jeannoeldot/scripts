@@ -91,7 +91,7 @@ invalid_option() {
 # Titre
 msg_titre "+---------------------------------------------------+"
 msg_titre "|                                                   |"
-msg_titre "|     Lancement de $HOME/Blender/blender-bf    |"
+msg_titre "|              Lancement de blender-bf              |"
 msg_titre "|                                                   |"
 msg_titre "+---------------------------------------------------+"
 
