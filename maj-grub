@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2024
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2024, 2025
 #
 # Version 0.1
 #
@@ -165,7 +165,7 @@ else
 fi
 msg_newline
 
-# Répertoire de travail /etc/default/grub
+# Répertoire de travail /etc/default/
 cd "${DIR_CONF_DEFAULT_GRUB}"
 
 # MODIFS /etc/default/grub
@@ -180,7 +180,9 @@ if [[ -f "${NAME_DEFAULT_GRUB_PACNEW}" ]]; then
         sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"\"" /tmp/${NAME_DEFAULT_GRUB}
     else
         sed -i "/^GRUB_CMDLINE_LINUX=/c\GRUB_CMDLINE_LINUX=\"rw systemd.unit=graphical.target quiet\"" /tmp/${NAME_DEFAULT_GRUB}
-        sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"nvidia.NVreg_PreserveVideoMemoryAllocations=0\"" /tmp/${NAME_DEFAULT_GRUB}
+# Inutile depuis Nvidia driver 575.57.08
+#        sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"nvidia.NVreg_PreserveVideoMemoryAllocations=0\"" /tmp/${NAME_DEFAULT_GRUB}
+        sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/c\GRUB_CMDLINE_LINUX_DEFAULT=\"\"" /tmp/${NAME_DEFAULT_GRUB}
     fi
     sed -i "/#GRUB_SAVEDEFAULT/s/^#//" /tmp/${NAME_DEFAULT_GRUB}
     sed -i "/#GRUB_DISABLE_SUBMENU/s/^#//" /tmp/${NAME_DEFAULT_GRUB}
