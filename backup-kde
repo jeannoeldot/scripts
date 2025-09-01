@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2021
-# Version : 07 DU 06/08/2021
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2013-2025
+# Version : 08 DU 01/09/2025
 #
 
 clear
@@ -42,7 +42,6 @@ REP_IMG="05-Images"
 REP_THEMES="05-Themes"
 REP_DOCSOFFICE="07-Docs-Office"
 REP_DWL="08-Dwl-OK"
-REP_SKAR="08-SuperKaramba-Themes"
 REP_DOCUS="09-Documentation"
 REP_CONF="09-Fichiers-Conf"
 REP_CONFIGS="09-Configurations"
@@ -81,7 +80,10 @@ AUJOURDHUI=$(date +%Y-%m-%d)
 # mettre ici le chemin vers les repertoires a sauvegarder
 SOURCES="
  /$REP_ETC
- $DATAS/$REP_PHOTOS
+ $HOME/$REP_PHOTOS
+ $HOME/$REP_MUSE
+ $HOME/$REP_VIDEO
+ $HOME/$REP_ISOS
  $HOME/$REP_3D
  $HOME/$REP_THEMES
  $HOME/$REP_CONKY
@@ -103,6 +105,9 @@ SOURCES_TAR="
  $REP_ETC
  $REP_3D
  $REP_PHOTOS
+ $REP_MUSE
+ $REP_VIDEO
+ $REP_ISOS
  $REP_THEMES
  $REP_CONKY
  $REP_DEV
