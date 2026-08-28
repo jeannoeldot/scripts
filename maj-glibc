@@ -1,0 +1,225 @@
+#!/usr/bin/env bash
+#
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2026
+#
+# Version 0.1
+#
+
+## POUR TEST
+#set -x
+
+# warning: /etc/locale.gen installed as /etc/locale.gen.pacnew
+# [2026-02-12T10:36:47+0100] [ALPM-SCRIPTLET] Generating locales...
+# [2026-02-12T10:36:47+0100] [ALPM-SCRIPTLET]   en_US.UTF-8... done
+# [2026-02-12T10:36:48+0100] [ALPM-SCRIPTLET]   fr_FR.UTF-8... done
+# [2026-02-12T10:36:48+0100] [ALPM-SCRIPTLET]   fr_FR.ISO-8859-1... done
+# [2026-02-12T10:36:48+0100] [ALPM-SCRIPTLET]   fr_FR.ISO-8859-15@euro... done
+
+# LOCALE
+FR_LOCALE=fr_FR
+
+# NOMS FICHIERS REELS
+NAME_GLIBC=locale.gen
+NAME_GLIBC_PACNEW=locale.gen.pacnew
+
+# REPERTOIRES
+DIR_CONF=/etc
+
+# COULEURS
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}$(tput setaf 1)
+BGreen=${Bold}$(tput setaf 2)
+BYellow=${Bold}$(tput setaf 3)
+BBlue=${Bold}$(tput setaf 4)
+BPurple=${Bold}$(tput setaf 5)
+BCyan=${Bold}$(tput setaf 6)
+BWhite=${Bold}$(tput setaf 7)
+
+#
+# FONCTIONS
+#
+msg() {
+  local mesg=$1; shift
+  printf "${BWhite}:: ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_2() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_info() {
+  local mesg=$1; shift
+  printf "${BWhite}==> ${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_titre() {
+  local mesg=$1; shift
+  printf "${BWhite}${mesg}${Reset}\n" "$@" >&2
+}
+
+msg_newline() {
+    local mesg=$1; shift
+    printf "\n" "$@" >&2
+}
+
+error() {
+  local mesg=$1; shift
+  printf "${BRed}==> ERREUR:${BWhite} ${mesg}${Reset}\n" "$@" >&2
+}
+
+cleanup() {
+  cd
+  [[ $1 ]] && exit $1
+}
+
+die() {
+  error "$*"
+  cleanup 1
+}
+
+read_input_text() {
+  printf '%s' "${BGreen}"
+  read -p "$1 [O/N]: " OPTION
+  msg_newline
+  OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
+  printf '%s\n' "${Reset}"
+}
+
+# DANS VIRTUALBOX OU NON
+# OUI ==> IN_VIRTUAL_BOX=1
+# NON ==> IN_VIRTUAL_BOX=0
+check_is_in_virtualbox() {
+    local vbox=$(journalctl -b | grep -E "DMI:")
+    echo ${vbox} | tr "[:upper:]" "[:lower:]" | grep -q virtualbox
+    if (( $? == 0 )); then
+        IN_VIRTUAL_BOX=1
+    else
+        IN_VIRTUAL_BOX=0
+    fi
+}
+
+#
+# FIN FONCTIONS
+#
+
+#
+# DEBUT DU SCRIPT
+#
+
+# nom du script = $0
+# nombre d'argument = $#
+# liste des arguments = $*
+# => Passe en root
+if (( EUID != 0 )); then
+    printf '\n%s\n' "${BYellow}Le script $0 doit être exécuté en «root»."
+    printf '%s\n' "Entrer le mot de passe de «root»${Reset}"
+    exec su -c "${0} ${1}"
+    exit ${?}
+fi
+
+
+# Titre
+msg_titre "+----------------------------------------------------+"
+msg_titre "|    Suite à la mise à jour de glibc                 |"
+msg_titre "|    Modification du fichier /etc/locale.gen         |"
+msg_titre "+----------------------------------------------------+"
+
+msg_newline
+
+# POUR TEST =1 SINON =0
+MISE_AU_POINT=0
+#set -x
+
+# La date du jour
+LADATE=$(date +%Y-%m-%d)
+
+# Répertoire de travail
+DIR_WORK="${DIR_CONF}"
+
+
+# MODIFS DE locale.gen.pacnew
+# ===========================
+if [[ -f "${NAME_GLIBC_PACNEW}" ]]; then
+    # 1) MODIFS SUR FICHIERS TEMPS
+    cp ${NAME_GLIBC_PACNEW} /tmp/${NAME_GLIBC}
+    sed -i "/${LOCALE}/s/^#//" /tmp/${NAME_GLIBC}
+    ed -i "/#en_US.UTF-8/s/^#//" /tmp/${NAME_GLIBC}
+
+    msg_newline
+    msg "Ces modifications seront apportées à «${NAME_GLIBC}» :"
+    sed '/#/d;/^$/d' /tmp/${NAME_GLIBC}
+
+    msg_newline
+
+    # 2) FAIT MODIFS SI REPONSE = o ou O
+    read_input_text "Confirmer les modifications apportées à «${NAME_GLIBC}»"
+        case "$OPTION" in
+          "o")
+            # Suppressions anciens fichiers backup
+            msg_newline
+            msg "Suppression des anciens fichiers .backup existants."
+            rm -v -f ${NAME_GLIBC}.backup.*
+            # Sauvegarde fichiers
+            msg_newline
+            msg "Sauvegarde des fichiers existants."
+            cp -v ${NAME_GLIBC} ${NAME_GLIBC}.backup.${LADATE}
+            # Modification fichier
+            msg_newline
+            msg "Modification de «${NAME_GLIBC}»."
+            mv -v /tmp/${NAME_GLIBC} ${NAME_GLIBC}
+            # Vérifications
+            msg_newline
+            msg "Vérification de «${NAME_GLIBC}» :"
+            sed '/#/d;/^$/d' ${NAME_GLIBC}
+            # Supprime le fichier .pacnew
+            msg_newline
+            msg "Suppression du fichier «${NAME_GLIBC_PACNEW}»."
+            rm -v -f "${NAME_GLIBC_PACNEW}"
+            # Exécution de locale-gen
+            msg "Exécution de «locale-gen»."
+            locale-gen
+            # FIN OK
+            msg_newline
+            msg "Modifications de «${NAME_GLIBC}» terminées."
+            retour=0
+            ;;
+          *)
+            # Réponse = N/n
+            # 3) SUPPRIME FICHIERS TEMPS
+            rm -f /tmp/${NAME_GLIBC}
+            msg_newline
+            msg "Modifications non apportées à «${NAME_GLIBC}»."
+            msg "NON éxécution de «locale-gen»."
+            retour=2
+            ;;
+      esac
+else
+      msg_newline
+      msg "Aucun fichier «${NAME_GLIBC_PACNEW}». Aucune modification à apporter."
+      retour=22
+fi
+
+# FIN
+
+
+## POUR TEST
+#set +x
+
+cd
+exit $retour
+
+#==============================================================================
+# ESSAIS
+#==============================================================================

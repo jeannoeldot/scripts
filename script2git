@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015,2016,2017,2020,2023,2024
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2014,2015,2016,2017,2020,2023,2024,2026
 #
 # Name : script2git
 #
@@ -163,6 +163,7 @@ cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/maj-flashplugin ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/Maj-Flashplugin.TXT ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/maj-flash-psd-addons ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/Maj-FlashPsdAddons.TXT ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-glibc/maj-glibc ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-grub/maj-grub ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-pacman/maj-pacman ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-refind/maj-refind ${DIR_GIT}/
@@ -220,6 +221,9 @@ printf '%s\n' " -> maj-flash-psd-addons" >> ${DIR_GIT}/README
 printf '%s\n' " -> Maj-FlashPsdAddons.TXT" >> ${DIR_GIT}/README
 printf '%s\n' " -> maj-flashplugin" >> ${DIR_GIT}/README
 printf '%s\n' " -> Maj-Flashplugin.TXT" >> ${DIR_GIT}/README
+printf '%s\n' "" >> ${DIR_GIT}/README
+printf '%s\n' "Répertoire : Maj-glibc" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-glibc" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Maj-grub" >> ${DIR_GIT}/README
 printf '%s\n' " -> maj-grub" >> ${DIR_GIT}/README
