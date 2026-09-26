@@ -165,6 +165,7 @@ cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/maj-flash-psd-addons ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-flashplugin/Maj-FlashPsdAddons.TXT ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-glibc/maj-glibc ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-grub/maj-grub ${DIR_GIT}/
+cp -vf ${DIR_SCRIPTS}/Maj-grub/maj-grub-alone ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-pacman/maj-pacman ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-refind/maj-refind ${DIR_GIT}/
 cp -vf ${DIR_SCRIPTS}/Maj-refind/modif-refind-conf ${DIR_GIT}/
@@ -227,6 +228,7 @@ printf '%s\n' " -> maj-glibc" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Maj-grub" >> ${DIR_GIT}/README
 printf '%s\n' " -> maj-grub" >> ${DIR_GIT}/README
+printf '%s\n' " -> maj-grub-alone" >> ${DIR_GIT}/README
 printf '%s\n' "" >> ${DIR_GIT}/README
 printf '%s\n' "Répertoire : Maj-pacman" >> ${DIR_GIT}/README
 printf '%s\n' " -> maj-pacman" >> ${DIR_GIT}/README
