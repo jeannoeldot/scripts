@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Décompression de blender-*-release.tar.xz ==> $HOME/Blender
-# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2023,2024
+# Décompression de blender-*-alpha+main.*-linux.x86_64-release.tar.xz ==> $HOME/Blender
+# Author: Jean-Noel Dot  <prenom nom @ fournisseur.fr> 2023,2024,2026
 # Version : 01
 
 ## POUR TEST
@@ -91,7 +91,7 @@ invalid_option() {
 # Titre
 msg_titre "+----------------------------------------------------+"
 msg_titre "|                                                    |"
-msg_titre "|     Décompression de blender-*-release.tar.xz      |"
+msg_titre "|     Décompression de blender-XXX-alpha             |"
 msg_titre "|                                                    |"
 msg_titre "+----------------------------------------------------+"
 
@@ -118,26 +118,26 @@ fi
 cd ${DIR_DWL}
 
 # TEST SI 1 FICHIER BLENDER release.tar.xz EXISTE
-liste_blender=($(ls -la | grep release.tar.xz | awk '{print $9}'))
+liste_blender=($(find -name blender-*-alpha+main.*-linux.x86_64-release.tar.xz | sed "s#./##"))
 # TEST
 #echo $liste_blender
-## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz
+## ==> blender-5.4.0-alpha+main.7ae63e844b0a-linux.x86_64-release.tar.xz
 # TEST
 if [[ $liste_blender == "" ]]; then
-    die "Aucun fichier blender-*-release.tar.xz trouvé dans ${DIR_DWL}."
+    die "Aucun fichier blender-XXX-alpha trouvé dans ${DIR_DWL}."
 else
     msg_newline
     msg "Fichier «$liste_blender» trouvé."
 fi
 
 # TEST SI 1 FICHIER BLENDER release.tar.xz.sha256 EXISTE
-liste_sha256=($(ls -la | grep release.tar.xz.sha256 | awk '{print $9}'))
+liste_sha256=($(find -name blender-*-alpha+main.*-linux.x86_64-release.tar.xz.sha256 | sed "s#./##"))
 # TEST
 #echo $liste_sha256
-## ==> blender-3.6.0-alpha+main.654cfc06c591-linux.x86_64-release.tar.xz.sha256
+## ==> blender-5.4.0-alpha+main.7ae63e844b0a-linux.x86_64-release.tar.xz.sha256
 # TEST
 if [[ $liste_sha256 == "" ]]; then
-    die "Aucun fichier blender-*-release.tar.xz.sha256 trouvé dans ${DIR_DWL}."
+    die "Aucun fichier sha256 pour blender-XXX-alpha trouvé dans ${DIR_DWL}."
 else
     msg_newline
     msg "Fichier «$liste_sha256» trouvé."
@@ -151,7 +151,7 @@ sha256sum_sha256=$(awk '{print $1}' $liste_sha256)
 
 # Calcul SHA256SUM de blender
 msg_newline
-msg "Calcul du SHA256SUM de blender-*-release.tar.xz."
+msg "Calcul du SHA256SUM de blender-XXX-alpha."
 sha256sum_blender=$(sha256sum $liste_blender | cut -d " " -f 1)
 # TEST
 #echo $sha256sum_blender
@@ -189,7 +189,7 @@ fi
 
 cd ${DIR_DWL}
 
-# Décompresse blender-*-release.tar.xz ds $DIR_BLENDER
+# Décompresse blender-XXX-alpha ds $DIR_BLENDER
 msg_newline
 msg "Décompression de «$liste_blender» dans «$DIR_BLENDER»"
 #tar -x --xz -f blender-*-release.tar.xz -C $DIR_BLENDER
